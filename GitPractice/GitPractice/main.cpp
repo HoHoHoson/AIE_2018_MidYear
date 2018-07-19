@@ -64,10 +64,15 @@ void guessNumber() {
 	}
 }
 
+void hangman()
+{
+	//Start making hangman game
+}
 
 void main() 
 {
 	enterWords();
+	hangman();
 	numberSwap();
 	guessNumber();
 	system("pause");
