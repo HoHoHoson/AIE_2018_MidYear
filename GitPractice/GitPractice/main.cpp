@@ -8,9 +8,11 @@ int main()
 	srand((unsigned int)time(nullptr));
 
 
-	int randomValue = rand() % 10 + 1;
+	int randomValue = rand() % 60 + 1;
 
-	bool foundAnswer = 0;
+
+	//This is a simple guess the number game..also helps to teach binary search
+	bool foundAnswer = false;
 	int answer = -1;
 	while (!foundAnswer)
 	{
