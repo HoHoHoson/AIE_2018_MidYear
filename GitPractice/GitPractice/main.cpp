@@ -67,6 +67,7 @@ void guessNumber() {
 
 void main() 
 {
+	int lollipop = 0;
 	enterWords();
 	numberSwap();
 	guessNumber();
