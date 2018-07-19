@@ -130,8 +130,7 @@ void battle(std::string attacker, std::string defender, int &knightHealth)
 }
 
 
-
-int main()
+void turnbasedKnights()
 {
 	srand((unsigned int)time(nullptr));
 	//int randomValue = (rand() % (264 - 50)) + 50;
@@ -153,12 +152,12 @@ int main()
 		std::cout << "Knight2 Attacks for " << dmg << " damage." << std::endl;
 		if (k1Health <= 0)
 		{
-			k1Health = 0;
-			std::cout << "Knight1 Died\n";
-			break;
+		k1Health = 0;
+		std::cout << "Knight1 Died\n";
+		break;
 		}
 		else
-			std::cout << "Knight1 survives with " << k1Health << " health.\n";
+		std::cout << "Knight1 survives with " << k1Health << " health.\n";
 
 		std::cout << std::endl;
 
@@ -167,15 +166,39 @@ int main()
 		std::cout << "Knight1 Attacks for " << dmg << " damage."  << std::endl;
 		if (k2Health <= 0)
 		{
-			k2Health = 0;
-			std::cout << "Knight2 Died\n";
+		k2Health = 0;
+		std::cout << "Knight2 Died\n";
 		}
 		else
-			std::cout << "Knight2 survives with " << k2Health << " health.\n";*/
+		std::cout << "Knight2 survives with " << k2Health << " health.\n";*/
 
 		std::cout << std::endl;
 	}
+}
 
+void knightsBeatingEachOther()
+{
+	const int setHealth = 100;
+	const int knightNum = 100;
+	bool alive[knightNum];
+	int knightHealth[knightNum];
+	
+	for (int i = 0; i < knightNum; i++) 
+	{
+		knightHealth[i] = setHealth;
+		alive[i] = true;
+	}
+
+	for (int i = 0; i < knightNum; i++)
+	{
+		knightHealth[i] -= randomValue(10, 20);
+		std::cout << knightHealth[i] << std::endl;
+	}
+}
+
+int main()
+{
+	knightsBeatingEachOther();
 
 	system("pause");
 	return 0;
