@@ -1,0 +1,182 @@
+#include <iostream>
+#include <random>
+#include <ctime>
+#include <string>
+
+
+void calculator()
+{
+	float n1;
+	float n2;
+	float n3 = 0;
+	char operation;
+	bool off = false;
+
+	std::cout << "Enter first number: ";
+	std::cin >> n1;
+
+	std::cout << "Enter second number: ";
+	std::cin >> n2;
+
+	std::cout << "Enter an operator: ";
+	std::cin >> operation;
+
+	switch (operation)
+	{
+	case '+':
+	{
+		n3 = n1 + n2;
+		break;
+	}
+	case '-':
+	{
+		n3 = n1 - n2;
+		break;
+	}
+	case '*':
+	{
+		n3 = n1 * n2;
+		break;
+	}
+	case '/':
+	{
+		n3 = n1 / n2;
+		break;
+	}
+	default:
+	{
+		std::cout << "Error\n";
+		break;
+	}
+	}
+
+	if (n3 != 0)
+	{
+		std::cout << n3 << std::endl;
+	}
+	std::cout << "Input anything to exit\n";
+	std::cin >> operation;
+}
+
+
+int doAttack(int currentHealth, int amountOfDamage,int multiplier)
+{
+	int totalDamage = amountOfDamage * multiplier;
+
+	int finalHealth = currentHealth - totalDamage;
+	if (finalHealth < 0)
+		finalHealth = 0;
+
+	return finalHealth;
+}
+
+
+int randomValue(int min, int max)
+{
+	int range = max - min;
+
+	if (min == max)
+		return min;
+	else if (min > max)
+	{
+		range = min - max;
+	}
+
+	int randomValue = rand() % (range + 1);
+	randomValue += min;
+
+	return randomValue;
+}
+
+
+
+void battle(std::string attacker, std::string defender, int &knightHealth) 
+{
+	int damage;
+	int dmg = 20;
+	char choice;
+
+	std::cin >> choice;
+
+	switch (choice)
+	{
+	case'1':
+	{
+		damage = randomValue(0, dmg);
+		knightHealth -= damage;
+		std::cout << attacker << " Attacks for " << damage << " damage." << std::endl;
+		if (knightHealth <= 0)
+		{
+			knightHealth = 0;
+			std::cout << defender << " Died\n";
+			break;
+		}
+		else
+			std::cout << defender << " survives with " << knightHealth << " health.\n";
+		break;
+	}
+	case'2':
+	{
+		
+	}
+	case'3':
+	{
+
+	}
+	default:
+		std::cout << "pkiap\n";
+		break;
+	}
+}
+
+
+
+int main()
+{
+	srand((unsigned int)time(nullptr));
+	//int randomValue = (rand() % (264 - 50)) + 50;
+
+	int k1Health = 100;
+	int k1Dmg = 20;
+	int k2Health = 100;
+	int k2Dmg = 20;
+	int dmg;
+	std::string Knight2 = "Knight2";
+	std::string Knight1 = "Knight1";
+
+
+	while (k1Health != 0 && k2Health != 0)
+	{
+		battle(Knight2, Knight1, k1Health);
+		/*dmg = randomValue(0, k2Dmg);
+		k1Health -= dmg;
+		std::cout << "Knight2 Attacks for " << dmg << " damage." << std::endl;
+		if (k1Health <= 0)
+		{
+			k1Health = 0;
+			std::cout << "Knight1 Died\n";
+			break;
+		}
+		else
+			std::cout << "Knight1 survives with " << k1Health << " health.\n";
+
+		std::cout << std::endl;
+
+		dmg = randomValue(0, k1Dmg);
+		k2Health -= dmg;
+		std::cout << "Knight1 Attacks for " << dmg << " damage."  << std::endl;
+		if (k2Health <= 0)
+		{
+			k2Health = 0;
+			std::cout << "Knight2 Died\n";
+		}
+		else
+			std::cout << "Knight2 survives with " << k2Health << " health.\n";*/
+
+		std::cout << std::endl;
+	}
+
+
+	system("pause");
+	return 0;
+}
