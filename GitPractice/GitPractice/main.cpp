@@ -1,87 +1,60 @@
-#include <string>
 #include <iostream>
-#include <random>
-#include <ctime>
+#include <string>
 
 std::string adj;
 std::string verb;
 std::string noun;
 bool test;
+std::string name;
+bool login = false;
+char choice;
 
-void enterWords()
+void logon()
 {
-	std::cout << "Enter an adjective";
-	std::cin >> adj;
-
-	std::cout << "Enter a verb";
-	std::cin >> verb;
-
-	std::cout << "Enter a noun";
-	std::cin >> noun;
-
-	std::cout << "The quick, " << adj << " fox " << verb << "s over the lazy " << noun << std::endl;
-
-}
-void numberSwap() {
-
-	int a = 0;
-	int b = 0;
-
-	std::cout << "Insert two numbers: ";
-	std::cin >> a >> b;
-
-	std::cout << "\nA: " << a << "\tB: " << b << "\nThe numbers will now magically switch places!" << std::endl;
-	std::swap(a, b);
-
-	std::cout << "\nA: " << a << "\tB: " << b << "\nIsn't that amazing!!" << std::endl;
+	system("cls");
+	std::cout << "Please enter your name: ";
+	std::cin >> name;
+	system("cls");
 }
 
-void guessNumber() {
-
-	int randomValue = rand() % 60 + 1;
-
-
-	//This is a simple guess the number game..also helps to teach binary search
-	bool foundAnswer = false;
-	int answer = -1;
-	while (!foundAnswer)
+int main() 
+{
+	do
 	{
-		std::cout << "Enter any number: " << std::endl;
-		std::cin >> answer;
-
-		if (answer < randomValue)
+		logon();
+		if (name == "Hoson" || name == "Andrew" || name == "Ed" || name == "Sam" || name == "Matt")
 		{
-			std::cout << "Higher, try again!\n";
-		}
-		else if (answer > randomValue)
-		{
-			std::cout << "Lower, try again!\n";
+			std::cout << "Welcome back " << name << "!\n";
+			login = true;
+			std::cout << std::endl;
+			system("Pause");
 		}
 		else
 		{
-			foundAnswer = true;
-			std::cout << "Just right!\n";
+			std::cout << "<Error> User not recognised.\n";
+			std::cout << std::endl;
+			std::cout << "Retry login? y/n\n";
+			std::cin >> choice;
+			switch (choice)
+			{
+			case 'y':
+			{
+				login = false;
+				break;
+			}
+			case 'n':
+			{
+				login = true;
+				break;
+			}
+			default:
+			{
+				std::cin >> choice;
+				break;
+			}
+			}
 		}
-	}
-}
 
-void hangman()
-{
-	//Start making hangman game
-	bool hasWon = true;
-
-	if (hasWon)
-	{
-		std::cout << "You won the game of hangman, well done!\n";
-	}
-}
-
-void main() 
-{
-	int lollipop = 0;
-	enterWords();
-	hangman();
-	numberSwap();
-	guessNumber();
-	system("pause");
+	} while (!login);
+	return 0;
 }
