@@ -31,16 +31,16 @@ int main()
 	int answer = -1;
 	while (!foundAnswer)
 	{
-		std::cout << "Enter a number: " << std::endl;
+		std::cout << "Enter any number: " << std::endl;
 		std::cin >> answer;
 
 		if (answer < randomValue)
 		{
-			std::cout << "Too low, try again!\n";
+			std::cout << "Higher, try again!\n";
 		}
 		else if (answer > randomValue)
 		{
-			std::cout << "Too high, try again!\n";
+			std::cout << "Lower, try again!\n";
 		}
 		else
 		{
