@@ -102,7 +102,6 @@ void battle(std::string attacker, std::string defender, int &knightHealth)
 	{
 	case'1':
 	{
-		std::cout << attacker << " readies their stance.\n";
 		damage = randomValue(0, dmg);
 		knightHealth -= damage;
 		std::cout << attacker << " Attacks for " << damage << " damage." << std::endl;
@@ -118,13 +117,11 @@ void battle(std::string attacker, std::string defender, int &knightHealth)
 	}
 	case'2':
 	{
-		std::cout << attacker << " readies their stance.\n";
-		break;
+		
 	}
 	case'3':
 	{
-		std::cout << attacker << " readies their stance.\n";
-		break;
+
 	}
 	default:
 		std::cout << "pkiap\n";
@@ -179,7 +176,7 @@ void turnbasedKnights()
 	}
 }
 
-void knightsBeatingEachOtherSim()
+void knightsBeatingEachOther()
 {
 	const int setHealth = 100;
 	const int knightNum = 10;
@@ -187,8 +184,6 @@ void knightsBeatingEachOtherSim()
 	bool alive[knightNum];
 	int knightHealth[knightNum];
 	int deadKnight = 0;
-	int previousKnight = 7;
-	int dmg;
 	srand((unsigned int)time(nullptr));
 	
 	for (int i = 0; i < knightNum; i++) 
@@ -201,31 +196,21 @@ void knightsBeatingEachOtherSim()
 	{
 		for (int i = 0; i < knightNum; i++)
 		{
-			if (alive[i] == false){}
-			else if (deadKnight == knightNum - 1) 
+			if (alive[i] == false)
+				break;
+			else if (deadKnight = knightNum - 1) 
 			{
 				winner = true;
-				std::cout << std::endl;
-				std::cout << "Knight " << i << " Wins!" << std::endl;
-				std::cout << std::endl;
 			}
-			else if (alive[i] == true)
+			else if (alive[i] = true)
 			{
-				dmg = randomValue(0, 10);
-				knightHealth[i] -= dmg;
-				std::cout << std::endl;
-				std::cout << "Knight " << i << "'s ass was beat by Knight " << previousKnight << " for " << dmg << " damage" << std::endl;
-				if (knightHealth[i] <= 0)
-				{
-					alive[i] = false;
-					deadKnight++;
-					std::cout << "Knight " << i << " Died!\n";
-				}
-				else
-				{
-					previousKnight = i;
-					std::cout << "Knight " << i << " is left with " << knightHealth[i] << " HP\n";
-				}
+				knightHealth[i] -= randomValue(10, 20);
+				std::cout << knightHealth[i] << std::endl;
+			}
+			else
+			{
+				alive[i] = false;
+				deadKnight++;
 			}
 		}
 	} while (!winner);
@@ -233,7 +218,7 @@ void knightsBeatingEachOtherSim()
 
 int main()
 {
-	turnbasedKnights();
+	knightsBeatingEachOther();
 
 	system("pause");
 	return 0;
