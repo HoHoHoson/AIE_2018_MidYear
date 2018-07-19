@@ -31,6 +31,7 @@ cookieClicker/cookieClicker/x64/Debug/main\.obj\.enc
 
 cookieClicker/cookieClicker/x64/Debug/vc141\.idb
 
+<<<<<<< HEAD
 GitPractice/GitPractice/x64/Debug/GitPractice\.tlog/CL\.command\.1\.tlog
 
 GitPractice/GitPractice/x64/Debug/GitPractice\.tlog/CL\.read\.1\.tlog
@@ -46,3 +47,14 @@ GitPractice/GitPractice/x64/Debug/GitPractice\.tlog/link\.read\.1\.tlog
 GitPractice/GitPractice/x64/Debug/GitPractice\.tlog/link\.write\.1\.tlog
 
 GitPractice/GitPractice/x64/Debug/vc141\.idb
+=======
+*.tlog
+
+*.log
+
+*.obj
+
+GitPractice/GitPractice/x64/Debug/
+
+GitPractice/x64/Debug/
+>>>>>>> master
