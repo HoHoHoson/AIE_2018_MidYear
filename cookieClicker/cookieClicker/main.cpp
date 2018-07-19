@@ -2,15 +2,19 @@
 
 bool gameRunning = true;
 bool alt = true;
-int caps = 0;
+bool gameMenu = true;
+bool cooldown = false;
+unsigned int caps = 0;
 int pigeons = 0;
 int pigeonCost;
 int alcoholic = 0;
 int alcoholicCost;
 int dDiver = 0;
 int dDiverCost;
-int recycling = 10;
+int recycling = 0;
 int recyclingCost;
+int factory = 0;
+int factoryCost;
 
 
 
@@ -18,13 +22,15 @@ int recyclingCost;
 void update() 
 {
 	caps += pigeons;
-	pigeonCost = pow(10, 1 + (pigeons * 0.05));
+	pigeonCost = pow(10, 1 + (pigeons * 0.01));
 	caps += alcoholic * 11;
-	alcoholicCost = pow(100, 1 + (alcoholic * 0.05));
+	alcoholicCost = pow(100, 1 + (alcoholic * 0.01));
 	caps += dDiver * 120;
-	dDiverCost = pow(1000, 1 + (dDiver * 0.05));
-	caps += recycling * 1300;
-	recyclingCost = pow(10000, 1 + (recycling * 0.05));
+	dDiverCost = pow(1000, 1 + (dDiver * 0.01));
+	caps += recycling * 1350;
+	recyclingCost = pow(10000, 1 + (recycling * 0.01));
+	caps += factory * 15000;
+	factoryCost = pow(100000, 1 + (factory * 0.01));
 }
 
 
@@ -51,9 +57,31 @@ void draw()
 	std::cout << "(3)Hiring people off the streets to swim in dumpsters. (" << dDiverCost << " Caps)\n";
 	std::cout << std::endl;
 	if (recycling != 0)
-		std::cout << "You have " << recycling << " Recycling Centers\n";
-	std::cout << "(4)Open a recycling center. It's like charity, for yourself! (" << recyclingCost << " Caps)\n";
+		std::cout << "You have " << recycling << " Recycling Centers!\n";
+	std::cout << "(4)Open a recycling center. It's like charity, for yourself. (" << recyclingCost << " Caps)\n";
 	std::cout << std::endl;
+	if (factory != 0)
+		std::cout << "You have " << factory << " Cap Factories!\n";
+	std::cout << "(5)Cap printing plant. This isn't money so its perfectly legal. (" << factoryCost << " Caps)\n";
+	std::cout << std::endl;
+	std::cout << "(6)Access the buy menu.\n";
+	std::cout << std::endl;
+	std::cout << "(x)Quit Game";
+}
+
+
+
+void drawBuy()
+{
+
+}
+
+
+
+void tooPoor() 
+{
+	cooldown = true;
+	std::cout << "                                             Not enough Caps...\n";
 }
 
 
@@ -61,26 +89,26 @@ void draw()
 void handleKey(char c)
 {
 	//std::cout << "You pressed " << c << std::endl;
-	if (c == 'p')
+	if (c == 'x' && gameMenu)
 	{
 		/*std::cout << "Should quit\n";*/
 		gameRunning = false;
 	}
 
-	if (c == 'q' && alt == true && c != 'w')
+	if (c == 'q' && alt == true && c != 'w' && gameMenu)
 	{
 		caps++;
 		alt = false;
 		draw();
 	}
-	else if (c == 'w' && alt == false && c != 'q') 
+	else if (c == 'w' && alt == false && c != 'q' && gameMenu)
 	{
 		caps++;
 		alt = true;
 		draw();
 	}
 
-	if (c == '1')
+	if (c == '1' && gameMenu)
 	{
 		if (caps >= pigeonCost)
 		{
@@ -89,10 +117,10 @@ void handleKey(char c)
 			pigeons++;
 			draw();
 		}
-		else
-			std::cout << "Not enough Caps..\n";
+		else if (!cooldown)
+			tooPoor();
 	}
-	if (c == '2')
+	if (c == '2' && gameMenu)
 	{
 		if (caps >= alcoholicCost)
 		{
@@ -100,10 +128,10 @@ void handleKey(char c)
 			draw();
 			caps -= alcoholicCost;
 		}
-		else
-			std::cout << "Not enough Caps..\n";
+		else if (!cooldown)
+			tooPoor();                                       
 	}
-	if (c == '3')
+	if (c == '3' && gameMenu)
 	{
 		if (caps >= dDiverCost)
 		{
@@ -111,10 +139,10 @@ void handleKey(char c)
 			draw();
 			caps -= dDiverCost;
 		}
-		else
-			std::cout << "Not enough Caps..\n";
+		else if (!cooldown)
+			tooPoor();
 	}
-	if (c == '4')
+	if (c == '4' && gameMenu)
 	{
 		if (caps >= recyclingCost)
 		{
@@ -122,8 +150,23 @@ void handleKey(char c)
 			draw();
 			caps -= recyclingCost;
 		}
-		else
-			std::cout << "Not enough Caps..\n";
+		else if (!cooldown)
+			tooPoor();
+	}
+	if (c == '5' && gameMenu)
+	{
+		if (caps >= factoryCost)
+		{
+			factory++;
+			draw();
+			caps -= factoryCost;
+		}
+		else if (!cooldown)
+			tooPoor();
+	}
+	if (c == '6' && gameMenu)
+	{
+		gameMenu = false;
 	}
 }
 
@@ -136,7 +179,11 @@ int main()
 	while (gameRunning) 
 	{
 		update();
-		draw();
+		if (gameMenu)
+			draw();
+		else
+			drawBuy();
+		cooldown = false;
 		std::this_thread::sleep_for(1s);
 	}
 
