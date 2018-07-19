@@ -2,16 +2,18 @@
 
 bool gameRunning = true;
 bool alt = true;
+bool gameMenu = true;
+bool cooldown = false;
 unsigned int caps = 0;
-int pigeons = 0;
+int pigeons = 1;
 int pigeonCost;
-int alcoholic = 0;
+int alcoholic = 1;
 int alcoholicCost;
-int dDiver = 0;
+int dDiver = 1;
 int dDiverCost;
-int recycling = 0;
+int recycling = 1;
 int recyclingCost;
-int factory = 0;
+int factory = 1;
 int factoryCost;
 
 
@@ -62,33 +64,41 @@ void draw()
 		std::cout << "You have " << factory << " Cap Factories!\n";
 	std::cout << "(5)Cap printing plant. This isn't money so its perfectly legal. (" << factoryCost << " Caps)\n";
 	std::cout << std::endl;
+	std::cout << "(6)Access the buy menu.\n";
+	std::cout << std::endl;
+	std::cout << "(x)Quit Game";
 }
 
+void tooPoor() 
+{
+	cooldown = true;
+	std::cout << "                                             Not enough Caps...\n";
+}
 
 
 void handleKey(char c)
 {
 	//std::cout << "You pressed " << c << std::endl;
-	if (c == 'p')
+	if (c == 'x' && gameMenu)
 	{
 		/*std::cout << "Should quit\n";*/
 		gameRunning = false;
 	}
 
-	if (c == 'q' && alt == true && c != 'w')
+	if (c == 'q' && alt == true && c != 'w' && gameMenu)
 	{
 		caps++;
 		alt = false;
 		draw();
 	}
-	else if (c == 'w' && alt == false && c != 'q') 
+	else if (c == 'w' && alt == false && c != 'q' && gameMenu)
 	{
 		caps++;
 		alt = true;
 		draw();
 	}
 
-	if (c == '1')
+	if (c == '1' && gameMenu)
 	{
 		if (caps >= pigeonCost)
 		{
@@ -97,10 +107,10 @@ void handleKey(char c)
 			pigeons++;
 			draw();
 		}
-		else
-			std::cout << "Not enough Caps..\n";
+		else if (!cooldown)
+			tooPoor();
 	}
-	if (c == '2')
+	if (c == '2' && gameMenu)
 	{
 		if (caps >= alcoholicCost)
 		{
@@ -108,10 +118,10 @@ void handleKey(char c)
 			draw();
 			caps -= alcoholicCost;
 		}
-		else
-			std::cout << "Not enough Caps..\n";
+		else if (!cooldown)
+			tooPoor();                                       
 	}
-	if (c == '3')
+	if (c == '3' && gameMenu)
 	{
 		if (caps >= dDiverCost)
 		{
@@ -119,10 +129,10 @@ void handleKey(char c)
 			draw();
 			caps -= dDiverCost;
 		}
-		else
-			std::cout << "Not enough Caps..\n";
+		else if (!cooldown)
+			tooPoor();
 	}
-	if (c == '4')
+	if (c == '4' && gameMenu)
 	{
 		if (caps >= recyclingCost)
 		{
@@ -130,11 +140,22 @@ void handleKey(char c)
 			draw();
 			caps -= recyclingCost;
 		}
-		else
-			std::cout << "Not enough Caps..\n";
+		else if (!cooldown)
+			tooPoor();
 	}
-}
+	if (c == '5' && gameMenu)
+	{
+		if (caps >= factoryCost)
+		{
+			factory++;
+			draw();
+			caps -= factoryCost;
+		}
+		else if (!cooldown)
+			tooPoor();
+	}
 
+}
 
 
 int main()
@@ -145,6 +166,7 @@ int main()
 	{
 		update();
 		draw();
+		cooldown = false;
 		std::this_thread::sleep_for(1s);
 	}
 
