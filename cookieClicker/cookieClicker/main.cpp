@@ -5,15 +5,15 @@ bool alt = true;
 bool gameMenu = true;
 bool cooldown = false;
 unsigned int caps = 0;
-int pigeons = 1;
+int pigeons = 0;
 int pigeonCost;
-int alcoholic = 1;
+int alcoholic = 0;
 int alcoholicCost;
-int dDiver = 1;
+int dDiver = 0;
 int dDiverCost;
-int recycling = 1;
+int recycling = 0;
 int recyclingCost;
-int factory = 1;
+int factory = 0;
 int factoryCost;
 
 
@@ -69,11 +69,21 @@ void draw()
 	std::cout << "(x)Quit Game";
 }
 
+
+
+void drawBuy()
+{
+
+}
+
+
+
 void tooPoor() 
 {
 	cooldown = true;
 	std::cout << "                                             Not enough Caps...\n";
 }
+
 
 
 void handleKey(char c)
@@ -154,8 +164,12 @@ void handleKey(char c)
 		else if (!cooldown)
 			tooPoor();
 	}
-
+	if (c == '6' && gameMenu)
+	{
+		gameMenu = false;
+	}
 }
+
 
 
 int main()
@@ -165,7 +179,10 @@ int main()
 	while (gameRunning) 
 	{
 		update();
-		draw();
+		if (gameMenu)
+			draw();
+		else
+			drawBuy();
 		cooldown = false;
 		std::this_thread::sleep_for(1s);
 	}
