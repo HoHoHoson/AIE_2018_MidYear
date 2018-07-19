@@ -11,7 +11,6 @@ int dDiver = 0;
 int dDiverCost;
 int recycling = 10;
 int recyclingCost;
-int drunkHoboCost;
 
 
 
@@ -26,13 +25,6 @@ void update()
 	dDiverCost = pow(1000, 1 + (dDiver * 0.05));
 	caps += recycling * 1300;
 	recyclingCost = pow(10000, 1 + (recycling * 0.05));
-	drunkHoboCost = pow(10, 1 + (dDiver * 0.05));
-	
-	//When a certain number of alcoholics is reached, they become hobos.
-	if (alcoholic >= drunkHoboCost) {
-		alcoholic--;
-		dDiver++;
-	}
 }
 
 
@@ -137,7 +129,7 @@ void handleKey(char c)
 
 
 
-void main()
+int main()
 {
 	AsyncKeyboard::setupKeyboard(handleKey);
 
@@ -150,4 +142,5 @@ void main()
 
 	AsyncKeyboard::shutdown;
 
+	return 0;
 }
