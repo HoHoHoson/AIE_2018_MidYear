@@ -33,11 +33,15 @@ void numberSwap() {
 	std::swap(a, b);
 
 	std::cout << "\nA: " << a << "\tB: " << b << "\nIsn't that amazing!!" << std::endl;
-	int randomValue = rand() % 10 + 1;
 }
 
 void guessNumber() {
-	bool foundAnswer = 0;
+
+	int randomValue = rand() % 60 + 1;
+
+
+	//This is a simple guess the number game..also helps to teach binary search
+	bool foundAnswer = false;
 	int answer = -1;
 	while (!foundAnswer)
 	{
