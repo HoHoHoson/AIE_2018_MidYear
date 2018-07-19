@@ -67,6 +67,12 @@ void guessNumber() {
 void hangman()
 {
 	//Start making hangman game
+	bool hasWon = true;
+
+	if (hasWon)
+	{
+		std::cout << "You won the game of hangman, well done!\n";
+	}
 }
 
 void main() 
