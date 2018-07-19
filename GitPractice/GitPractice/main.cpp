@@ -6,6 +6,7 @@
 std::string adj;
 std::string verb;
 std::string noun;
+bool test;
 
 void enterWords()
 {
