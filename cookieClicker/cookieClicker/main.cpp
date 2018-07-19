@@ -2,15 +2,17 @@
 
 bool gameRunning = true;
 bool alt = true;
-int caps = 0;
+unsigned int caps = 0;
 int pigeons = 0;
 int pigeonCost;
 int alcoholic = 0;
 int alcoholicCost;
 int dDiver = 0;
 int dDiverCost;
-int recycling = 10;
+int recycling = 0;
 int recyclingCost;
+int factory = 0;
+int factoryCost;
 
 
 
@@ -18,13 +20,15 @@ int recyclingCost;
 void update() 
 {
 	caps += pigeons;
-	pigeonCost = pow(10, 1 + (pigeons * 0.05));
+	pigeonCost = pow(10, 1 + (pigeons * 0.01));
 	caps += alcoholic * 11;
-	alcoholicCost = pow(100, 1 + (alcoholic * 0.05));
+	alcoholicCost = pow(100, 1 + (alcoholic * 0.01));
 	caps += dDiver * 120;
-	dDiverCost = pow(1000, 1 + (dDiver * 0.05));
-	caps += recycling * 1300;
-	recyclingCost = pow(10000, 1 + (recycling * 0.05));
+	dDiverCost = pow(1000, 1 + (dDiver * 0.01));
+	caps += recycling * 1350;
+	recyclingCost = pow(10000, 1 + (recycling * 0.01));
+	caps += factory * 15000;
+	factoryCost = pow(100000, 1 + (factory * 0.01));
 }
 
 
@@ -51,8 +55,12 @@ void draw()
 	std::cout << "(3)Hiring people off the streets to swim in dumpsters. (" << dDiverCost << " Caps)\n";
 	std::cout << std::endl;
 	if (recycling != 0)
-		std::cout << "You have " << recycling << " Recycling Centers\n";
-	std::cout << "(4)Open a recycling center. It's like charity, for yourself! (" << recyclingCost << " Caps)\n";
+		std::cout << "You have " << recycling << " Recycling Centers!\n";
+	std::cout << "(4)Open a recycling center. It's like charity, for yourself. (" << recyclingCost << " Caps)\n";
+	std::cout << std::endl;
+	if (factory != 0)
+		std::cout << "You have " << factory << " Cap Factories!\n";
+	std::cout << "(5)Cap printing plant. This isn't money so its perfectly legal. (" << factoryCost << " Caps)\n";
 	std::cout << std::endl;
 }
 
