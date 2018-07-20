@@ -89,47 +89,201 @@ int randomValue(int min, int max)
 }
 
 
-
-void battle(std::string attacker, std::string defender, int &knightHealth) 
+struct Knight
 {
-	int damage;
-	int dmg = 20;
-	char choice;
+	int health;
 
-	std::cin >> choice;
+	std::string choice;
+	std::string name;
+};
 
-	switch (choice)
+
+void battle(bool& defenderTurn, Knight& attacker, Knight& defender, int& minDmg, int& maxDmg) 
+{
+	int damageDisplay = randomValue(minDmg, maxDmg);
+	bool validChoice = false;
+
+
+	std::cout << std::endl;
+	std::cout << attacker.name << " starts it off!\n";
+	do
 	{
-	case'1':
-	{
-		std::cout << attacker << " readies their stance.\n";
-		damage = randomValue(0, dmg);
-		knightHealth -= damage;
-		std::cout << attacker << " Attacks for " << damage << " damage." << std::endl;
-		if (knightHealth <= 0)
+		std::cout << std::endl;
+		std::cin >> attacker.choice;
+		if (attacker.choice == "attack" || attacker.choice == "block" || attacker.choice == "tackle")
 		{
-			knightHealth = 0;
-			std::cout << defender << " Died\n";
-			break;
+			validChoice = true;
+			system("cls");
+			std::cout << std::endl;
+			std::cout << attacker.name << " readies their stance.\n";
 		}
 		else
-			std::cout << defender << " survives with " << knightHealth << " health.\n";
-		break;
-	}
-	case'2':
+		{
+			system("cls");
+			std::cout << std::endl;
+			std::cout << "Invalid command, try again.\n";
+			validChoice = false;
+		}
+	} while (!validChoice);
+
+	do
 	{
-		std::cout << attacker << " readies their stance.\n";
-		break;
-	}
-	case'3':
-	{
-		std::cout << attacker << " readies their stance.\n";
-		break;
-	}
-	default:
-		std::cout << "pkiap\n";
-		break;
-	}
+		std::cout << std::endl;
+		std::cout << "It's " <<defender.name << " turn!\n";
+		std::cout << std::endl;
+		std::cin >> defender.choice;
+		validChoice = true;
+		if (defender.choice == attacker.choice)
+		{
+			std::cout << std::endl;
+			std::cout << attacker.name << " and " << defender.name << " clashes equally in a flurry of steel!\n";
+		}
+		else if (defender.choice == "attack")
+		{
+			if (attacker.choice == "tackle")
+			{
+				std::cout << std::endl;
+				std::cout << attacker.name << " sprints in for a full force tackle,\njust to lunge straight into " << defender.name << "'s sword!\n";
+				damageDisplay;
+				attacker.health -= damageDisplay;
+				std::cout << std::endl;
+				std::cout << defender.name << " impales " << attacker.name << " for " << damageDisplay << " damage.\n";
+				std::cout << std::endl;
+				if (attacker.health <= 0)
+				{
+					std::cout << attacker.name << " bleeds out on " << defender.name << "'s blade\n";
+					std::cout << std::endl;
+					std::cout << defender.name << " Wins!\n";
+				}
+				else 
+				{
+					std::cout << attacker.name << " survives with " << attacker.health << " HP.\n";
+				}
+			}
+			if (attacker.choice == "block")
+			{
+				std::cout << std::endl;
+				std::cout << defender.name << " attacks with a forward thrust.\n" << attacker.name << ", with quick reflexes, blocks the attack!\n";
+				damageDisplay;
+				defender.health -= damageDisplay;
+				std::cout << std::endl;
+				std::cout << defender.name << "'s sword pinged off of " << attacker.name << "'s shield,\nopening " << defender.name << " up for " << damageDisplay << " counterattack damage!\n";
+				std::cout << std::endl;
+				if (defender.health <= 0)
+				{
+					std::cout << attacker.name << " decapitates " << defender.name << " with a clean cut!\n";
+					std::cout << std::endl;
+					std::cout << attacker.name << " Wins!\n";
+				}
+				else
+				{
+					std::cout << defender.name << " survives with " << defender.health << " HP.\n";
+				}
+			}
+		}
+		else if (defender.choice == "block")
+		{
+			if (attacker.choice == "attack")
+			{
+				std::cout << std::endl;
+				std::cout << attacker.name << " attacks with a forward thrust.\n" << defender.name << ", with quick reflexes, blocks the attack!\n";
+				damageDisplay;
+				attacker.health -= damageDisplay;
+				std::cout << std::endl;
+				std::cout << attacker.name << "'s sword pinged off of " << defender.name << "'s shield,\nopening " << attacker.name << " up for " << damageDisplay << " counterattack damage!\n";
+				std::cout << std::endl;
+				if (attacker.health <= 0)
+				{
+					std::cout << defender.name << " decapitates " << attacker.name << " with a clean cut!\n";
+					std::cout << std::endl;
+					std::cout << defender.name << " Wins!\n";
+				}
+				else
+				{
+					std::cout << attacker.name << " survives with " << attacker.health << " HP.\n";
+				}
+			}
+			if (attacker.choice == "tackle")
+			{
+				std::cout << std::endl;
+				std::cout << defender.name << " raises their shield in expectance of a bladed strike.\nInstead, " << attacker.name << " crashes into their shield with a forceful shoulder tackle!\n";
+				damageDisplay;
+				defender.health -= damageDisplay;
+				std::cout << std::endl;
+				std::cout << attacker.name << " follows up with a bone shattering shield bash for " << damageDisplay << " damage!" << std::endl;
+				std::cout << std::endl;
+				if (defender.health <= 0)
+				{
+					std::cout << attacker.name << " shatters " << defender.name << "'s skull with a crippling blow from their shield!\n";
+					std::cout << std::endl;
+					std::cout << attacker.name << " Wins!\n";
+				}
+				else
+				{
+					std::cout << defender.name << " survives with " << defender.health << " HP.\n";
+				}
+			}
+		}
+		else if (defender.choice == "tackle")
+		{
+			if (attacker.choice == "block")
+			{
+				std::cout << std::endl;
+				std::cout << attacker.name << " raises their shield in expectance of a bladed strike.\nInstead, " << defender.name << " crashes into their shield with a forceful shoulder tackle!\n";
+				damageDisplay;
+				attacker.health -= damageDisplay;
+				std::cout << std::endl;
+				std::cout << defender.name << " follows up with a bone shattering shield bash for " << damageDisplay << " damage!" << std::endl;
+				std::cout << std::endl;
+				if (attacker.health <= 0)
+				{
+					std::cout << defender.name << " shatters " << attacker.name << "'s skull with a crippling blow from their shield!\n";
+					std::cout << std::endl;
+					std::cout << defender.name << " Wins!\n";
+				}
+				else
+				{
+					std::cout << attacker.name << " survives with " << attacker.health << " HP.\n";
+				}
+			}
+			if (attacker.choice == "attack")
+			{
+				std::cout << std::endl;
+				std::cout << defender.name << " sprints in for a full force tackle,\njust to lunge straight into " << attacker.name << "'s sword!\n";
+				damageDisplay;
+				defender.health -= damageDisplay;
+				std::cout << std::endl;
+				std::cout << attacker.name << " impales " << defender.name << " for " << damageDisplay << " damage.\n";
+				std::cout << std::endl;
+				if (defender.health <= 0)
+				{
+					std::cout << defender.name << " bleeds out on " << attacker.name << "'s blade\n";
+					std::cout << std::endl;
+					std::cout << attacker.name << " Wins!\n";
+				}
+				else 
+				{
+					std::cout << defender.name << " survives with " << defender.health << " HP.\n";
+				}
+			}
+		}
+		else
+		{
+			validChoice = false;
+			system("cls");
+			std::cout << std::endl;
+			std::cout << "Invalid command, try again.\n";
+		}
+	} while (!validChoice);
+
+	std::cout << std::endl;
+	system("pause");
+	system("cls");
+	if (defenderTurn)
+		defenderTurn = false;
+	else
+		defenderTurn = true;
+
 }
 
 
@@ -138,44 +292,32 @@ void turnbasedKnights()
 	srand((unsigned int)time(nullptr));
 	//int randomValue = (rand() % (264 - 50)) + 50;
 
-	int k1Health = 100;
-	int k1Dmg = 20;
-	int k2Health = 100;
-	int k2Dmg = 20;
-	int dmg;
-	std::string Knight2 = "Knight2";
-	std::string Knight1 = "Knight1";
+	Knight knight1;
+	Knight knight2;
+	bool defenderTurn = false;
+	int setHealth = 10;
+	int setMaxDamage = 6;
+	int setMinDamage = 4;
 
 
-	while (k1Health != 0 && k2Health != 0)
+	std::cout << std::endl;
+	std::cout << "Knight 1 name : ";
+	std::cin >> knight1.name;
+	std::cout << std::endl;
+	std::cout << "Knight 2 name : ";
+	std::cin >> knight2.name;
+	std::cout << std::endl;
+	system("cls");
+
+	knight1.health = setHealth;
+	knight2.health = setHealth;
+
+	while (knight1.health > 0 && knight2.health > 0)
 	{
-		battle(Knight2, Knight1, k1Health);
-		/*dmg = randomValue(0, k2Dmg);
-		k1Health -= dmg;
-		std::cout << "Knight2 Attacks for " << dmg << " damage." << std::endl;
-		if (k1Health <= 0)
-		{
-		k1Health = 0;
-		std::cout << "Knight1 Died\n";
-		break;
-		}
+		if (!defenderTurn)
+			battle(defenderTurn, knight1, knight2, setMinDamage, setMaxDamage);
 		else
-		std::cout << "Knight1 survives with " << k1Health << " health.\n";
-
-		std::cout << std::endl;
-
-		dmg = randomValue(0, k1Dmg);
-		k2Health -= dmg;
-		std::cout << "Knight1 Attacks for " << dmg << " damage."  << std::endl;
-		if (k2Health <= 0)
-		{
-		k2Health = 0;
-		std::cout << "Knight2 Died\n";
-		}
-		else
-		std::cout << "Knight2 survives with " << k2Health << " health.\n";*/
-
-		std::cout << std::endl;
+			battle(defenderTurn, knight2, knight1, setMinDamage, setMaxDamage);
 	}
 }
 
@@ -233,7 +375,7 @@ void knightsBeatingEachOtherSim()
 
 int main()
 {
-	turnbasedKnights();
+	knightsBeatingEachOtherSim();
 
 	system("pause");
 	return 0;
