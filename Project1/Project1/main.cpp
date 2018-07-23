@@ -373,10 +373,52 @@ void knightsBeatingEachOtherSim()
 	} while (!winner);
 }
 
+
+void menuDraw()
+{
+	char menuSelect;
+	std::cout << "(1) Calculator\n";
+	std::cout << "(2) Turn Based Knights\n";
+	std::cout << "(3) Knight Battle Sim\n";
+	std::cin >> menuSelect;
+	switch (menuSelect)
+	{
+	case '1':
+	{
+		system("cls");
+		calculator();
+		break;
+	}
+	case '2':
+	{
+		system("cls");
+		turnbasedKnights();
+		break;
+	}
+	case '3':
+	{
+		system("cls");
+		knightsBeatingEachOtherSim();
+		break;
+	}
+	case '4':
+	{
+		break;
+	}
+	default:
+	{
+		system("cls");
+		menuDraw();
+		break;
+	}
+	}
+}
+
+
 int main()
 {
-	knightsBeatingEachOtherSim();
-
+	menuDraw();
+	
 	system("pause");
 	return 0;
 }
