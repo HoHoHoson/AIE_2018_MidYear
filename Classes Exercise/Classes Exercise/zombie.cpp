@@ -38,3 +38,8 @@ void Zombie::damage(int dmg)
 {
 	z_health -= dmg;
 }
+
+void Zombie::setHealth()
+{
+	z_health = 0;
+}

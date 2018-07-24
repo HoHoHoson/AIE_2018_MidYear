@@ -13,6 +13,7 @@ public:
 	void damage(int damage);
 	std::string getJob();
 	int getDamage();
+	void setHealth();
 
 private:
 
