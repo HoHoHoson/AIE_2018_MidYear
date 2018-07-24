@@ -51,6 +51,23 @@ void update()
 }
 
 
+void test()
+{
+	char c = 'T', d = 'S'; 
+	char *p1 = &c; 
+	char *p2 = &d; 
+	char *p3;
+	p3 = &d;
+	std::cout << p3 << std::endl;
+	p3 = p1;
+	std::cout << "*p3 = " << *p3 << std::endl;
+	std::cout << ", p3 = " << p3 << std::endl;
+	*p1 = *p2;
+	std::cout << "*p1 = " << *p1 << std::endl;
+	std::cout << ", p1 = " << p1 << std::endl;
+}
+
+
 int main()
 {
 	update();
