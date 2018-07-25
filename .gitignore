@@ -30,3 +30,7 @@ DynamicArray/\.vs/
 DynamicArray/Debug/
 
 DynamicArray/DynamicArray/Debug/
+
+DynamicArray/DynamicArray/x64/Debug/
+
+DynamicArray/x64/Debug/
