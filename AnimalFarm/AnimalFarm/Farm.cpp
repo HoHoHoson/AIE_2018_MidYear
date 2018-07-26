@@ -55,6 +55,11 @@ void Farm::addAnimal(Animals * animal)
 
 void Farm::playSounds()
 {
+	if (h_CurrentNumber == 0)
+	{
+		std::cout << "All you hear is sweet silence.\n";
+		return;
+	}
 	for (int i = 0; i < h_CurrentNumber; ++i)
 	{
 		h_FarmArray[i]->playSound();
