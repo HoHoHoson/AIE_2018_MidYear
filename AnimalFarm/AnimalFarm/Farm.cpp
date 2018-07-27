@@ -2,7 +2,7 @@
 
 Farm::Farm()
 {
-	
+	h_MaxAnimals = BASE_ANIMALS;
 }
 
 Farm::~Farm()
@@ -37,8 +37,7 @@ void Farm::listAnimal()
 
 void Farm::addAnimal(Animals * animal)
 {
-
-	if (h_CurrentNumber >= MAX_ANIMALS)
+	if (h_CurrentNumber >= BASE_ANIMALS)
 	{
 		std::cout << "Not enough space.\n";
 		delete animal;
@@ -57,7 +56,7 @@ void Farm::playSounds()
 {
 	if (h_CurrentNumber == 0)
 	{
-		std::cout << "All you hear is sweet silence.\n";
+		std::cout << "All you hear is silence.\n";
 		return;
 	}
 	for (int i = 0; i < h_CurrentNumber; ++i)
@@ -69,7 +68,7 @@ void Farm::playSounds()
 void Farm::drawMenu()
 {
 	std::cout << "You have " << h_Money << " coins!\n";
-	std::cout << "Farm has (" << h_CurrentNumber << "/" << MAX_ANIMALS << ") Animals" << std::endl;
+	std::cout << "Farm has (" << h_CurrentNumber << "/" << h_MaxAnimals << ") Animals" << std::endl;
 	std::cout << std::endl;
 	std::cout << "\t1. Chicken\n";
 	std::cout << "\t2. Chickpea\n";
@@ -77,6 +76,7 @@ void Farm::drawMenu()
 	std::cout << "\t4. Play animal sounds\n";
 	std::cout << "\t5. Count number of animals\n";
 	std::cout << "\t6. Murderize\n";
+	//std::cout << "\t7. Expand Farm\n";
 }
 
 void Farm::slaughter()
@@ -97,3 +97,31 @@ void Farm::slaughter()
 	std::cout << "You hear the screams of tiny voices.\n";
 	std::cout << "Earned " << earned << " bloody coins!\n";
 }
+
+
+void Farm::operator + (Animals * animal)
+{
+	return (addAnimal(animal));
+}
+
+
+
+//void Farm::expandFarm()
+//{
+//	if (h_Money < h_FarmCost)
+//	{
+//		std::cout << "Your farm can now hold 5 extra animals!\n";
+//		h_Money -= h_FarmCost;
+//		h_MaxAnimals += 5;
+//
+//		Animals** temp = new Animals*[h_MaxAnimals];
+//		for (int i = 0; i < (h_CurrentNumber); ++i)
+//		{
+//			temp[i] = h_FarmArray[i];
+//		}
+//		delete[] h_FarmArray;
+//		h_FarmArray = temp;
+//	}
+//	else
+//		std::cout << "Too poor.\n";
+//}

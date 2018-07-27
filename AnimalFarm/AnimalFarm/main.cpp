@@ -23,7 +23,8 @@ int main()
 		}
 		case 1:
 		{
-			myFarm.addAnimal(new Chicken);
+			myFarm.operator+(new Chicken);
+			//myFarm.addAnimal(new Chicken);
 			break;
 		}
 		case 3:

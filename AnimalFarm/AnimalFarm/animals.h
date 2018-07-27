@@ -10,6 +10,7 @@ public:
 	virtual ~Animals() = default;
 
 	virtual std::string getType() = 0;
+	virtual std::string acapella() = 0;
 	virtual void playSound() = 0;
 
 protected:
