@@ -3,7 +3,6 @@
 
 int main()
 {
-	int alphabet;
 	NaughtsNCrosses ticTacToe;
 
 	do
@@ -14,8 +13,8 @@ int main()
 	} while (!ticTacToe.checkIfWin(ticTacToe.getPlayer()));
 	ticTacToe.win();
 
-	std::cout << std::endl;
 
+	std::cout << std::endl;
 	system("pause");
 	return 0;
 }

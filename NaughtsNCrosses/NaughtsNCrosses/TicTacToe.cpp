@@ -20,7 +20,13 @@ NaughtsNCrosses::~NaughtsNCrosses()
 
 }
 
-bool NaughtsNCrosses::isValid(unsigned int i) const
+bool NaughtsNCrosses::isCharValid(char c) const
+{
+	char temp = toupper(c);
+	return (temp == 'A' || temp == 'B' || temp == 'C');
+}
+
+bool NaughtsNCrosses::isIntValid(unsigned int i) const
 {
 	return (0 < i && i <= 3);
 }
@@ -28,7 +34,6 @@ bool NaughtsNCrosses::isValid(unsigned int i) const
 bool NaughtsNCrosses::isSlotEmpty(unsigned int x, unsigned int y) const
 {
 	char temp;
-	x -= 1;
 	y -= 1;
 	if (h_2DArray[x][y] == 0)
 		return true;
@@ -48,36 +53,36 @@ unsigned int NaughtsNCrosses::getPlayer()
 
 void NaughtsNCrosses::input()
 {
-	unsigned int x = 0;
+	char x = 0;
 	unsigned int y = 0;
 
 	do
 	{
 		drawBoard();
 		std::cout << "Player " << playerToken << " Turn: (x, y)\n";
-		std::cout << "x -> "; std::cin >> x;
-		while (!isValid(x))
+		std::cout << "x -> "; std::cin >> x;  std::cin.sync();
+		while (!isCharValid(x))
 		{
 			drawBoard();
 			std::cout << "Player " << playerToken << " Turn: (x, y)\n";
 			std::cout << "Invalid coordinate x!\n";
-			std::cout << "x -> "; std::cin >> x;
+			std::cout << "x -> "; std::cin >> x; std::cin.sync();
 		}
 		drawBoard();
-		std::cout << "Player " << playerToken << " Turn: (" << x << ", y)\n";
+		std::cout << "Player " << playerToken << " Turn: (" << (char)toupper(x) << ", y)\n";
 		std::cout << "y -> "; std::cin >> y;
-		while (!isValid(y))
+		while (!isIntValid(y))
 		{
 			drawBoard();
-			std::cout << "Player " << playerToken << " Turn: (" << x << ", y)\n";
+			std::cout << "Player " << playerToken << " Turn: (" << (char)toupper(x) << ", y)\n";
 			std::cout << "Invalid coordinate y!\n";
 			std::cout << "y -> "; std::cin >> y;
 		} 
 		drawBoard();
-		std::cout << "Player " << playerToken << " Turn: (" << x << ", " << y << ")\n";
-	} while (!isSlotEmpty(x, y));
+		std::cout << "Player " << playerToken << " Turn: (" << (char)toupper(x) << ", " << y << ")\n";
+	} while (!isSlotEmpty(toInt(x), y));
 
-	h_2DArray[x - 1][y - 1] = player;
+	h_2DArray[toInt(x)][y - 1] = player;
 }
 
 bool NaughtsNCrosses::checkIfWin(unsigned int player)
@@ -97,6 +102,17 @@ bool NaughtsNCrosses::checkIfWin(unsigned int player)
 	else if (h_2DArray[0][2] == player && h_2DArray[1][1] == player && h_2DArray[2][0] == player)
 		return true;
 	return false;
+}
+
+char NaughtsNCrosses::toSymbol(unsigned int x)
+{
+	return "ABC"[x - 1];
+}
+
+int NaughtsNCrosses::toInt(char x)
+{
+	x = toupper(x);
+	return x - 'A';
 }
 
 void NaughtsNCrosses::switchTurn()
@@ -128,7 +144,7 @@ void NaughtsNCrosses::drawBoard()
 	
 	for (int x = 0; x < 3; ++x)
 	{
-		std::cout << "  " << x + 1;
+		std::cout << "  " << toSymbol(x + 1);
 		for (int y = 0; y < 3; ++y)
 		{
 			int checkValue = h_2DArray[x][y];
