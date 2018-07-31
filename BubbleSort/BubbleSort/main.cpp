@@ -7,7 +7,5 @@ int main()
 
 	numGuess.startUp();
 
-	std::cout << "\n";
-	system("pause");
 	return 0;
 }

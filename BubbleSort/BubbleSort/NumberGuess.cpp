@@ -14,6 +14,13 @@ NumberGuess::~NumberGuess()
 
 }
 
+void NumberGuess::pressEnterToContinue()
+{
+	std::cin.clear();
+	std::cin.ignore(std::cin.rdbuf()->in_avail());
+	std::cin.get();
+}
+
 void NumberGuess::startUp()
 {
 	bool quit = false;
@@ -32,6 +39,15 @@ void NumberGuess::startUp()
 			game();
 			break;
 		}
+		case AI:
+		{
+			break;
+		}
+		case Scoreboard:
+		{
+			scoreBoard();
+			break;
+		}
 		case Exit:
 			quit = true;
 		}
@@ -46,7 +62,7 @@ void NumberGuess::menuScreen()
 	{
 		system("cls");
 		std::cout <<
-			"Number Guess\n\n"
+			"\nNumber Guess\n\n"
 			"\t(1) Play\n"
 			"\t(2) Lotto Predictor(WiP)\n"
 			"\t(3) HighScores(WiP)\n"
@@ -59,19 +75,20 @@ void NumberGuess::menuScreen()
 	case 1:
 	{
 		gameState = Game;
+		break;
 	}
 	case 2:
 	{
-
+		gameState = AI;
+		break;
 	}
 	case 3:
 	{
-
+		gameState = Scoreboard;
+		break;
 	}
 	case 4:
-	{
 		gameState = Exit;
-	}
 	}
 }
 
@@ -83,24 +100,39 @@ void NumberGuess::setMax()
 
 void NumberGuess::game()
 {
+	unsigned int input;
+	unsigned int turns = 0;
+
 	system("cls");
 	h_TargetNumber = (rand() % h_Max + 1) - 1;
-	bool win = false;
-	int input;
-	while (!win)
+	std::cout <<
+		"\nA random number 'n' between 0 - " << h_Max << " has been chosen!\n\n";
+
+	do
 	{
-		readInput("input: ", input);
+		turns++;
+		readInput(("\t" + std::to_string(h_Min) + " < n < " + std::to_string(h_Max) + "\nn" + std::to_string(turns) + " > "), input);
+
 		if (input > h_TargetNumber && input < h_Max)
 			h_Max = input;
 		if (input < h_TargetNumber && input > h_Min)
 			h_Min = input;
 		if (input == h_TargetNumber)
 		{
-			std::cout << "You are a weener\n";
+			std::cout << 
+				"\tn = " << h_TargetNumber << 
+				"\n\nYou guessed 'n' in " << turns << " turns!\n";
+			std::cin.get();
 			break;
 		}
-		std::cout << h_Min << "  " << h_Max << std::endl;
-	}
+	} while (true);
+
+	pressEnterToContinue();
+	gameState = Menu;
+}
+
+void NumberGuess::aiMode()
+{
 }
 
 struct HighScores
@@ -109,9 +141,39 @@ struct HighScores
 	unsigned int score;
 };
 
-bool operator>(HighScores& score1, HighScores& score2)
+bool operator<(HighScores& score1, HighScores& score2)
 {
-	return (score1.score > score2.score);
+	return (score1.score < score2.score);
 }
+
+void NumberGuess::scoreBoard()
+{
+	bool reSort;
+	HighScores leaderBoard[10];
+
+	system("cls");
+	std::cout << "\nHighScores\n\n";
+
+	for (int i = 0; i < 10; ++i)
+	{
+		leaderBoard[i].name = "bill no." + std::to_string(i);
+		leaderBoard[i].score = rand() % 21;
+	}
+
+	bubbleSorter(leaderBoard, 10);
+
+	for (int i = 0; i < 10; ++i)
+	{
+		std::cout << std::setw(5) << std::left << "\t" + std::to_string(i + 1) + ". ";
+		std::cout << std::setw(15) << std::left << leaderBoard[i].name; 
+		std::cout << std::setw(15) << std::left << leaderBoard[i].score;
+
+		std::cout << std::endl;
+	}
+
+	pressEnterToContinue();
+	gameState = Menu;
+}
+
 
 
