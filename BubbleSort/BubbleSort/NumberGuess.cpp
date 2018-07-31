@@ -94,27 +94,28 @@ void NumberGuess::menuScreen()
 
 void NumberGuess::setMax()
 {
-	std::cout << "Set the max range: ";
-	std::cin >> h_Max;
+	readInput("Set the max range: ", h_Max);
 }
 
 void NumberGuess::game()
 {
 	unsigned int input;
 	unsigned int turns = 0;
+	unsigned int range = 100;
+	h_Min = 0;
 
 	system("cls");
-	h_TargetNumber = (rand() % h_Max + 1) - 1;
+	h_TargetNumber = (rand() % range + 1) - 1;
 	std::cout <<
-		"\nA random number 'n' between 0 - " << h_Max << " has been chosen!\n\n";
+		"\nA random number 'n' between 0 - " << range << " has been chosen!\n\n";
 
 	do
 	{
 		turns++;
-		readInput(("\t" + std::to_string(h_Min) + " < n < " + std::to_string(h_Max) + "\nn" + std::to_string(turns) + " > "), input);
+		readInput(("\t" + std::to_string(h_Min) + " < n < " + std::to_string(range) + "\nn" + std::to_string(turns) + " > "), input);
 
-		if (input > h_TargetNumber && input < h_Max)
-			h_Max = input;
+		if (input > h_TargetNumber && input < range)
+			range = input;
 		if (input < h_TargetNumber && input > h_Min)
 			h_Min = input;
 		if (input == h_TargetNumber)
@@ -133,6 +134,7 @@ void NumberGuess::game()
 
 void NumberGuess::aiMode()
 {
+	setMax();
 }
 
 struct HighScores

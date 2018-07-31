@@ -47,7 +47,6 @@ template<typename T>
 inline void NumberGuess::bubbleSorter(T * arr, int size)
 {
 	bool swapped;
-
 	do
 	{
 		swapped = false;
