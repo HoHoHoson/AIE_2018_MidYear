@@ -92,37 +92,51 @@ void NumberGuess::menuScreen()
 	}
 }
 
-void NumberGuess::setMax()
+void NumberGuess::setTarget(unsigned int& value)
 {
-	readInput("Set the max range: ", h_Max);
+	bool isValid = true;
+	do
+	{
+		if (isValid == false)
+			std::cout << "Invalid value!\n";
+
+		readInput("Set the target value: ", value);
+
+		if (value > h_Min && value < h_Max)
+			isValid = true;
+		else
+			isValid = false;
+		system("cls");
+	} while (!isValid);
+	std::cout << "You have chosen: " << value << std::endl;
 }
 
 void NumberGuess::game()
 {
 	unsigned int input;
-	unsigned int turns = 0;
-	unsigned int range = 100;
+	h_Turns = 0;
+	h_Max = 100;
 	h_Min = 0;
 
 	system("cls");
-	h_TargetNumber = (rand() % range + 1) - 1;
+	h_TargetNumber = (rand() % h_Max + 1) - 1;
 	std::cout <<
-		"\nA random number 'n' between 0 - " << range << " has been chosen!\n\n";
+		"\nA random number 'n' between " << h_Min << " - " << h_Max << " has been chosen!\n\n";
 
 	do
 	{
-		turns++;
-		readInput(("\t" + std::to_string(h_Min) + " < n < " + std::to_string(range) + "\nn" + std::to_string(turns) + " > "), input);
+		h_Turns++;
+		readInput(("\t" + std::to_string(h_Min) + " < n < " + std::to_string(h_Max) + "\nn" + std::to_string(h_Turns) + " > "), input);
 
-		if (input > h_TargetNumber && input < range)
-			range = input;
+		if (input > h_TargetNumber && input < h_Max)
+			h_Max = input;
 		if (input < h_TargetNumber && input > h_Min)
 			h_Min = input;
 		if (input == h_TargetNumber)
 		{
 			std::cout << 
 				"\tn = " << h_TargetNumber << 
-				"\n\nYou guessed 'n' in " << turns << " turns!\n";
+				"\n\nYou guessed 'n' in " << h_Turns << " turns!\n";
 			std::cin.get();
 			break;
 		}
@@ -134,7 +148,39 @@ void NumberGuess::game()
 
 void NumberGuess::aiMode()
 {
-	setMax();
+	char i;
+	bool validChoice = false;
+	unsigned int value;
+
+	h_Max = 100;
+	h_Min = 0;
+	h_Turns = 0;
+
+	do
+	{
+		std::cin.clear();
+		std::cin.ignore(std::cin.rdbuf()->in_avail());
+		std::cin >> i;
+		std::cin.get();
+
+		switch (i)
+		{
+		case '1':
+		{
+			value = (rand() % h_Max + 1) - 1;
+			validChoice = true;
+			break;
+		}
+		case '2':
+		{
+			setTarget(value);
+			validChoice = true;
+			break;
+		}
+		default:
+			validChoice = false;
+		}
+	} while (!validChoice);
 }
 
 struct HighScores

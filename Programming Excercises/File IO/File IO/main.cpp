@@ -1,41 +1,68 @@
 #include <iostream>
 #include <fstream>
 #include <string>
+#include <cassert>
+
+//struct Data
+//{
+//	std::string input;
+//};
+//
+//struct DataConversion
+//{
+//	DataConversion(){}
+//	DataConversion(const Data& test)
+//	{
+//		assert(test.input.size() < 256);
+//
+//		strcpy_s(wordArray, 255, test.input.data());
+//	}
+//	char wordArray[256];
+//};
+	
 
 int main()
 {
-	std::string input = "test string";
-	std::string write;
-	char testString[] = "test";
-	char* readString;
+	std::string forScience = "potato";
+
+	std::string writeTo;
+	//Data test;
+	//test.input = "test string";
 
 
 	std::fstream fout("data.dat", std::ios::out | std::ios::binary);
 	if (fout.good())
 	{
-		fout.write((char*)&input, sizeof(input) / sizeof(std::string));
+		//DataConversion d1(test);
+		char chips[256];
+		strcpy_s(chips, 255, forScience.data());
+		fout.write((char*)&chips, sizeof(std::string));
+		forScience = "";
+		//test.input = "";
 	}
 	else
 		std::cout << "Error\n";
 	fout.close();
 
+	std::cout << forScience;
 
 	std::fstream fin("data.dat", std::ios::in | std::ios::binary);
-	std::streampos size;
-		size = fin.tellg();
-		readString = new char[size];
 	if (fin.good())
 	{
 		while (!fin.eof() && fin.peek() != EOF)
 		{
-			fin.read(readString, size);
+			//DataConversion d2;
+			char chicken[256];
+			fin.read((char*)chicken, sizeof(std::string));
+			writeTo = chicken;
+			//writeTo = d2.wordArray;
 		}
 	}
 	else 
 		std::cout << "Error\n";
 	fin.close();
 
-	std::cout << readString;
+	std::cout << writeTo;
 	std::cout << "\n";
 	
 

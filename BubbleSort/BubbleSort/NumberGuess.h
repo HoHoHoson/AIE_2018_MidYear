@@ -12,12 +12,15 @@ public:
 	~NumberGuess();
 
 	void startUp();
+	void setTarget(unsigned int& value);
+	void aiMode();
 
 private:
 
 	unsigned int h_Min;
 	unsigned int h_Max;
 	unsigned int h_TargetNumber;
+	unsigned int h_Turns;
 
 	enum h_state
 	{
@@ -31,9 +34,7 @@ private:
 
 	void menuScreen();
 	void game();
-	void aiMode();
 	void scoreBoard();
-	void setMax();
 	void pressEnterToContinue();
 
 	template<typename T>
