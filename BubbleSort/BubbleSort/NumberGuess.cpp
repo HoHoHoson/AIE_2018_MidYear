@@ -4,6 +4,7 @@
 NumberGuess::NumberGuess()
 {
 	srand((unsigned int)time(nullptr));
+	loadHighScores();
 	gameState = Menu;
 	h_Min = 0;
 	h_Max = 100;
@@ -41,6 +42,7 @@ void NumberGuess::startUp()
 		}
 		case AI:
 		{
+			aiMode();
 			break;
 		}
 		case Scoreboard:
@@ -49,7 +51,10 @@ void NumberGuess::startUp()
 			break;
 		}
 		case Exit:
+		{
+			saveHighScores();
 			quit = true;
+		}
 		}
 	} while (!quit);
 }
@@ -62,10 +67,10 @@ void NumberGuess::menuScreen()
 	{
 		system("cls");
 		std::cout <<
-			"\nNumber Guess\n\n"
+			"\nNUMBER GUESS\n\n"
 			"\t(1) Play\n"
-			"\t(2) Lotto Predictor(WiP)\n"
-			"\t(3) HighScores(WiP)\n"
+			"\t(2) Lotto Predictor\n"
+			"\t(3) HighScores\n"
 			"\t(4) Exit Game\n";
 		readInput("> ", choice);
 	} while (choice == 0 || choice > 4);
@@ -97,10 +102,12 @@ void NumberGuess::setTarget(unsigned int& value)
 	bool isValid = true;
 	do
 	{
+		std::cout << "\nChoose a number between " << h_Min << " - " << h_Max << "\n\n";
+
 		if (isValid == false)
 			std::cout << "Invalid value!\n";
 
-		readInput("Set the target value: ", value);
+		readInput("Target value > ", value);
 
 		if (value > h_Min && value < h_Max)
 			isValid = true;
@@ -108,12 +115,14 @@ void NumberGuess::setTarget(unsigned int& value)
 			isValid = false;
 		system("cls");
 	} while (!isValid);
-	std::cout << "You have chosen: " << value << std::endl;
+	std::cout << "\nYou have rigged the lottery number to be " << value << std::endl;
 }
 
 void NumberGuess::game()
 {
 	unsigned int input;
+	std::string temp;
+
 	h_Turns = 0;
 	h_Max = 100;
 	h_Min = 0;
@@ -126,28 +135,36 @@ void NumberGuess::game()
 	do
 	{
 		h_Turns++;
-		readInput(("\t" + std::to_string(h_Min) + " < n < " + std::to_string(h_Max) + "\nn" + std::to_string(h_Turns) + " > "), input);
+		readInput(("\n\t" + std::to_string(h_Min) + " < n < " + std::to_string(h_Max) + "\nn" + std::to_string(h_Turns) + " > "), input);
 
-		if (input > h_TargetNumber && input < h_Max)
-			h_Max = input;
-		if (input < h_TargetNumber && input > h_Min)
-			h_Min = input;
+		rangeSetter(input);
 		if (input == h_TargetNumber)
 		{
 			std::cout << 
-				"\tn = " << h_TargetNumber << 
+				"\n\tn = " << h_TargetNumber << 
 				"\n\nYou guessed 'n' in " << h_Turns << " turns!\n";
-			std::cin.get();
 			break;
 		}
 	} while (true);
 
-	pressEnterToContinue();
+	if (h_Turns < leaderBoard[9].playerTurns)
+	{
+		std::cout << "\nYou've made it onto the scoreboard!\n";
+		leaderBoard[9].playerTurns = h_Turns;
+		do
+		{
+			readInput("\nName (max.10 chars)\n", temp);
+		} while (temp.length() > 10);
+		leaderBoard[9].playerName = temp;
+	}
+	else
+		pressEnterToContinue();
 	gameState = Menu;
 }
 
 void NumberGuess::aiMode()
 {
+	system("cls");
 	char i;
 	bool validChoice = false;
 	unsigned int value;
@@ -160,6 +177,11 @@ void NumberGuess::aiMode()
 	{
 		std::cin.clear();
 		std::cin.ignore(std::cin.rdbuf()->in_avail());
+		std::cout <<
+			"\nLOTTERY PREDICTOR\n\n"
+			"\t(1) Set a random number\n"
+			"\t(2) Set your own number\n"
+			"\t(3) Exit to menu\n> ";
 		std::cin >> i;
 		std::cin.get();
 
@@ -167,61 +189,57 @@ void NumberGuess::aiMode()
 		{
 		case '1':
 		{
-			value = (rand() % h_Max + 1) - 1;
+			system("cls");
+			h_TargetNumber = (rand() % h_Max + 1) - 1;
+			std::cout << "\nThe lottery number is " << h_TargetNumber << "\n\n";
 			validChoice = true;
 			break;
 		}
 		case '2':
 		{
-			setTarget(value);
+			system("cls");
+			setTarget(h_TargetNumber);
 			validChoice = true;
 			break;
+		}
+		case '3':
+		{
+			gameState = Menu;
+			return;
 		}
 		default:
 			validChoice = false;
 		}
 	} while (!validChoice);
-}
 
-struct HighScores
-{
-	std::string name;
-	unsigned int score;
-};
-
-bool operator<(HighScores& score1, HighScores& score2)
-{
-	return (score1.score < score2.score);
-}
-
-void NumberGuess::scoreBoard()
-{
-	bool reSort;
-	HighScores leaderBoard[10];
-
-	system("cls");
-	std::cout << "\nHighScores\n\n";
-
-	for (int i = 0; i < 10; ++i)
+	do
 	{
-		leaderBoard[i].name = "bill no." + std::to_string(i);
-		leaderBoard[i].score = rand() % 21;
-	}
+		std::cout << "\n\t" + std::to_string(h_Min) + " < n < " + std::to_string(h_Max);
+		value = (h_Max - h_Min) / 2 + h_Min;
+		rangeSetter(value);
+		h_Turns++;
+		std::cout << "\nAI predicted " << value;
 
-	bubbleSorter(leaderBoard, 10);
+		if (value == h_TargetNumber)
+		{
+			std::cout <<
+				"\n\n\tn = " << h_TargetNumber <<
+				"\n\The AI guessed 'n' in " << h_Turns << " turns!\n";
+		}
+		pressEnterToContinue();
+	} while (value != h_TargetNumber);
 
-	for (int i = 0; i < 10; ++i)
-	{
-		std::cout << std::setw(5) << std::left << "\t" + std::to_string(i + 1) + ". ";
-		std::cout << std::setw(15) << std::left << leaderBoard[i].name; 
-		std::cout << std::setw(15) << std::left << leaderBoard[i].score;
-
-		std::cout << std::endl;
-	}
-
-	pressEnterToContinue();
-	gameState = Menu;
+	std::cout << h_Turns;
 }
+
+void NumberGuess::rangeSetter(unsigned int input)
+{
+	if (input > h_TargetNumber && input < h_Max)
+		h_Max = input;
+	if (input < h_TargetNumber && input > h_Min)
+		h_Min = input;
+}
+
 
 
 

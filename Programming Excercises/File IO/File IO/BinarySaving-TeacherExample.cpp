@@ -65,9 +65,10 @@ int examplemain()
 	{
 		for (int i = 0; i < 3; ++i)
 		{
-			HighScoreDataConversion saveData;
-			loadFile.read((char*)&saveData, sizeof(HighScoreDataConversion));
+			HighScoreDataConversion saveData;	//Temporary instance to store the data for use/copy. 
+			loadFile.read((char*)&saveData, sizeof(HighScoreDataConversion));	//"sizeof" must equal to the data being loaded.
 
+			//Copying the data into the instance for use.
 			scores[i].playerName = saveData.name;
 			scores[i].playerScore = saveData.playerScore;
 		}

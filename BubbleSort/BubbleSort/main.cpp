@@ -5,9 +5,7 @@ int main()
 {
 	NumberGuess numGuess;
 
-	//numGuess.startUp();
-	//numGuess.~NumberGuess();
-	numGuess.aiMode();
+	numGuess.startUp();
 
 	return 0;
 }

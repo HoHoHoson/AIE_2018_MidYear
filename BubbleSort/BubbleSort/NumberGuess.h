@@ -3,7 +3,14 @@
 #include <iomanip>
 #include <string>
 #include <time.h>
+#include <fstream>
 
+
+struct HighScore
+{
+	std::string playerName = "---";
+	unsigned int playerTurns = 9999;
+};
 
 class NumberGuess
 {
@@ -12,15 +19,15 @@ public:
 	~NumberGuess();
 
 	void startUp();
-	void setTarget(unsigned int& value);
-	void aiMode();
 
 private:
 
+	std::fstream h_SaveFile;
 	unsigned int h_Min;
 	unsigned int h_Max;
 	unsigned int h_TargetNumber;
 	unsigned int h_Turns;
+	HighScore leaderBoard[10];
 
 	enum h_state
 	{
@@ -34,7 +41,12 @@ private:
 
 	void menuScreen();
 	void game();
+	void aiMode();
 	void scoreBoard();
+	void setTarget(unsigned int& value);
+	void rangeSetter(unsigned int input);
+	void saveHighScores();
+	void loadHighScores();
 	void pressEnterToContinue();
 
 	template<typename T>
@@ -54,7 +66,7 @@ inline void NumberGuess::bubbleSorter(T * arr, int size)
 		for (int i = 0; i < size - 1; ++i)
 		{
 			T temp;
-			if (arr[i] < arr[i + 1])
+			if (arr[i] > arr[i + 1])
 			{
 				temp = arr[i];
 				arr[i] = arr[i + 1];
@@ -63,6 +75,14 @@ inline void NumberGuess::bubbleSorter(T * arr, int size)
 			}
 		}
 	} while (swapped);
+}
+
+inline bool operator>(HighScore& s1, HighScore& s2)
+{
+	if (s1.playerTurns > s2.playerTurns)
+		return true;
+	else
+		return false;
 }
 
 template<typename T>
