@@ -108,7 +108,7 @@ TDynamicArray<T> & TDynamicArray<T>::operator+(const TDynamicArray & other)
 {
 	h_maxSize += other.h_maxSize;
 
-	T tempArray = new T[h_maxSize];
+	T* tempArray = new T[h_maxSize];
 
 	for (size_t i = 0; i < h_currentSize; ++i)
 	{
@@ -116,16 +116,19 @@ TDynamicArray<T> & TDynamicArray<T>::operator+(const TDynamicArray & other)
 	}
 	for (size_t i = 0; i < other.h_currentSize; ++i)
 	{
-		h_contents[i + h_currentSize] = other.h_contents[i];
+		tempArray[i + h_currentSize] = other.h_contents[i];
 	}
 
 	h_currentSize += other.h_currentSize;
 
-	delete[] h_contents;
+	delete [] h_contents;
+	h_contents = new T[h_maxSize];
+	
 	for (size_t i = 0; i < h_currentSize; ++i)
 	{
 		h_contents[i] = tempArray[i];
 	}
+	delete[] tempArray;
 
 	return *this;
 }
