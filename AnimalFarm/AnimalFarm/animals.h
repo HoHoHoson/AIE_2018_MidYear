@@ -7,7 +7,7 @@
 class Animals
 {
 public:
-	virtual ~Animals() = default;
+	~Animals() = default;
 
 	virtual std::string getType() = 0;
 	virtual std::string acapella() = 0;

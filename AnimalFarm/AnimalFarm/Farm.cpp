@@ -37,14 +37,17 @@ void Farm::listAnimal()
 
 void Farm::addAnimal(Animals * animal)
 {
-	if (h_CurrentNumber >= BASE_ANIMALS)
+	if (h_CurrentNumber >= h_MaxAnimals)
 	{
 		std::cout << "Not enough space.\n";
 		delete animal;
 		return;
 	}
-	if (h_Money == 0)
+	if (h_Money <= 0)
+	{
 		std::cout << "Too poor.\n";
+		return;
+	}
 
 	h_FarmArray[h_CurrentNumber] = animal;
 	h_CurrentNumber++;
@@ -76,7 +79,7 @@ void Farm::drawMenu()
 	std::cout << "\t4. Play animal sounds\n";
 	std::cout << "\t5. Count number of animals\n";
 	std::cout << "\t6. Murderize\n";
-	//std::cout << "\t7. Expand Farm\n";
+	std::cout << "\t7. Expand Farm\n";
 }
 
 void Farm::slaughter()
@@ -106,22 +109,22 @@ void Farm::operator + (Animals * animal)
 
 
 
-//void Farm::expandFarm()
-//{
-//	if (h_Money < h_FarmCost)
-//	{
-//		std::cout << "Your farm can now hold 5 extra animals!\n";
-//		h_Money -= h_FarmCost;
-//		h_MaxAnimals += 5;
-//
-//		Animals** temp = new Animals*[h_MaxAnimals];
-//		for (int i = 0; i < (h_CurrentNumber); ++i)
-//		{
-//			temp[i] = h_FarmArray[i];
-//		}
-//		delete[] h_FarmArray;
-//		h_FarmArray = temp;
-//	}
-//	else
-//		std::cout << "Too poor.\n";
-//}
+void Farm::expandFarm()
+{
+	if (h_Money >= h_FarmCost)
+	{
+		std::cout << "Your farm can now hold 5 extra animals!\n";
+		h_Money -= h_FarmCost;
+		h_MaxAnimals += 5;
+
+		Animals** temp = new Animals*[h_MaxAnimals];
+		for (int i = 0; i < (h_CurrentNumber); ++i)
+		{
+			temp[i] = h_FarmArray[i];
+		}
+		delete[] h_FarmArray;
+		h_FarmArray = temp;
+	}
+	else
+		std::cout << "Too poor.\n";
+}

@@ -45,6 +45,12 @@ int main()
 		case 6:
 		{
 			myFarm.slaughter();
+			break;
+		}
+		case 7:
+		{
+			myFarm.expandFarm();
+			break;
 		}
 		}
 		std::cout << std::endl;

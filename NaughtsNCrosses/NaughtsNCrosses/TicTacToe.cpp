@@ -60,23 +60,23 @@ void NaughtsNCrosses::input()
 	{
 		drawBoard();
 		std::cout << "Player " << playerToken << " Turn: (x, y)\n";
-		std::cout << "x -> "; std::cin >> x;  std::cin.sync();
+		readInput("x -> ", x);
 		while (!isCharValid(x))
 		{
 			drawBoard();
 			std::cout << "Player " << playerToken << " Turn: (x, y)\n";
 			std::cout << "Invalid coordinate x!\n";
-			std::cout << "x -> "; std::cin >> x; std::cin.sync();
+			readInput("x -> ", x);
 		}
 		drawBoard();
 		std::cout << "Player " << playerToken << " Turn: (" << (char)toupper(x) << ", y)\n";
-		std::cout << "y -> "; std::cin >> y;
+		readInput("y -> ", y);
 		while (!isIntValid(y))
 		{
 			drawBoard();
 			std::cout << "Player " << playerToken << " Turn: (" << (char)toupper(x) << ", y)\n";
 			std::cout << "Invalid coordinate y!\n";
-			std::cout << "y -> "; std::cin >> y;
+			readInput("y -> ", y);
 		} 
 		drawBoard();
 		std::cout << "Player " << playerToken << " Turn: (" << (char)toupper(x) << ", " << y << ")\n";
