@@ -1,6 +1,8 @@
 #include "LinkedList.h"
 
-LinkedList::LinkedList()
+
+template<typename T>
+LinkedList<T>::LinkedList()
 {
 	head = nullptr;
 	tail = nullptr;
@@ -8,23 +10,27 @@ LinkedList::LinkedList()
 	valueCount = 0;
 }
 
-LinkedList::~LinkedList()
+template<typename T>
+LinkedList<T>::~LinkedList()
 {
 }
 
-void LinkedList::begin()
+template<typename T>
+void LinkedList<T>::begin()
 {
 	iterator = head;
 }
 
-bool LinkedList::end()
+template<typename T>
+bool LinkedList<T>::end()
 {
 	return (iterator == nullptr);
 }
 
-void LinkedList::pushFront(int value)
+template<typename T>
+void LinkedList<T>::pushFront(T value)
 {
-	Node* newNode = new Node;
+	Node<T>* newNode = new Node<T>;
 	initialiseNode(newNode, value);
 
 	if (isEmpty())
@@ -41,18 +47,21 @@ void LinkedList::pushFront(int value)
 	valueCount++;
 }
 
-void LinkedList::popFront()
+template<typename T>
+void LinkedList<T>::popFront()
 {
-	Node* deleteThis = head;
+	Node<T>* deleteThis = head;
 	head = head->nextNode;
 	head->previousNode = nullptr;
 	delete deleteThis;
+	begin();
 	valueCount--;
 }
 
-void LinkedList::pushBack(int value)
+template<typename T>
+void LinkedList<T>::pushBack(T value)
 {
-	Node* newNode = new Node;
+	Node<T>* newNode = new Node<T>;
 	initialiseNode(newNode, value);
 
 	if (isEmpty())
@@ -69,52 +78,100 @@ void LinkedList::pushBack(int value)
 	valueCount++;
 }
 
-void LinkedList::popBack()
+template<typename T>
+void LinkedList<T>::popBack()
 {
-	Node* deleteThis = tail;
+	Node<T>* deleteThis = tail;
 	tail = tail->previousNode;
 	tail->nextNode = nullptr;
 	delete deleteThis;
 	valueCount--;
 }
 
-void LinkedList::getFirst()
+template<typename T>
+void LinkedList<T>::getFirst()
 {
 	std::cout << "\nHead Value = " << head->data << std::endl;
 }
 
-void LinkedList::getLast()
+template<typename T>
+void LinkedList<T>::getLast()
 {
 	std::cout << "\nTail Value = " << tail->data << std::endl;
 }
 
-void LinkedList::insertTo(unsigned int pos, int value)
+template<typename T>
+void LinkedList<T>::insertAt(unsigned int pos, T value)
 {
-	Node* newNode = new Node;
+	if (pos == 1)
+	{
+		pushFront(value);
+		return;
+	}
+
+	Node<T>* newNode = new Node<T>;
 	initialiseNode(newNode, value);
+	Node<T>* temp = nullptr;
 
 	begin();
 	for (size_t i = 1; i < pos; ++i)
 	{
 		if (i == pos - 1)
 		{
-			newNode->previousNode = iterator;
-			iterator->nextNode = newNode;
+			temp = iterator;
+			newNode->previousNode = temp;
 		}
 		iterator = iterator->nextNode;
 	}
 	newNode->nextNode = iterator;
+	temp->nextNode = newNode;
 	iterator->previousNode = newNode;
+
+	valueCount++;
 }
 
-void LinkedList::totalValues()
+template<typename T>
+void LinkedList<T>::eraseAt(unsigned int pos)
+{
+	if (pos == 1)
+	{
+		popFront();
+		return;
+	}
+	if (pos == valueCount)
+	{
+		popBack();
+		return;
+	}
+
+	Node<T>* deleteThis = nullptr;
+
+	begin();
+	for (size_t i = 1; i < pos; ++i)
+	{
+		if (i == pos - 1)
+		{
+			deleteThis = iterator->nextNode;
+			iterator->nextNode = deleteThis->nextNode;
+		}
+		iterator = iterator->nextNode;
+	}
+	iterator->previousNode = deleteThis->previousNode;
+	delete deleteThis;
+
+	valueCount--;
+}
+
+template<typename T>
+void LinkedList<T>::totalValues()
 {
 	std::cout << "\n\tObjects Stored: " << valueCount << std::endl;
 }
 
-void LinkedList::displayList()
+template<typename T>
+void LinkedList<T>::displayList()
 {
-	Node* temp = head;
+	Node<T>* temp = head;
 	std::cout << "\n\t";
 	while (temp != nullptr)
 	{
@@ -129,9 +186,48 @@ void LinkedList::displayList()
 	totalValues();
 }
 
-void LinkedList::clearList()
+template<typename T>
+void LinkedList<T>::removeAny(T value)
 {
-	Node* temp;
+	Node<T>* temp;
+
+	begin();
+	while (!end())
+	{
+		temp = nullptr;
+
+		if (head->data == value)
+		{
+			popFront();
+			break;
+		}
+		if (tail->data == value)
+		{
+			popBack();
+			break;
+		}
+
+		if (iterator->data == value)
+		{
+			temp = iterator->previousNode;
+			temp->nextNode = iterator->nextNode;
+			temp = iterator->nextNode;
+			temp->previousNode = iterator->previousNode;
+			temp = iterator;
+			valueCount--;
+		}
+
+		iterator = iterator->nextNode;
+
+		if (temp != nullptr)
+			delete temp;
+	}
+}
+
+template<typename T>
+void LinkedList<T>::clearList()
+{
+	Node<T>* temp;
 	while (!isEmpty())
 	{
 		temp = head;
@@ -147,14 +243,21 @@ void LinkedList::clearList()
 	valueCount = 0;
 }
 
-bool LinkedList::isEmpty() const
+template<typename T>
+bool LinkedList<T>::isEmpty() const
 {
-	return (head == nullptr || tail == nullptr);
+	return (head == nullptr && tail == nullptr);
 }
 
-void LinkedList::initialiseNode(Node*& newNode, int& value)
+template<typename T>
+void LinkedList<T>::initialiseNode(Node<T>*& newNode, T& value)
 {
 	newNode->data = value;
 	newNode->nextNode = nullptr;
 	newNode->previousNode = nullptr;
 }
+
+
+//Add a new "template class LinkedList< TYPE >;" for every new type of Linked List
+template class LinkedList<int>;
+template class LinkedList<float>;

@@ -1,43 +1,46 @@
 #pragma once
 #include <iostream>
 
+
+template<typename T>
 struct Node
 {
-	int data;
+	T data;
 	Node* nextNode;
 	Node* previousNode;
 };
 
 
+template<typename T>
 class LinkedList
 {
 public:
 	LinkedList();
 	~LinkedList();
 
-	void begin();
-	bool end();
-	void pushFront(int value);
+	void pushFront(T value);
 	void popFront();
-	void pushBack(int value);
+	void pushBack(T value);
 	void popBack();
 	void getFirst();
 	void getLast();
-	void insertTo(unsigned int pos, int value);
+	void insertAt(unsigned int pos, T value);
 	void eraseAt(unsigned int pos);
-	void totalValues();
 	void displayList();
-	void removeAny(int value);
+	void removeAny(T value);
 	void clearList();
 
 private:
 	
-	Node* head;
-	Node* tail;
-	Node* iterator;
+	Node<T>* head;
+	Node<T>* tail;
+	Node<T>* iterator;
 	bool isEmpty() const;
-	int data;
+	T data;
 	unsigned int valueCount;
-	void initialiseNode(Node*& newNode, int& value);
+	void begin();
+	bool end();
+	void totalValues();
+	void initialiseNode(Node<T>*& newNode, T& value);
 
 };
