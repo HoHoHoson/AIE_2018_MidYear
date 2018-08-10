@@ -7,6 +7,10 @@
 struct Asteroid
 {
 	bool spinninX;
+	bool m_switchDirX;
+	bool m_coolDownX;
+	bool m_switchDirY;
+	bool m_coolDownY;
 	int m_asteroidPosX;
 	int m_asteroidPosY;
 	float m_asteroidSpeed;
@@ -35,6 +39,13 @@ protected:
 	aie::Texture* m_shipTexture;
 	aie::Texture* m_asteroidTexture;
 
+	bool m_makeEven;
+
+	int asteroidWidth;
+	int asteroidHeight;
+	int shipWidth;
+	int shipHeight;
+
 	unsigned int m_shipPosX;
 	unsigned int m_shipPosY;
 	float m_shipSpeed;
@@ -44,3 +55,4 @@ protected:
 	unsigned int m_asteroidCount;
 	float m_asteroidRotation;
 };
+
