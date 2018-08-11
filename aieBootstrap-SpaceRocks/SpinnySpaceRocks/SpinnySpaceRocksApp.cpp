@@ -79,7 +79,7 @@ void SpinnySpaceRocksApp::update(float deltaTime) {
 	// input example
 	aie::Input* input = aie::Input::getInstance();
 
-	if (input->isKeyDown(aie::INPUT_KEY_W) && m_shipPosY < getWindowHeight() - shipWidth)
+	if (input->isKeyDown(aie::INPUT_KEY_W) && m_shipPosY < getWindowHeight() - shipHeight)
 	{
 		m_shipPosY += m_shipSpeed * deltaTime;
 		m_shipRotation = 0;
@@ -102,6 +102,9 @@ void SpinnySpaceRocksApp::update(float deltaTime) {
 
 	for (size_t i = 0; i < m_asteroidCount; ++i)
 	{
+		if (m_spaceRocks[i].m_asteroidSpeed >= m_shipSpeed + 50)
+			m_spaceRocks[i].m_asteroidSpeed = m_shipSpeed + 50;
+
 		if (m_spaceRocks[i].spinninX)
 		{
 			if (!m_spaceRocks[i].m_switchDirX)
