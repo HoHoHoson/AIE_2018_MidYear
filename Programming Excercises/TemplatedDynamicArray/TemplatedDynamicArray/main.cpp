@@ -3,32 +3,64 @@
 
 int main()
 {
-	TDynamicArray<int> tArr;
-	TDynamicArray<int> baaar;
 	srand((unsigned int)time(nullptr));
 
+	using std::cout;
+	using std::endl;
+
+	TDynamicArray<float> arr;
+	TDynamicArray<float> meHaarty;
+
+	cout << "\nPushing back 15 random values (ranging from 1-20) into the 'arr' Array\n\n";
 	for (int i = 0; i < 15; ++i)
 	{
-		tArr.pushBack(rand() % 20 + 1);
+		arr.pushBack(rand() % 20 + 1);
 	}
+	arr.displayArray();
+	cout << "\n\n";
+
+	cout << "\nInserted '6.6' into Index 9\n\n";
+	arr.insertAt(9, 6.6);
+	arr.displayArray();
+	cout << "\n\n";
+
+	cout << "\nRemoved the value at Index 6\n\n";
+	arr.removeAt(6);
+	arr.displayArray();
+	cout << "\n\n";
+
+	cout << "\nCreated a second Array 'meHaarty' with 10 random values (ranging from 1-20)\n\n";
 	for (int i = 0; i < 10; ++i)
 	{
-		baaar.pushBack(rand() % 20 + 1);
+		meHaarty.pushBack(rand() % 20 + 1);
 	}
-	//tArr.insertAt(0, 69);
-	//tArr.removeAt(0);
-	//tArr.clearArray();
-	//tArr.bubbleSort();
-	//tArr.searchArray(20);
-	std::cout << "tArr Array\n";
-	tArr.displayArray();
-	std::cout << "baaar Array\n";
-	baaar.displayArray();
+	meHaarty.displayArray();
+	cout << "\n\n";
 
-	std::cout << "tArr + baaar\n";
-	//TDynamicArray<int> plus(tArr, baaar);
-	tArr + baaar;
-	tArr.displayArray();
+	cout << "\nCombined 'meHaarty' onto 'arr'\n\n";
+	arr + meHaarty;
+	arr.displayArray();
+	cout << "\n\n";
+
+	cout << "\nPopped back 'arrMeHaarty'\n\n";
+	arr.popBack();
+	arr.displayArray();
+	cout << "\n\n";
+
+	cout << "\nSearch for any '20' in 'arrMeHaarty'\n\n";
+	arr.searchArray(20);
+	cout << "\n\n";
+
+	cout << "\nBubbleSort 'arrMeHaarty'\n\n";
+	arr.bubbleSort();
+	arr.displayArray();
+	cout << "\n\n";
+
+	cout << "\nCompletely cleared 'arrMeHaarty'\n\n";
+	arr.clearArray();
+	arr.displayArray();
+	cout << "\n\n";
+
 
 	system("pause");
 	return 0;

@@ -104,7 +104,7 @@ TDynamicArray<T>& TDynamicArray<T>::operator=(const TDynamicArray<T>& other)
 }
 
 template<typename T>
-TDynamicArray<T> & TDynamicArray<T>::operator+(const TDynamicArray & other)
+TDynamicArray<T> & TDynamicArray<T>::operator+(const TDynamicArray<T> & other)
 {
 	h_maxSize += other.h_maxSize;
 
@@ -220,13 +220,19 @@ void TDynamicArray<T>::bubbleSort()
 template<typename T>
 void TDynamicArray<T>::searchArray(const T value)
 {
+	bool foundValue = false;
+
 	for (size_t i = 0; i < h_currentSize; ++i)
 	{
 		if (h_contents[i] == value)
 		{
 			std::cout << "Index " << i << " -> " << h_contents[i] << "\n" << std::endl;
+			foundValue = true;
 		}
 	}
+
+	if (!foundValue)
+		std::cout << "Can't locate any '" << value << "'\n\n";
 }
 
 template<typename T>
@@ -247,10 +253,13 @@ void TDynamicArray<T>::clearArray()
 template<typename T>
 void TDynamicArray<T>::displayArray()
 {
-	for (int i = 0; i < h_currentSize; ++i)
+	size_t i;
+	for (i = 0; i < h_currentSize; ++i)
 	{
-		std::cout << "Index " << i << " -> " << h_contents[i] << "\n" << std::endl;
+		std::cout << "\tIndex " << i << " -> " << h_contents[i] << "\n";
 	}
+	if (0 == h_currentSize)
+		std::cout << "Array is empty\nTherefore\nHave an empty array '[]'\n";
 }
 
 template<typename T>
