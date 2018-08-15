@@ -7,12 +7,12 @@ class TreeNode;
 template<typename T>
 struct TreeEdge
 {
-	TreeEdge(TreeNode<T>* connectedNode, float cost)
+	TreeEdge()
 	{
-		m_cost = cost;
-		m_toNode = connectedNode;
+		m_Cost = 1.0f;
+		m_ToNode = nullptr;
 	}
 
-	float m_cost;
-	TreeNode<T>* m_toNode;
+	float m_Cost;
+	TreeNode<T>* m_ToNode;
 };

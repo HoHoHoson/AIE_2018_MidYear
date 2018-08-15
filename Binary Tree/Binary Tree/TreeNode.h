@@ -11,31 +11,30 @@ public:
 	TreeNode();
 
 	T getData();
+	TreeNode<T>* getLeftNode();
+	TreeNode<T>* getRightNode();
 	void setData(T value);
-	void addEdge(TreeNode<T>* connectedNode, float cost = 1.0f);
+	void setLeftEdge(TreeNode<T>* toNode, float cost = 1.0f);
+	void setRightEdge(TreeNode<T>* toNode, float cost = 1.0f);
 	void listEdges();
 
 private:
-	T m_data;
-	TreeEdge<T>* m_Lefty;
-	TreeEdge<T>* m_Righty;
-
-	std::vector<TreeEdge<T>*> m_edgeArray;
+	T m_Data;
+	TreeEdge<T> m_Lefty;
+	TreeEdge<T> m_Righty;
 };
 
 
 template<typename T>
 inline TreeNode<T>::TreeNode(T value)
 {
-	m_data = value;
-	m_Lefty = nullptr;
-	m_Righty = nullptr;
+	m_Data = value;
 }
 
 template<typename T>
 inline TreeNode<T>::TreeNode()
 {
-	for (auto& eachEdge : m_edgeArray)
+	for (auto& eachEdge : m_EdgeArray)
 	{
 		delete eachEdge;
 	}
@@ -44,29 +43,51 @@ inline TreeNode<T>::TreeNode()
 template<typename T>
 inline T TreeNode<T>::getData()
 {
-	return m_data;
+	return m_Data;
+}
+
+template<typename T>
+inline TreeNode<T>* TreeNode<T>::getLeftNode()
+{
+	if (m_Lefty.m_ToNode == nullptr)
+		return nullptr;
+	else
+		return m_Lefty.m_ToNode;
+}
+
+template<typename T>
+inline void TreeNode<T>::setLeftEdge(TreeNode<T>* toNode, float cost)
+{
+	m_Lefty.m_ToNode = toNode;
+	m_Lefty.m_Cost = cost;
+}
+
+template<typename T>
+inline TreeNode<T>* TreeNode<T>::getRightNode()
+{
+	return m_Righty.m_ToNode;
+}
+
+template<typename T>
+inline void TreeNode<T>::setRightEdge(TreeNode<T>* toNode, float cost)
+{
+	m_Righty.m_ToNode = toNode;
+	m_Righty.m_Cost = cost;
 }
 
 template<typename T>
 inline void TreeNode<T>::setData(T value)
 {
-	m_data = value;
-}
-
-template<typename T>
-inline void TreeNode<T>::addEdge(TreeNode<T>* toNode, float cost)
-{
-	TreeEdge<T>* newEdge = new TreeEdge<T>(toNode, cost);
-	m_edgeArray.push_back(newEdge);
+	m_Data = value;
 }
 
 template<typename T>
 inline void TreeNode<T>::listEdges()
 {
 	std::cout << "Links " << std::setw(3) << "> ";
-	if (m_edgeArray.size() != 0)
+	if (m_EdgeArray.size() != 0)
 	{
-		for (auto eachEdge : m_edgeArray)
+		for (auto eachEdge : m_EdgeArray)
 		{
 			auto temp = eachEdge->m_toNode;
 			std::cout << temp->getData() << "   ";
