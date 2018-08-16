@@ -17,15 +17,21 @@ public:
 
 	void addNode(T value);
 	void drawTree();
+	void removeNode(T value);
+	void clear();
 
 private:
 	TreeNode<T>* m_RootNode;
 	TreeNode<T>* m_Iterator;
 	size_t m_TreeDepth;
+	size_t m_IteratorDepth;
 
 	bool m_IsEmpty();
 	auto m_BufferWidth(size_t height, size_t setWidth);
 	auto m_SpacingWidth(size_t height, size_t setWidth);
+
+	void begin();
+	void setIterator(T value);
 };
 
 
@@ -34,6 +40,7 @@ inline BinaryTree<T>::BinaryTree()
 {
 	m_RootNode = nullptr;
 	m_TreeDepth = 0;
+	begin();
 }
 
 template<typename T>
@@ -50,42 +57,23 @@ inline void BinaryTree<T>::addNode(T value)
 		return;
 	}
 
-	int depthCount = 0;
-	m_Iterator = m_RootNode;
+	setIterator(value);
 
-	while (true)
+	if (m_Iterator->getData() == value)
+		std::cout << "Tree already contains a '" << value << "'\n";
+	else if (value < m_Iterator->getData())
 	{
-		if (m_Iterator->getData() == value)
-		{
-			std::cout << "Tree already contains a '" << value << "'\n";
-			return;
-		}
-
-		depthCount++;
-
-		if (value < m_Iterator->getData())
-			if (m_Iterator->getLeftNode() == nullptr)
-			{
-				TreeNode<T>* newNode = new TreeNode<T>(value);
-				m_Iterator->setLeftEdge(newNode);
-				break;
-			}
-			else
-				m_Iterator = m_Iterator->getLeftNode();
-
-		if (value > m_Iterator->getData())
-			if (m_Iterator->getRightNode() == nullptr)
-			{
-				TreeNode<T>* newNode = new TreeNode<T>(value);
-				m_Iterator->setRightEdge(newNode);
-				break;
-			}
-			else
-				m_Iterator = m_Iterator->getRightNode();
+		m_Iterator->setLeftEdge(new TreeNode<T>(value));
+		m_IteratorDepth++;
+	}
+	else if (value > m_Iterator->getData())
+	{
+		m_Iterator->setRightEdge(new TreeNode<T>(value));
+		m_IteratorDepth++;
 	}
 
-	if (depthCount > m_TreeDepth)
-		m_TreeDepth = depthCount;
+	if (m_IteratorDepth > m_TreeDepth)
+		m_TreeDepth = m_IteratorDepth;
 }
 
 template<typename T>
@@ -97,10 +85,10 @@ inline void BinaryTree<T>::drawTree()
 		return;
 	}
 	else
-		std::cout << "Here is an upside down tree\n";
+		std::cout << "\nHere is an upside down tree graph\n\n";
 
 	int heightCount = m_TreeDepth;
-	size_t setWidth = 4;
+	size_t setWidth = 2;
 
 	std::vector<TreeNode<T>*> readArray;
 	std::vector<TreeNode<T>*> tempArray;
@@ -171,5 +159,42 @@ template<typename T>
 inline auto BinaryTree<T>::m_SpacingWidth(size_t height, size_t setWidth)
 {
 	return std::setw(setWidth * pow(2, height));
+}
+
+template<typename T>
+inline void BinaryTree<T>::begin()
+{
+	m_Iterator = m_RootNode;
+	m_IteratorDepth = 0;
+}
+
+template<typename T>
+inline void BinaryTree<T>::setIterator(T value)
+{
+	begin();
+
+	while (true)
+	{
+		if (m_Iterator->getData() == value)
+			return;
+
+		if (value < m_Iterator->getData())
+			if (m_Iterator->getLeftNode() == nullptr)
+				break;
+			else
+			{
+				m_Iterator = m_Iterator->getLeftNode();
+				m_IteratorDepth++;
+			}
+
+		else if (value > m_Iterator->getData())
+			if (m_Iterator->getRightNode() == nullptr)
+				break;			
+			else
+			{
+				m_Iterator = m_Iterator->getRightNode();
+				m_IteratorDepth++;
+			}
+	}
 }
 

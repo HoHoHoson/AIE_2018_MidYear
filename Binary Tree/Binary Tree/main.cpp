@@ -9,14 +9,8 @@ int main()
 	BinaryTree<int>* bTree = new BinaryTree<int>;
 
 	bTree->addNode(10);
-	bTree->addNode(11);
-	bTree->addNode(2);
-	bTree->addNode(1);
-	bTree->addNode(15);
-	bTree->addNode(19);
-	bTree->addNode(20);
-	bTree->addNode(9);
-	bTree->addNode(14);
+	for (int i = 0; i < 25; ++i)
+		bTree->addNode(rand() % 21);
 
 	bTree->drawTree();
 
