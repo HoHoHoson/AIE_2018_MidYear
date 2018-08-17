@@ -18,6 +18,7 @@ public:
 
 	void addNode(T value);
 	void removeNode(T value);
+	void searchFor(T value);
 	void clear();
 	void drawTree();
 
@@ -62,7 +63,7 @@ inline void BinaryTree<T>::addNode(T value)
 	setupIterators(value);
 
 	if (m_Iterator->getData() == value)
-		std::cout << "Tree already contains a '" << value << "'\n";
+		std::cout << "\nTree already contains a '" << value << "'\n";
 	else if (value < m_Iterator->getData())
 	{
 		m_Iterator->setLeftEdge(new TreeNode<T>(value));
@@ -87,7 +88,7 @@ inline void BinaryTree<T>::drawTree()
 		return;
 	}
 	else
-		std::cout << "\nHere is an upside down tree graph\n\n";
+		std::cout << "\nDISPLAY TREE\n\n";
 
 	int heightCount = m_TreeDepth;
 	size_t setWidth = 4;
@@ -143,12 +144,12 @@ inline void BinaryTree<T>::removeNode(T value)
 
 	if (m_IsEmpty())
 	{
-		std::cout << "You can't delete nothing!\n";
+		std::cout << "\nYou can't delete nothing!\n";
 		return;
 	}
 	if (m_Iterator->getData() != value)
 	{
-		std::cout << "Can't delete '" << value << "' due to it not existing\n";
+		std::cout << "\nCan't delete '" << value << "' due to it not existing\n";
 		return;
 	}
 
@@ -187,6 +188,45 @@ inline void BinaryTree<T>::removeNode(T value)
 
 		delete m_Iterator;
 	}
+}
+
+template<typename T>
+inline void BinaryTree<T>::searchFor(T value)
+{
+	TreeNode<T>* previous = setupIterators(value);
+
+	if (m_Iterator->getData() != value)
+	{
+		std::cout << "\nThe object '" << value << "' doesn't exist!\n";
+		return;
+	}
+
+	std::cout << "\nNode[" << value << "]\n";
+
+	std::cout << "\nParent:\n";
+	if (previous == m_Iterator)
+		std::cout << "ROOT NODE\n";
+	else if (m_ItWentLeft)
+		std::cout << "LEFT node of {" << previous->getData() << "}\n";
+	else
+		std::cout << "RIGHT node of {" << previous->getData() << "}\n";
+
+	std::cout << "\nChildren:\n";
+		if (m_Iterator->getLeftNode() == nullptr && m_Iterator->getRightNode() == nullptr)
+			std::cout << "LEAF NODE\n";
+		else
+		{
+			if (m_Iterator->getLeftNode() != nullptr)
+				std::cout << "Left {" << m_Iterator->getLeftNode()->getData() << "}\n";
+			else
+				std::cout << "Left {NONE}\n";
+
+			if (m_Iterator->getRightNode() != nullptr)
+				std::cout << "Right {" << m_Iterator->getRightNode()->getData() << "}\n";
+			else
+				std::cout << "Right {NONE}\n";
+		}
+
 }
 
 template<typename T>

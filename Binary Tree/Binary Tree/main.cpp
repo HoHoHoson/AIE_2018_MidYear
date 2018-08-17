@@ -19,6 +19,13 @@ int main()
 	bTree->addNode(17);
 	bTree->drawTree();
 
+	std::cout << "\n[Searched for node '15']\n";
+	bTree->searchFor(15);
+
+	std::cout << "\n[Attempted to add another '17']\n";
+	bTree->addNode(17);
+	bTree->drawTree();
+
 	std::cout << "\n[Removed a leaf node '4']\n";
 	bTree->removeNode(4);
 	bTree->drawTree();
