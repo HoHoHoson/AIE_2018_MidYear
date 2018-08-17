@@ -1,5 +1,4 @@
 #pragma once
-#include <vector>
 #include "TreeEdge.h"
 
 
@@ -49,10 +48,7 @@ inline T TreeNode<T>::getData()
 template<typename T>
 inline TreeNode<T>* TreeNode<T>::getLeftNode()
 {
-	if (m_Lefty.m_ToNode == nullptr)
-		return nullptr;
-	else
-		return m_Lefty.m_ToNode;
+	return m_Lefty.m_ToNode;
 }
 
 template<typename T>

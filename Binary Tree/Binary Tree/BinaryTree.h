@@ -2,6 +2,7 @@
 #include <iostream>
 #include <iomanip>
 #include <cmath>
+#include <vector>
 #include "TreeNode.h"
 #include "TreeEdge.h"
 
@@ -16,22 +17,23 @@ public:
 	~BinaryTree();
 
 	void addNode(T value);
-	void drawTree();
 	void removeNode(T value);
 	void clear();
+	void drawTree();
 
 private:
 	TreeNode<T>* m_RootNode;
 	TreeNode<T>* m_Iterator;
 	size_t m_TreeDepth;
 	size_t m_IteratorDepth;
+	bool m_ItWentLeft;
 
 	bool m_IsEmpty();
 	auto m_BufferWidth(size_t height, size_t setWidth);
 	auto m_SpacingWidth(size_t height, size_t setWidth);
 
 	void begin();
-	void setIterator(T value);
+	TreeNode<T>* setupIterators(T value);
 };
 
 
@@ -57,7 +59,7 @@ inline void BinaryTree<T>::addNode(T value)
 		return;
 	}
 
-	setIterator(value);
+	setupIterators(value);
 
 	if (m_Iterator->getData() == value)
 		std::cout << "Tree already contains a '" << value << "'\n";
@@ -81,14 +83,14 @@ inline void BinaryTree<T>::drawTree()
 {
 	if (m_IsEmpty())
 	{
-		std::cout << "There is nothing to draw, the tree is empty\n";
+		std::cout << "\nThere is nothing to draw, the tree is empty\n";
 		return;
 	}
 	else
 		std::cout << "\nHere is an upside down tree graph\n\n";
 
 	int heightCount = m_TreeDepth;
-	size_t setWidth = 2;
+	size_t setWidth = 4;
 
 	std::vector<TreeNode<T>*> readArray;
 	std::vector<TreeNode<T>*> tempArray;
@@ -135,6 +137,100 @@ inline void BinaryTree<T>::drawTree()
 }
 
 template<typename T>
+inline void BinaryTree<T>::removeNode(T value)
+{
+	TreeNode<T>* previousNode = setupIterators(value);
+
+	if (m_IsEmpty())
+	{
+		std::cout << "You can't delete nothing!\n";
+		return;
+	}
+	if (m_Iterator->getData() != value)
+	{
+		std::cout << "Can't delete '" << value << "' due to it not existing\n";
+		return;
+	}
+
+	if (m_Iterator->getLeftNode() == nullptr && m_Iterator->getRightNode() == nullptr)
+	{
+		delete m_Iterator;
+		if (m_ItWentLeft)
+			previousNode->setLeftEdge(nullptr);
+		else
+			previousNode->setRightEdge(nullptr);
+	}
+	else if (m_Iterator->getLeftNode() != nullptr && m_Iterator->getRightNode() != nullptr)
+	{
+		previousNode = m_Iterator;
+		m_Iterator = m_Iterator->getRightNode();
+
+		while (m_Iterator->getLeftNode() != nullptr)
+		{
+			m_Iterator = m_Iterator->getLeftNode();
+		} 
+
+		int temp = m_Iterator->getData();
+		removeNode(m_Iterator->getData());
+		previousNode->setData(temp);
+	}
+	else
+	{
+		if (m_ItWentLeft && m_Iterator->getRightNode() == nullptr)
+			previousNode->setLeftEdge(m_Iterator->getLeftNode());
+		else if (m_ItWentLeft && m_Iterator->getLeftNode() == nullptr)
+			previousNode->setLeftEdge(m_Iterator->getRightNode());
+		else if (m_Iterator->getRightNode() == nullptr)
+			previousNode->setRightEdge(m_Iterator->getLeftNode());
+		else
+			previousNode->setRightEdge(m_Iterator->getRightNode());
+
+		delete m_Iterator;
+	}
+}
+
+template<typename T>
+inline void BinaryTree<T>::clear()
+{
+	bool wentLeft = true;
+	TreeNode<T>* prev = nullptr;
+
+	while (!m_IsEmpty())
+	{
+		begin();
+		
+		while (true)
+		{
+			if (m_Iterator->getLeftNode() != nullptr)
+			{
+				prev = m_Iterator;
+				m_Iterator = m_Iterator->getLeftNode();
+				wentLeft = true;
+			}
+			else if (m_Iterator->getRightNode() != nullptr)
+			{
+				prev = m_Iterator;
+				m_Iterator = m_Iterator->getRightNode();
+				wentLeft = false;
+			}
+			else
+			{
+				if (m_Iterator == m_RootNode)
+					m_RootNode = nullptr;
+
+				delete m_Iterator;
+
+				if (wentLeft && !m_IsEmpty())
+					prev->setLeftEdge(nullptr);
+				else
+					prev->setRightEdge(nullptr);
+				break;
+			}
+		}
+	}
+}
+
+template<typename T>
 inline bool BinaryTree<T>::m_IsEmpty()
 {
 	return (m_RootNode == nullptr);
@@ -166,23 +262,28 @@ inline void BinaryTree<T>::begin()
 {
 	m_Iterator = m_RootNode;
 	m_IteratorDepth = 0;
+	m_ItWentLeft = true;
 }
 
 template<typename T>
-inline void BinaryTree<T>::setIterator(T value)
+inline TreeNode<T>* BinaryTree<T>::setupIterators(T value)
 {
 	begin();
+
+	TreeNode<T>* prev = m_Iterator;
 
 	while (true)
 	{
 		if (m_Iterator->getData() == value)
-			return;
+			break;
 
 		if (value < m_Iterator->getData())
 			if (m_Iterator->getLeftNode() == nullptr)
 				break;
 			else
 			{
+				m_ItWentLeft = true;
+				prev = m_Iterator;
 				m_Iterator = m_Iterator->getLeftNode();
 				m_IteratorDepth++;
 			}
@@ -192,9 +293,13 @@ inline void BinaryTree<T>::setIterator(T value)
 				break;			
 			else
 			{
+				m_ItWentLeft = false;
+				prev = m_Iterator;
 				m_Iterator = m_Iterator->getRightNode();
 				m_IteratorDepth++;
 			}
 	}
+	
+	return prev;
 }
 
