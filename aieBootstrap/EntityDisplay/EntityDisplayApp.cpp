@@ -42,15 +42,16 @@ bool EntityDisplayApp::startup() {
 		FILE_MAP_ALL_ACCESS,
 		0, 0, m_entities.size() * sizeof(Entity));
 
-	// REMEMBER to "unmap" the pointer and "close" the HANDLE
-	CloseHandle(m_EntityCountMemory);
-	UnmapViewOfFile(m_EntityCounterPtr);
-
 	return true;
 }
 
 void EntityDisplayApp::shutdown() 
 {
+	// REMEMBER to "unmap" the pointer and "close" the HANDLE
+	CloseHandle(m_EntityCountMemory);
+	UnmapViewOfFile(m_EntityCounterPtr);
+	UnmapViewOfFile(m_EntityDataPtr);
+	CloseHandle(m_EntityDataMemory);
 
 	delete m_font;
 	delete m_2dRenderer;
@@ -61,10 +62,17 @@ void EntityDisplayApp::update(float deltaTime) {
 	// input example
 	aie::Input* input = aie::Input::getInstance();
 
-	memcpy(&m_entities[0], m_EntityDataPtr, m_entities.size() * sizeof(Entity));
+	// old C memory copy
+	//memcpy(&m_entities[0], m_EntityDataPtr, m_entities.size() * sizeof(Entity));
+
+	// new C++ memory copy
+	std::copy(m_EntityDataPtr, m_EntityDataPtr + m_entities.size(), &m_entities[0]);
 
 	// exit the application
 	if (input->isKeyDown(aie::INPUT_KEY_ESCAPE))
+		quit();
+
+	if (*m_EntityCounterPtr == 0)
 		quit();
 }
 

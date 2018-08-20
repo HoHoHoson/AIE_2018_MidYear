@@ -56,8 +56,12 @@ bool EntityEditorApp::startup()
 
 void EntityEditorApp::shutdown() 
 {
+	*m_EntityNumPtr = 0;
+
 	UnmapViewOfFile(m_EntityNumPtr); // "Unmapping" pointer, does not delete the memory itself
 	CloseHandle(m_EntityCountMemory); // Closes the HANDLE for whichever app it is called in
+	UnmapViewOfFile(m_EntityDataPtr);
+	CloseHandle(m_EntityDataMemory);
 
 	delete m_font;
 	delete m_2dRenderer;
@@ -68,7 +72,11 @@ void EntityEditorApp::update(float deltaTime) {
 	// input example
 	aie::Input* input = aie::Input::getInstance();
 
-	memcpy(m_EntityDataPtr, &m_entities[0], ENTITY_COUNT * sizeof(Entity));
+	// apparently its bad to use the old C language copy function
+	//memcpy(m_EntityDataPtr, &m_entities[0], ENTITY_COUNT * sizeof(Entity));
+
+	// the updated C++ version of memcpy that I should use
+	std::copy(&m_entities[0], &m_entities[0] + ENTITY_COUNT, m_EntityDataPtr);
 
 	// exit the application
 	if (input->isKeyDown(aie::INPUT_KEY_ESCAPE))
