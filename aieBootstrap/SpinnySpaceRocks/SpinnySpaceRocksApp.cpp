@@ -4,6 +4,7 @@
 #include "Input.h"
 #include <time.h>
 #include <random>
+#include <algorithm>
 
 
 SpinnySpaceRocksApp::SpinnySpaceRocksApp() 
@@ -24,6 +25,8 @@ bool SpinnySpaceRocksApp::startup()
 	// the following path would be used instead: "./font/consolas.ttf"
 	m_font = new aie::Font("../bin/font/consolas.ttf", 32);
 	
+	GameState state = Menu;
+
 	m_makeEven = false;
 
 	m_shipTexture = new aie::Texture("../bin/textures/ship.png");
@@ -31,11 +34,14 @@ bool SpinnySpaceRocksApp::startup()
 	m_shipPosY = getWindowHeight() / 2;
 	m_shipSpeed = 700;
 	m_shipRotation = 0;
+	m_ShipRotaionSpeed = 7;
 
 	m_asteroidTexture = new aie::Texture("../bin/textures/rock_large.png");
 	m_asteroidCount = 10;
 	m_asteroidRotation = 0;
 	m_spaceRocks = new Asteroid[m_asteroidCount];
+
+	// randomly spawns an even number of asteroids on the bottom and left of the screen
 	for (size_t i = 0; i < m_asteroidCount; ++i)
 	{
 		if (m_makeEven)
@@ -74,31 +80,46 @@ void SpinnySpaceRocksApp::shutdown() {
 	delete m_2dRenderer;
 }
 
-void SpinnySpaceRocksApp::update(float deltaTime) {
-
+void SpinnySpaceRocksApp::update(float deltaTime) 
+{
 	// input example
 	aie::Input* input = aie::Input::getInstance();
 
-	if (input->isKeyDown(aie::INPUT_KEY_W) && m_shipPosY < getWindowHeight() - shipHeight)
+	float rY = cosf(m_shipRotation) * m_shipSpeed; // calculates the vertical movement speed depending on the rotation of the sprite
+	float rX = sinf(m_shipRotation) * m_shipSpeed; // calculates the horizontal movement speed depending on the rotation of the sprite
+
+	if (input->isKeyDown(aie::INPUT_KEY_W))
 	{
-		m_shipPosY += m_shipSpeed * deltaTime;
-		m_shipRotation = 0;
+		// forwards ship movement depending on the rotation
+		m_shipPosY += rY * deltaTime; 
+		m_shipPosX -= rX * deltaTime;
 	}
-	if (input->isKeyDown(aie::INPUT_KEY_S) && m_shipPosY > 0 + shipHeight)
+	if (input->isKeyDown(aie::INPUT_KEY_S))
 	{
-		m_shipPosY -= m_shipSpeed * deltaTime;
-		m_shipRotation = 3.15f;
+		// backwards ship movement depending on the rotation
+		m_shipPosY -= rY * deltaTime;
+		m_shipPosX += rX * deltaTime;
 	}
-	if (input->isKeyDown(aie::INPUT_KEY_A) && m_shipPosX > 0 + shipWidth)
+	if (input->isKeyDown(aie::INPUT_KEY_A))
 	{
-		m_shipPosX -= m_shipSpeed * deltaTime;
-		m_shipRotation = 1.575f;
+		// rotates the ship angle right
+		m_shipRotation += m_ShipRotaionSpeed * deltaTime;
 	}
-	if (input->isKeyDown(aie::INPUT_KEY_D) && m_shipPosX < getWindowWidth() - shipWidth)
+	if (input->isKeyDown(aie::INPUT_KEY_D))
 	{
-		m_shipPosX += m_shipSpeed * deltaTime;
-		m_shipRotation = 4.725f;
+		// rotates the ship angle left
+		m_shipRotation -= m_ShipRotaionSpeed * deltaTime;
 	}
+	
+	// code for clamping the ship to stay within the screen since I can't find the Clamp function
+	if (m_shipPosX > getWindowWidth() - shipWidth)
+		m_shipPosX = getWindowWidth() - shipWidth;
+	if (m_shipPosX < 0 + shipWidth)
+		m_shipPosX = 0 + shipWidth;
+	if (m_shipPosY > getWindowHeight() - shipHeight)
+		m_shipPosY = getWindowHeight() - shipHeight;
+	if (m_shipPosY < 0 + shipHeight)
+		m_shipPosY = 0 + shipHeight;
 
 	for (size_t i = 0; i < m_asteroidCount; ++i)
 	{
@@ -164,8 +185,10 @@ void SpinnySpaceRocksApp::update(float deltaTime) {
 		}
 
 		m_asteroidRotation++;
-		if (checkCollision(m_spaceRocks[i]))
-			quit();
+
+		// exit if the ship collides with the asteroids
+		/*if (checkCollision(m_spaceRocks[i]))
+			quit();*/
 	}
 
 	// exit the application
@@ -193,6 +216,7 @@ void SpinnySpaceRocksApp::draw() {
 	m_2dRenderer->end();
 }
 
+// AABB Rectangular Collision between the Ship and the Asteroids
 bool SpinnySpaceRocksApp::checkCollision(Asteroid rock)
 {
 	if (rock.m_asteroidPosX - asteroidWidth >= m_shipPosX - shipWidth &&

@@ -11,8 +11,8 @@ struct Asteroid
 	bool m_coolDownX;
 	bool m_switchDirY;
 	bool m_coolDownY;
-	int m_asteroidPosX;
-	int m_asteroidPosY;
+	float m_asteroidPosX;
+	float m_asteroidPosY;
 	float m_asteroidSpeed;
 };
 
@@ -46,13 +46,20 @@ protected:
 	int shipWidth;
 	int shipHeight;
 
-	unsigned int m_shipPosX;
-	unsigned int m_shipPosY;
+	float m_shipPosX;
+	float m_shipPosY;
 	float m_shipSpeed;
 	float m_shipRotation;
+	float m_ShipRotaionSpeed;
 
 	Asteroid* m_spaceRocks;
 	unsigned int m_asteroidCount;
 	float m_asteroidRotation;
+
+	enum GameState
+	{
+		Menu,
+		Game
+	};
 };
 
