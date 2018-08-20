@@ -39,12 +39,17 @@ bool EntityEditorApp::startup()
 
 	*m_EntityNumPtr = ENTITY_COUNT;
 
-	/*HANDLE entityDataMemory = CreateFileMapping(
+	m_EntityDataMemory = CreateFileMapping(
 		INVALID_HANDLE_VALUE,
 		nullptr,
 		PAGE_READWRITE,
 		0, ENTITY_COUNT * sizeof(Entity),
-		L"EntityDataMemory");*/
+		L"EntityDataMemory");
+
+	m_EntityDataPtr = (Entity*)MapViewOfFile(
+		m_EntityDataMemory,
+		FILE_MAP_ALL_ACCESS,
+		0, 0, ENTITY_COUNT * sizeof(Entity));
 
 	return true;
 }
@@ -62,6 +67,8 @@ void EntityEditorApp::update(float deltaTime) {
 
 	// input example
 	aie::Input* input = aie::Input::getInstance();
+
+	memcpy(m_EntityDataPtr, &m_entities[0], ENTITY_COUNT * sizeof(Entity));
 
 	// exit the application
 	if (input->isKeyDown(aie::INPUT_KEY_ESCAPE))

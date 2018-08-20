@@ -3,6 +3,7 @@
 #include "Application.h"
 #include "Renderer2D.h"
 #include <Windows.h>
+#include <algorithm>
 
 struct Entity {
 	float x = 0, y = 0;
@@ -36,4 +37,7 @@ protected:
 	// member variables for the Inter Process stuff
 	HANDLE m_EntityCountMemory;
 	int* m_EntityNumPtr;
+
+	HANDLE m_EntityDataMemory;
+	Entity* m_EntityDataPtr;
 };

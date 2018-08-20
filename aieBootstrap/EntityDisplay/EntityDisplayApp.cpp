@@ -3,6 +3,7 @@
 #include "Font.h"
 #include "Input.h"
 
+
 EntityDisplayApp::EntityDisplayApp() {
 
 }
@@ -20,8 +21,7 @@ bool EntityDisplayApp::startup() {
 
 	// Display is a client, therefor it must use "OpenFileMapping" to access the virtual memory
 	m_EntityCountMemory = OpenFileMapping(
-		FILE_MAP_ALL_ACCESS,
-		false, 
+		FILE_MAP_ALL_ACCESS, false, 
 		L"EntityCountMemory"); // name of the memory block it needs to access
 
 	// "mapped" a pointer so that the Display app can read/write the virtual memory
@@ -32,14 +32,25 @@ bool EntityDisplayApp::startup() {
 
 	m_entities.resize(*m_EntityCounterPtr);
 
+
+	m_EntityDataMemory = OpenFileMapping(
+		FILE_MAP_ALL_ACCESS, false,
+		L"EntityDataMemory");
+
+	m_EntityDataPtr = (Entity*)MapViewOfFile(
+		m_EntityDataMemory,
+		FILE_MAP_ALL_ACCESS,
+		0, 0, m_entities.size() * sizeof(Entity));
+
 	// REMEMBER to "unmap" the pointer and "close" the HANDLE
-	UnmapViewOfFile(m_EntityCounterPtr);
 	CloseHandle(m_EntityCountMemory);
+	UnmapViewOfFile(m_EntityCounterPtr);
 
 	return true;
 }
 
-void EntityDisplayApp::shutdown() {
+void EntityDisplayApp::shutdown() 
+{
 
 	delete m_font;
 	delete m_2dRenderer;
@@ -49,6 +60,8 @@ void EntityDisplayApp::update(float deltaTime) {
 
 	// input example
 	aie::Input* input = aie::Input::getInstance();
+
+	memcpy(&m_entities[0], m_EntityDataPtr, m_entities.size() * sizeof(Entity));
 
 	// exit the application
 	if (input->isKeyDown(aie::INPUT_KEY_ESCAPE))
