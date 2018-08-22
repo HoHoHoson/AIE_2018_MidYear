@@ -160,8 +160,8 @@ void SpinnySpaceRocksApp::update(float deltaTime)
 			Bullet* b = m_InactiveBullets.back();
 			b->m_PosX = m_shipPosX;
 			b->m_PosY = m_shipPosY;
-			b->m_AngX = sinf(m_shipRotation) * b->m_Speed;
-			b->m_AngY = cosf(m_shipRotation) * b->m_Speed;
+			b->m_SpeedX = sinf(m_shipRotation) * b->m_SetSpeed;
+			b->m_SpeedY = cosf(m_shipRotation) * b->m_SetSpeed;
 			m_InactiveBullets.pop_back();
 			m_ActiveBullets.push_front(b);
 		}
@@ -247,8 +247,8 @@ void SpinnySpaceRocksApp::update(float deltaTime)
 				do
 				{
 					// to dereference an iterator to a pointer, you need to have the iterator with the dereference pointer inside some brackets
-					(*it)->m_PosX -= (*it)->m_AngX * deltaTime;
-					(*it)->m_PosY += (*it)->m_AngY * deltaTime;
+					(*it)->m_PosX -= (*it)->m_SpeedX * deltaTime;
+					(*it)->m_PosY += (*it)->m_SpeedY * deltaTime;
 
 					if ((*it)->m_PosX > getWindowWidth() || (*it)->m_PosX < 0 ||
 						(*it)->m_PosY > getWindowHeight() || (*it)->m_PosY < 0)
@@ -380,5 +380,15 @@ int SpinnySpaceRocksApp::getRandom(int min, int max)
 double SpinnySpaceRocksApp::getRadians(double degrees)
 {
 	return (degrees * M_PI / 180);
+}
+
+void SpinnySpaceRocksApp::setAnglesTo(float& speedX, float& speedY, float setSpeed, float currentX, float currentY, float toX, float toY)
+{
+	float dy = currentY - toY;
+	float dx = currentX - toX;
+	float angle = atan2(dy, dx);
+
+	speedY = cosf(angle) * setSpeed;
+	speedX = sinf(angle) * setSpeed;
 }
 

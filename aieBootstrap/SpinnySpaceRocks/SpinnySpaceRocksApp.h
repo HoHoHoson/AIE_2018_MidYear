@@ -23,9 +23,9 @@ struct Bullet
 {
 	float m_PosX;
 	float m_PosY;
-	float m_AngX;
-	float m_AngY;
-	float m_Speed = 800;
+	float m_SpeedX;
+	float m_SpeedY;
+	float m_SetSpeed = 800;
 };
 
 struct Asteroid
@@ -60,6 +60,7 @@ protected:
 	bool checkCollision(aie::Texture* s_Obj, float s_X, float s_Y, aie::Texture* l_Obj, float l_X, float l_Y);
 	int getRandom(int min, int max);
 	double getRadians(double degrees);
+	void setAnglesTo(float& moveX, float& moveY, float setSpeed, float currentX, float currentY, float toX, float toY);
 
 	aie::Texture* m_shipTexture;
 	aie::Texture* m_asteroidTexture;
@@ -94,11 +95,3 @@ protected:
 	};
 	GameState state;
 };
-
-// CODE FOR DIRECTIONAL MOVEMENT (make it into a function) 
-	//dy = PositionDestination.Y - PositionCurrent.Y
-	//dx = PositionDestination.X - PositionCurrent.X
-	//angle = atan2(dy / dx)
-	//
-	//posY += cos(angle) * speed
-	//posX -= sin(angle) * speed
