@@ -21,57 +21,63 @@ bool SpinnySpaceRocksApp::startup()
 	// TODO: remember to change this when redistributing a build!
 	// the following path would be used instead: "./font/consolas.ttf"
 	m_font = new aie::Font("../bin/font/consolas.ttf", 32);
+	m_shipTexture = new aie::Texture("../bin/textures/ship.png");
+	m_BulletTexture = new aie::Texture("../bin/textures/bullet.png");
+	m_asteroidTexture = new aie::Texture("../bin/textures/rock_large.png");
+	m_smlRockTexture = new aie::Texture("../bin/textures/rock_small.png");
 	
 	state = Game;
 	
 	m_makeEven = false;
 
-	m_shipTexture = new aie::Texture("../bin/textures/ship.png");
 	m_shipPosX = getWindowWidth() / 2;
 	m_shipPosY = getWindowHeight() / 2;
-	m_shipSpeed = 600;
-	m_shipRotation = 0;
 
-	m_BulletTexture = new aie::Texture("../bin/textures/bullet.png");
-	for (size_t i = 0; i < 10; ++i)
+	for (size_t i = 0; i < m_MaxBullets; ++i)
 		m_InactiveBullets.push_back(new Bullet);
 
-	AngryRock boss;
+	boss.m_PosX = getWindowWidth() + m_asteroidTexture->getWidth();
+	boss.m_PosY = getWindowHeight() + m_asteroidTexture->getHeight();
+	bossState = Idle;
 
-	m_asteroidTexture = new aie::Texture("../bin/textures/rock_large.png");
-	m_asteroidCount = 10;
-	m_asteroidRotation = 0;
-	m_spaceRocks = new Asteroid[m_asteroidCount];
+	for (size_t i = 0; i < m_MaxMinions; ++i)
+		m_InactiveMinions.push_back(new LilRock);
 
-	// randomly spawns an even number of asteroids on the bottom and left of the screen
-	for (size_t i = 0; i < m_asteroidCount; ++i)
-	{
-		if (m_makeEven)
-		{
-			m_spaceRocks[i].m_asteroidPosY = getRandom(0 + m_asteroidTexture->getHeight() / 2, getWindowHeight() - m_asteroidTexture->getHeight() / 2);
-			m_spaceRocks[i].m_asteroidPosX = 0 + m_asteroidTexture->getWidth() / 2;
-			m_spaceRocks[i].spinninX = true;
-		}
-		else
-		{
-			m_spaceRocks[i].m_asteroidPosX = getRandom(0 + m_asteroidTexture->getWidth() / 2, getWindowWidth() - m_asteroidTexture->getWidth() / 2);
-			m_spaceRocks[i].m_asteroidPosY = 0 + m_asteroidTexture->getHeight() / 2;
-			m_spaceRocks[i].spinninX = false;
-		}
+	//m_asteroidCount = 10;
+	//m_asteroidRotation = 0;
+	//m_spaceRocks = new Asteroid[m_asteroidCount];
 
-		m_spaceRocks[i].m_asteroidSpeed = 300;
-		m_spaceRocks[i].m_switchDirX = false;
-		m_spaceRocks[i].m_coolDownX = false;
-		m_spaceRocks[i].m_switchDirY = false;
-		m_spaceRocks[i].m_coolDownY = false;
+	//// randomly spawns an even number of asteroids on the bottom and left of the screen
+	//for (size_t i = 0; i < m_asteroidCount; ++i)
+	//{
+	//	if (m_makeEven)
+	//	{
+	//		m_spaceRocks[i].m_asteroidPosY = getRandom(0 + m_asteroidTexture->getHeight() / 2, getWindowHeight() - m_asteroidTexture->getHeight() / 2);
+	//		m_spaceRocks[i].m_asteroidPosX = 0 + m_asteroidTexture->getWidth() / 2;
+	//		m_spaceRocks[i].spinninX = true;
+	//	}
+	//	else
+	//	{
+	//		m_spaceRocks[i].m_asteroidPosX = getRandom(0 + m_asteroidTexture->getWidth() / 2, getWindowWidth() - m_asteroidTexture->getWidth() / 2);
+	//		m_spaceRocks[i].m_asteroidPosY = 0 + m_asteroidTexture->getHeight() / 2;
+	//		m_spaceRocks[i].spinninX = false;
+	//	}
 
-		m_makeEven = !m_makeEven;
-	}
+	//	m_spaceRocks[i].m_asteroidSpeed = 300;
+	//	m_spaceRocks[i].m_switchDirX = false;
+	//	m_spaceRocks[i].m_coolDownX = false;
+	//	m_spaceRocks[i].m_switchDirY = false;
+	//	m_spaceRocks[i].m_coolDownY = false;
+
+	//	m_makeEven = !m_makeEven;
+	//}
 
 	asteroidWidth = m_asteroidTexture->getWidth() / 2;
 	asteroidHeight = m_asteroidTexture->getHeight() / 2;
 	shipWidth = m_shipTexture->getWidth() / 2;
 	shipHeight = m_shipTexture->getHeight() / 2;
+	minionWidth = m_smlRockTexture->getWidth() / 2;
+	minionHeight = m_smlRockTexture->getHeight() / 2;
 
 	return true;
 }
@@ -125,6 +131,7 @@ void SpinnySpaceRocksApp::update(float deltaTime)
 
 	case SpinnySpaceRocksApp::Game:
 	{
+		m_Timer += deltaTime;
 		m_shipRotation = atan2(input->getMouseY() - m_shipPosY, input->getMouseX() - m_shipPosX) + 3.15 * 1.5;
 
 		if (input->isKeyDown(aie::INPUT_KEY_W))
@@ -162,6 +169,7 @@ void SpinnySpaceRocksApp::update(float deltaTime)
 			b->m_PosY = m_shipPosY;
 			b->m_SpeedX = sinf(m_shipRotation) * b->m_SetSpeed;
 			b->m_SpeedY = cosf(m_shipRotation) * b->m_SetSpeed;
+			b->hurtsPlayer = false;
 			m_InactiveBullets.pop_back();
 			m_ActiveBullets.push_front(b);
 		}
@@ -176,105 +184,268 @@ void SpinnySpaceRocksApp::update(float deltaTime)
 		if (m_shipPosY < 0 + shipHeight)
 			m_shipPosY = 0 + shipHeight;
 
-		for (size_t i = 0; i < m_asteroidCount; ++i)
+		//for (size_t i = 0; i < m_asteroidCount; ++i)
+		//{
+		//	if (m_spaceRocks[i].m_asteroidSpeed >= m_shipSpeed + 50)
+		//		m_spaceRocks[i].m_asteroidSpeed = m_shipSpeed + 50;
+
+		//	if (m_spaceRocks[i].spinninX)
+		//	{
+		//		if (!m_spaceRocks[i].m_switchDirX)
+		//			m_spaceRocks[i].m_asteroidPosX += m_spaceRocks[i].m_asteroidSpeed * deltaTime;
+		//		else
+		//			m_spaceRocks[i].m_asteroidPosX -= m_spaceRocks[i].m_asteroidSpeed * deltaTime;
+
+		//		if (!m_spaceRocks[i].m_switchDirY)
+		//			m_spaceRocks[i].m_asteroidPosY += (m_spaceRocks[i].m_asteroidSpeed * deltaTime) / 2;
+		//		else
+		//			m_spaceRocks[i].m_asteroidPosY -= (m_spaceRocks[i].m_asteroidSpeed * deltaTime) / 2;
+		//	}
+		//	else
+		//	{
+		//		if (!m_spaceRocks[i].m_switchDirY)
+		//			m_spaceRocks[i].m_asteroidPosY += m_spaceRocks[i].m_asteroidSpeed * deltaTime;
+		//		else
+		//			m_spaceRocks[i].m_asteroidPosY -= m_spaceRocks[i].m_asteroidSpeed * deltaTime;
+
+		//		if (!m_spaceRocks[i].m_switchDirX)
+		//			m_spaceRocks[i].m_asteroidPosX += (m_spaceRocks[i].m_asteroidSpeed * deltaTime) / 2;
+		//		else
+		//			m_spaceRocks[i].m_asteroidPosX -= (m_spaceRocks[i].m_asteroidSpeed * deltaTime) / 2;
+		//	}
+
+		//	if (m_spaceRocks[i].m_coolDownX == true)
+		//	{
+		//		float timer = 0;
+		//		while (timer < 0.5f)
+		//			timer += deltaTime;
+		//		timer = 0;
+		//		m_spaceRocks[i].m_coolDownX = false;
+		//	}
+		//	else if (m_spaceRocks[i].m_asteroidPosX < 0 + m_asteroidTexture->getWidth() / 2 ||
+		//		m_spaceRocks[i].m_asteroidPosX > getWindowWidth() - m_asteroidTexture->getWidth() / 2 &&
+		//		m_spaceRocks[i].m_coolDownX == false)
+		//	{
+		//		m_spaceRocks[i].m_coolDownX = true;
+		//		m_spaceRocks[i].m_switchDirX = !m_spaceRocks[i].m_switchDirX;
+		//		m_spaceRocks[i].m_asteroidSpeed *= 1.0f + getRandom(0, 3) / 10.0f;
+		//	}
+
+		//	if (m_spaceRocks[i].m_coolDownY == true)
+		//	{
+		//		float timer = 0;
+		//		while (timer < 0.5f)
+		//			timer += deltaTime;
+		//		timer = 0;
+		//		m_spaceRocks[i].m_coolDownY = false;
+		//	}
+		//	else if (m_spaceRocks[i].m_asteroidPosY < 0 + m_asteroidTexture->getHeight() / 2 ||
+		//		m_spaceRocks[i].m_asteroidPosY > getWindowHeight() - m_asteroidTexture->getHeight() / 2)
+		//	{
+		//		m_spaceRocks[i].m_coolDownY = true;
+		//		m_spaceRocks[i].m_switchDirY = !m_spaceRocks[i].m_switchDirY;
+		//		m_spaceRocks[i].m_asteroidSpeed *= 1.0f + getRandom(0, 2) / 1000.0f;
+		//	}
+
+		//	m_asteroidRotation++;
+
+		//	// exit if the ship collides with the asteroids
+		//	//if (checkCollision(m_asteroidTexture, m_spaceRocks[i].m_asteroidPosX, m_spaceRocks[i].m_asteroidPosY, 
+		//	//	m_shipTexture, m_shipPosX, m_shipPosY))
+		//	//	quit();
+		//}
+
+		switch (bossState)
 		{
-			if (m_spaceRocks[i].m_asteroidSpeed >= m_shipSpeed + 50)
-				m_spaceRocks[i].m_asteroidSpeed = m_shipSpeed + 50;
+		case SpinnySpaceRocksApp::Idle:
+		{
 
-			if (m_spaceRocks[i].spinninX)
+			setAnglesTo(boss.m_SpeedX, boss.m_SpeedY, boss.m_SetSpeed, boss.m_PosX, boss.m_PosY, getWindowWidth() / 2, getWindowHeight() / 2, deltaTime);
+
+			/*if (m_Timer > 1 && !m_InactiveMinions.empty() && boss.m_SpeedX == 0 && boss.m_SpeedY == 0)
 			{
-				if (!m_spaceRocks[i].m_switchDirX)
-					m_spaceRocks[i].m_asteroidPosX += m_spaceRocks[i].m_asteroidSpeed * deltaTime;
-				else
-					m_spaceRocks[i].m_asteroidPosX -= m_spaceRocks[i].m_asteroidSpeed * deltaTime;
-
-				if (!m_spaceRocks[i].m_switchDirY)
-					m_spaceRocks[i].m_asteroidPosY += (m_spaceRocks[i].m_asteroidSpeed * deltaTime) / 2;
-				else
-					m_spaceRocks[i].m_asteroidPosY -= (m_spaceRocks[i].m_asteroidSpeed * deltaTime) / 2;
-			}
-			else
+				m_Timer = 0.0f;
+				LilRock* r = m_InactiveMinions.back();
+				r->X = boss.m_PosX;
+				r->Y = boss.m_PosY;
+				setAnglesTo(r->speedX, r->speedY, r->setSpeed, r->X, r->Y, m_shipPosX, m_shipPosY, deltaTime);
+				m_InactiveMinions.pop_back();
+				m_ActiveMinions.push_front(r);
+			}*/
+			/*if (!m_InactiveMinions.empty() && m_Timer > 1)
 			{
-				if (!m_spaceRocks[i].m_switchDirY)
-					m_spaceRocks[i].m_asteroidPosY += m_spaceRocks[i].m_asteroidSpeed * deltaTime;
-				else
-					m_spaceRocks[i].m_asteroidPosY -= m_spaceRocks[i].m_asteroidSpeed * deltaTime;
-
-				if (!m_spaceRocks[i].m_switchDirX)
-					m_spaceRocks[i].m_asteroidPosX += (m_spaceRocks[i].m_asteroidSpeed * deltaTime) / 2;
-				else
-					m_spaceRocks[i].m_asteroidPosX -= (m_spaceRocks[i].m_asteroidSpeed * deltaTime) / 2;
-			}
-
-			if (m_spaceRocks[i].m_coolDownX == true)
-			{
-				float timer = 0;
-				while (timer < 0.5f)
-					timer += deltaTime;
-				timer = 0;
-				m_spaceRocks[i].m_coolDownX = false;
-			}
-			else if (m_spaceRocks[i].m_asteroidPosX < 0 + m_asteroidTexture->getWidth() / 2 ||
-				m_spaceRocks[i].m_asteroidPosX > getWindowWidth() - m_asteroidTexture->getWidth() / 2 &&
-				m_spaceRocks[i].m_coolDownX == false)
-				 {
-				    m_spaceRocks[i].m_coolDownX = true;
-				    m_spaceRocks[i].m_switchDirX = !m_spaceRocks[i].m_switchDirX;
-					m_spaceRocks[i].m_asteroidSpeed *= 1.0f + getRandom(0, 3) / 10.0f;
-				 }
-
-			if (m_spaceRocks[i].m_coolDownY == true)
-			{
-				float timer = 0;
-				while (timer < 0.5f)
-					timer += deltaTime;
-				timer = 0;
-				m_spaceRocks[i].m_coolDownY = false;
-			}
-			else if (m_spaceRocks[i].m_asteroidPosY < 0 + m_asteroidTexture->getHeight() / 2 ||
-				m_spaceRocks[i].m_asteroidPosY > getWindowHeight() - m_asteroidTexture->getHeight() / 2)
-				 {
-					m_spaceRocks[i].m_coolDownY = true;
-					m_spaceRocks[i].m_switchDirY = !m_spaceRocks[i].m_switchDirY;
-					m_spaceRocks[i].m_asteroidSpeed *= 1.0f + getRandom(0, 2) / 1000.0f;							 
-				 }
-
-			m_asteroidRotation++;
-
-			if (!m_ActiveBullets.empty())
-			{
-				auto it = m_ActiveBullets.begin();
-				do
+				m_Timer = 0;
+				double increment = getRadians(360) / 10;
+				double angle = 0;
+				for (size_t i = 0; i < 10; ++i)
 				{
-					// to dereference an iterator to a pointer, you need to have the iterator with the dereference pointer inside some brackets
-					(*it)->m_PosX -= (*it)->m_SpeedX * deltaTime;
-					(*it)->m_PosY += (*it)->m_SpeedY * deltaTime;
+					LilRock* r = m_InactiveMinions.back();
+					r->X = boss.m_PosX;
+					r->Y = boss.m_PosY;
+					r->speedX = cos(angle) * r->setSpeed;
+					r->speedY = sin(angle) * r->setSpeed;
+					angle += increment;
+					m_InactiveMinions.pop_back();
+					m_ActiveMinions.push_front(r);
+				}
+			}*/
+			if (!m_InactiveMinions.empty() && m_Timer > 0.1f)
+			{
+				m_Timer = 0;
 
-					if ((*it)->m_PosX > getWindowWidth() || (*it)->m_PosX < 0 ||
-						(*it)->m_PosY > getWindowHeight() || (*it)->m_PosY < 0)
+				LilRock* r = m_InactiveMinions.back();
+				r->X = boss.m_PosX;
+				r->Y = boss.m_PosY;
+				setAnglesTo(r->speedX, r->speedY, r->setSpeed, r->X, r->Y, m_shipPosX, m_shipPosY, deltaTime);
+				m_InactiveMinions.pop_back();
+				m_ActiveMinions.push_front(r);
+			}
+
+			break;
+		}
+		case SpinnySpaceRocksApp::Charge:
+		{
+			
+			boss.m_SetSpeed = 1000;
+			if (boss.rebound == true)
+			{
+				setAnglesTo(boss.m_SpeedX, boss.m_SpeedY, boss.m_SetSpeed, boss.m_PosX, boss.m_PosY, m_shipPosX, m_shipPosY, deltaTime);
+				boss.rebound = false;
+			}
+			if (boss.m_PosX < 0 + asteroidWidth || boss.m_PosX > getWindowWidth() - asteroidWidth)
+			{
+				boss.rebound = true;
+				boss.m_SetSpeed = 1000 * (getWindowWidth() / getWindowHeight());
+			}
+			if (boss.m_PosY < 0 + asteroidHeight || boss.m_PosY > getWindowHeight() - asteroidHeight)
+			{
+				boss.rebound = true;
+				boss.m_SetSpeed = 1000;
+			}
+
+			break;
+		}
+		default:
+			break;
+		}
+
+		if (boss.invincible == true)
+		{
+			boss.m_RotationSpeed = 100;
+		}
+
+		boss.m_PosX += boss.m_SpeedX * deltaTime;
+		boss.m_PosY += boss.m_SpeedY * deltaTime;
+		boss.m_Rotation += boss.m_RotationSpeed * deltaTime;
+
+		if (!m_ActiveMinions.empty())
+		{
+			auto it = m_ActiveMinions.begin();
+			do
+			{
+				(*it)->X += (*it)->speedX * deltaTime;
+				(*it)->Y += (*it)->speedY * deltaTime;
+
+				if ((*it)->X < 0 - minionWidth || (*it)->X > getWindowWidth() + minionWidth ||
+					(*it)->Y < 0 - minionHeight || (*it)->Y > getWindowHeight() + minionHeight ||
+					(*it)->speedX ==0 & (*it)->speedY == 0)
+				{
+					m_InactiveMinions.push_back(*it);
+					it = m_ActiveMinions.erase(it);
+				}
+				else
+					++it;
+
+			} while (it != m_ActiveMinions.end());
+		}
+
+		if (!m_ActiveBullets.empty())
+		{
+			auto it = m_ActiveBullets.begin();
+			do
+			{
+				// to dereference a pointer inside an iterator, you need to dereference the iterator first, then the pointer.
+				// hence why the iterator "it" is dereferenced inside some brackets first then dereferenced again to access the value of the pointer.
+				(*it)->m_PosX -= (*it)->m_SpeedX * deltaTime;
+				(*it)->m_PosY += (*it)->m_SpeedY * deltaTime;
+
+				if (checkCollision(m_BulletTexture, (*it)->m_PosX, (*it)->m_PosY, m_asteroidTexture, boss.m_PosX, boss.m_PosY))
+				{
+					if (boss.invincible == true)
 					{
+						(*it)->m_SpeedX = -(*it)->m_SpeedX;
+						(*it)->m_SpeedY = -(*it)->m_SpeedY;
+						(*it)->hurtsPlayer = true;
+						++it;
+					}
+					else
+					{
+						boss.m_Health--;
 						m_InactiveBullets.push_front(*it);
 						it = m_ActiveBullets.erase(it);
 					}
+				}
+				else if ((*it)->m_PosX > getWindowWidth() || (*it)->m_PosX < 0 || (*it)->m_PosY > getWindowHeight() || (*it)->m_PosY < 0)
+				{
+					m_InactiveBullets.push_front(*it);
+					it = m_ActiveBullets.erase(it);
+				}
+				else if ((*it)->hurtsPlayer == true)
+				{
+					if (checkCollision(m_BulletTexture, (*it)->m_PosX, (*it)->m_PosY, m_shipTexture, m_shipPosX, m_shipPosY))
+					{
+						quit();
+					}
 					else
 						++it;
-
-				} while (it != m_ActiveBullets.end());
-			}
-
-			// exit if the ship collides with the asteroids
-			//if (checkCollision(m_asteroidTexture, m_spaceRocks[i].m_asteroidPosX, m_spaceRocks[i].m_asteroidPosY, 
-			//	m_shipTexture, m_shipPosX, m_shipPosY))
-			//	quit();
+				}
+				else
+					++it;
+				
+			} while (it != m_ActiveBullets.end());
 		}
 
-		//setShowCursor(false);
+		if (!m_ActiveMinions.empty())
+		{
+			auto minIt = m_ActiveMinions.begin();
+			bool removed = false;
+			do
+			{
+				if (!m_ActiveBullets.empty())
+				{
+					auto it = m_ActiveBullets.begin();
+					do
+					{
+						if (checkCollision(m_BulletTexture, (*it)->m_PosX, (*it)->m_PosY, m_smlRockTexture, (*minIt)->X, (*minIt)->Y))
+						{
+							m_InactiveBullets.push_front(*it);
+							m_ActiveBullets.erase(it);
+							m_InactiveMinions.push_back(*minIt);
+							minIt = m_ActiveMinions.erase(minIt);
+							removed = true;
+							break;
+						}
+						else
+							++it;
+
+					} while (it != m_ActiveBullets.end());
+				}
+				if (removed == false)
+					++minIt;
+				else
+					removed = false;
+
+			} while (minIt != m_ActiveMinions.end());
+		}
+
 		break;
 	}
 
 	default:
 		assert(false && "The Update switch statement broke");
 	}
+
+	//setShowCursor(false);
 
 	// exit the application
 	if (input->isKeyDown(aie::INPUT_KEY_ESCAPE))
@@ -325,15 +496,23 @@ void SpinnySpaceRocksApp::draw()
 
 	case SpinnySpaceRocksApp::Game:
 	{
+		std::string h = std::to_string(boss.m_Health);
+
 		m_2dRenderer->drawSprite(m_shipTexture, m_shipPosX, m_shipPosY, NULL, NULL, m_shipRotation, 0, 0.5f, 0.5f);
 
-		for (size_t i = 0; i < m_asteroidCount; ++i)
-			m_2dRenderer->drawSprite(m_asteroidTexture, m_spaceRocks[i].m_asteroidPosX, m_spaceRocks[i].m_asteroidPosY, NULL, NULL, m_asteroidRotation, 0, 0.5f, 0.5f);
+		m_2dRenderer->drawSprite(m_asteroidTexture, boss.m_PosX, boss.m_PosY, NULL, NULL, boss.m_Rotation, 0);
+
+		for (auto rock : m_ActiveMinions)
+			m_2dRenderer->drawSprite(m_smlRockTexture, rock->X, rock->Y);
+
+		/*for (size_t i = 0; i < m_asteroidCount; ++i)
+			m_2dRenderer->drawSprite(m_asteroidTexture, m_spaceRocks[i].m_asteroidPosX, m_spaceRocks[i].m_asteroidPosY, NULL, NULL, m_asteroidRotation, 0, 0.5f, 0.5f);*/
 
 		for (auto bullet : m_ActiveBullets)
 			m_2dRenderer->drawSprite(m_BulletTexture, bullet->m_PosX, bullet->m_PosY, NULL, NULL, NULL, 1);
 
 		// output some text, uses the last used colour
+		m_2dRenderer->drawText(m_font, h.c_str(), 100, 100, 0.1f);
 		m_2dRenderer->drawText(m_font, "TRY NOT TO DIE :D", 0, 10, 0.1f);
 
 		break;
@@ -382,13 +561,18 @@ double SpinnySpaceRocksApp::getRadians(double degrees)
 	return (degrees * M_PI / 180);
 }
 
-void SpinnySpaceRocksApp::setAnglesTo(float& speedX, float& speedY, float setSpeed, float currentX, float currentY, float toX, float toY)
+void SpinnySpaceRocksApp::setAnglesTo(float& speedX, float& speedY, float setSpeed, float currentX, float currentY, float toX, float toY, float deltaT)
 {
-	float dy = currentY - toY;
-	float dx = currentX - toX;
+	float dy = toY - currentY;
+	float dx = toX - currentX;
 	float angle = atan2(dy, dx);
 
-	speedY = cosf(angle) * setSpeed;
-	speedX = sinf(angle) * setSpeed;
+	speedX = cosf(angle) * setSpeed;
+	speedY = sinf(angle) * setSpeed;
+
+	if (currentX > toX - speedX * deltaT && currentX < toX + speedX * deltaT) 
+		speedX = 0;
+	if (currentY > toY - speedY * deltaT && currentY < toY + speedY * deltaT)
+		speedY = 0;
 }
 
