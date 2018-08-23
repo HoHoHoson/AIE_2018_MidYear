@@ -131,6 +131,8 @@ void SpinnySpaceRocksApp::update(float deltaTime)
 
 	case SpinnySpaceRocksApp::Game:
 	{
+		exTimer += deltaTime;
+		boss.coolDown += deltaTime;
 		m_Timer += deltaTime;
 		m_shipRotation = atan2(input->getMouseY() - m_shipPosY, input->getMouseX() - m_shipPosX) + 3.15 * 1.5;
 
@@ -262,77 +264,170 @@ void SpinnySpaceRocksApp::update(float deltaTime)
 
 			setAnglesTo(boss.m_SpeedX, boss.m_SpeedY, boss.m_SetSpeed, boss.m_PosX, boss.m_PosY, getWindowWidth() / 2, getWindowHeight() / 2, deltaTime);
 
-			/*if (m_Timer > 1 && !m_InactiveMinions.empty() && boss.m_SpeedX == 0 && boss.m_SpeedY == 0)
+			if (boss.m_SpeedX == 0 && boss.m_SpeedY == 0)
 			{
-				m_Timer = 0.0f;
-				LilRock* r = m_InactiveMinions.back();
-				r->X = boss.m_PosX;
-				r->Y = boss.m_PosY;
-				setAnglesTo(r->speedX, r->speedY, r->setSpeed, r->X, r->Y, m_shipPosX, m_shipPosY, deltaTime);
-				m_InactiveMinions.pop_back();
-				m_ActiveMinions.push_front(r);
-			}*/
-			/*if (!m_InactiveMinions.empty() && m_Timer > 1)
-			{
-				m_Timer = 0;
-				double increment = getRadians(360) / 10;
-				double angle = 0;
-				for (size_t i = 0; i < 10; ++i)
+				if (m_Timer > 0.5f)
 				{
-					LilRock* r = m_InactiveMinions.back();
-					r->X = boss.m_PosX;
-					r->Y = boss.m_PosY;
-					r->speedX = cos(angle) * r->setSpeed;
-					r->speedY = sin(angle) * r->setSpeed;
-					angle += increment;
-					m_InactiveMinions.pop_back();
-					m_ActiveMinions.push_front(r);
+					if (!m_InactiveMinions.empty() && boss.m_Health >= 4 || boss.m_Health <= 2)
+					{
+						m_Timer = 0.0f;
+						LilRock* r = m_InactiveMinions.back();
+						r->X = boss.m_PosX;
+						r->Y = boss.m_PosY;
+						setAnglesTo(r->speedX, r->speedY, r->setSpeed, r->X, r->Y, m_shipPosX, m_shipPosY, deltaTime);
+						m_InactiveMinions.pop_back();
+						m_ActiveMinions.push_front(r);
+					}
+			
 				}
-			}*/
-			if (!m_InactiveMinions.empty() && m_Timer > 0.1f)
-			{
-				m_Timer = 0;
+				if (exTimer > 1.5f && boss.m_Health < 4)
+				{
+					exTimer = 0.0f;
+					bossExplosion();
+				}
+			}
 
-				LilRock* r = m_InactiveMinions.back();
-				r->X = boss.m_PosX;
-				r->Y = boss.m_PosY;
-				setAnglesTo(r->speedX, r->speedY, r->setSpeed, r->X, r->Y, m_shipPosX, m_shipPosY, deltaTime);
-				m_InactiveMinions.pop_back();
-				m_ActiveMinions.push_front(r);
+			if (boss.invincible == true && boss.m_SpeedX == 0 && boss.m_SpeedY == 0)
+			{
+				boss.coolDown = 0;
+				m_Timer = 0;
+				exTimer = 0;
+
+				if (boss.m_Health == 4)
+					bossState = RapidFire;
+				else
+					bossState = Charge;
 			}
 
 			break;
 		}
 		case SpinnySpaceRocksApp::Charge:
 		{
-			
-			boss.m_SetSpeed = 1000;
-			if (boss.rebound == true)
+
+			if (boss.m_Health <= 2 && m_Timer > 1.5f)
 			{
-				setAnglesTo(boss.m_SpeedX, boss.m_SpeedY, boss.m_SetSpeed, boss.m_PosX, boss.m_PosY, m_shipPosX, m_shipPosY, deltaTime);
-				boss.rebound = false;
+				m_Timer = 0;
+				bossExplosion();
 			}
-			if (boss.m_PosX < 0 + asteroidWidth || boss.m_PosX > getWindowWidth() - asteroidWidth)
+
+			if (boss.coolDown > 2 && boss.coolDown < 7)
+			{
+				boss.m_SetSpeed = 950;
+				if (boss.rebound == true)
+				{
+					setAnglesTo(boss.m_SpeedX, boss.m_SpeedY, boss.m_SetSpeed, boss.m_PosX, boss.m_PosY, m_shipPosX, m_shipPosY, deltaTime);
+					boss.rebound = false;
+				}
+				if (boss.m_PosX < 0 + asteroidWidth || boss.m_PosX > getWindowWidth() - asteroidWidth)
+				{
+					boss.rebound = true;
+					boss.m_SetSpeed = 950 * (getWindowWidth() / getWindowHeight());
+				}
+				if (boss.m_PosY < 0 + asteroidHeight || boss.m_PosY > getWindowHeight() - asteroidHeight)
+				{
+					boss.rebound = true;
+					boss.m_SetSpeed = 950;
+				}
+			}
+			if (boss.coolDown > 7)
 			{
 				boss.rebound = true;
-				boss.m_SetSpeed = 1000 * (getWindowWidth() / getWindowHeight());
-			}
-			if (boss.m_PosY < 0 + asteroidHeight || boss.m_PosY > getWindowHeight() - asteroidHeight)
-			{
-				boss.rebound = true;
-				boss.m_SetSpeed = 1000;
+				boss.m_SetSpeed = 650;
+
+				if (boss.m_Health >= 3)
+				{
+					boss.invincible = false;
+					m_Timer = 0;
+					boss.coolDown = 0;
+					bossState = Idle;
+				}
+				else
+				{
+					if (m_shipPosX > getWindowWidth() / 2)
+						setAnglesTo(boss.m_SpeedX, boss.m_SpeedY, boss.m_SetSpeed, boss.m_PosX, boss.m_PosY, getWindowWidth() * 0.25f, getWindowHeight() / 2, deltaTime);
+					else
+						setAnglesTo(boss.m_SpeedX, boss.m_SpeedY, boss.m_SetSpeed, boss.m_PosX, boss.m_PosY, getWindowWidth() * 0.75f, getWindowHeight() / 2, deltaTime);
+
+					if (boss.m_SpeedX == 0 && boss.m_SpeedY == 0)
+					{
+						m_Timer = 0;
+						boss.coolDown = 0;
+						exTimer = 0;
+						bossState = RapidFire;
+					}
+				}
 			}
 
 			break;
+		}
+		case SpinnySpaceRocksApp::RapidFire:
+		{
+
+			if (boss.m_Health <= 1 && exTimer > 1.5f)
+			{
+				exTimer = 0;
+				bossExplosion();
+			}
+
+			if (!m_InactiveMinions.empty() && m_Timer > 0.2f && boss.coolDown > 2 && boss.coolDown < 9)
+			{
+				m_Timer = 0;
+				bool alt = false;
+
+				for (size_t i = 0; i < 2; i++)
+				{
+					LilRock* r = m_InactiveMinions.back();
+					r->X = boss.m_PosX;
+					r->Y = boss.m_PosY;
+					setAnglesTo(r->speedX, r->speedY, r->setSpeed, r->X, r->Y, m_shipPosX, m_shipPosY, deltaTime);
+
+					if (alt == false)
+					{
+						r->speedX = +r->speedX;
+						r->speedY = -r->speedY;
+						alt = true;
+					}
+					else
+						alt = false;
+
+					m_InactiveMinions.pop_back();
+					m_ActiveMinions.push_front(r);
+				}
+			}
+
+			if (boss.coolDown > 12)
+				if (boss.m_Health <= 1 && lastStand == false)
+				{
+					static float temp = boss.m_PosX;
+					if (temp > getWindowWidth() / 2)
+						setAnglesTo(boss.m_SpeedX, boss.m_SpeedY, boss.m_SetSpeed, boss.m_PosX, boss.m_PosY, getWindowWidth() * 0.25f, getWindowHeight() / 2, deltaTime);
+					else
+						setAnglesTo(boss.m_SpeedX, boss.m_SpeedY, boss.m_SetSpeed, boss.m_PosX, boss.m_PosY, getWindowWidth() * 0.75f, getWindowHeight() / 2, deltaTime);
+
+					if (boss.m_SpeedX == 0 && boss.m_SpeedY == 0)
+					{
+						m_Timer = 0;
+						boss.coolDown = 0;
+						lastStand = true;
+					}
+				}
+				else
+				{
+					m_Timer = 0;
+					boss.coolDown = 0;
+					boss.invincible = false;
+					bossState = Idle;
+				}
+
 		}
 		default:
 			break;
 		}
 
 		if (boss.invincible == true)
-		{
-			boss.m_RotationSpeed = 100;
-		}
+			boss.m_RotationSpeed = 70;
+		else
+			boss.m_RotationSpeed = 7;
 
 		boss.m_PosX += boss.m_SpeedX * deltaTime;
 		boss.m_PosY += boss.m_SpeedY * deltaTime;
@@ -380,6 +475,7 @@ void SpinnySpaceRocksApp::update(float deltaTime)
 					}
 					else
 					{
+						boss.invincible = true;
 						boss.m_Health--;
 						m_InactiveBullets.push_front(*it);
 						it = m_ActiveBullets.erase(it);
@@ -394,7 +490,7 @@ void SpinnySpaceRocksApp::update(float deltaTime)
 				{
 					if (checkCollision(m_BulletTexture, (*it)->m_PosX, (*it)->m_PosY, m_shipTexture, m_shipPosX, m_shipPosY))
 					{
-						quit();
+						// player gets damaged
 					}
 					else
 						++it;
@@ -503,7 +599,7 @@ void SpinnySpaceRocksApp::draw()
 		m_2dRenderer->drawSprite(m_asteroidTexture, boss.m_PosX, boss.m_PosY, NULL, NULL, boss.m_Rotation, 0);
 
 		for (auto rock : m_ActiveMinions)
-			m_2dRenderer->drawSprite(m_smlRockTexture, rock->X, rock->Y);
+			m_2dRenderer->drawSprite(m_smlRockTexture, rock->X, rock->Y, NULL, NULL, NULL, 0.5f);
 
 		/*for (size_t i = 0; i < m_asteroidCount; ++i)
 			m_2dRenderer->drawSprite(m_asteroidTexture, m_spaceRocks[i].m_asteroidPosX, m_spaceRocks[i].m_asteroidPosY, NULL, NULL, m_asteroidRotation, 0, 0.5f, 0.5f);*/
@@ -574,5 +670,35 @@ void SpinnySpaceRocksApp::setAnglesTo(float& speedX, float& speedY, float setSpe
 		speedX = 0;
 	if (currentY > toY - speedY * deltaT && currentY < toY + speedY * deltaT)
 		speedY = 0;
+}
+
+void SpinnySpaceRocksApp::bossExplosion()
+{
+	if (m_InactiveMinions.size() > 10)
+	{
+		double increment = getRadians(360) / 10;
+		double angle = 0;
+
+		if (evenRings == true)
+		{
+			angle += increment * 0.5f;
+			evenRings = false;
+		}
+		else
+			evenRings = true;
+
+		for (size_t i = 0; i < 10; ++i)
+		{
+			LilRock* r = m_InactiveMinions.back();
+			r->X = boss.m_PosX;
+			r->Y = boss.m_PosY;
+			
+			r->speedX = cos(angle) * r->setSpeed;
+			r->speedY = sin(angle) * r->setSpeed;
+			angle += increment;
+			m_InactiveMinions.pop_back();
+			m_ActiveMinions.push_front(r);
+		}
+	}
 }
 

@@ -16,7 +16,8 @@
 struct AngryRock
 {
 	bool rebound = true;
-	bool invincible = true;
+	bool invincible = false;
+	float coolDown = 0;
 	float m_PosX;
 	float m_PosY;
 	float m_SpeedX;
@@ -33,7 +34,7 @@ struct LilRock
 	float Y;
 	float speedX;
 	float speedY;
-	float setSpeed = 1000;
+	float setSpeed = 700;
 };
 
 struct Bullet
@@ -98,7 +99,7 @@ protected:
 
 	float m_shipPosX;
 	float m_shipPosY;
-	float m_shipSpeed = 600;
+	float m_shipSpeed = 650;
 	float m_shipRotation = 0;
 
 	Asteroid* m_spaceRocks;
@@ -117,8 +118,13 @@ protected:
 	{
 		Idle,
 		Charge,
+		RapidFire
 	};
 	BossAI bossState;
+	void bossExplosion();
+	float exTimer = 0;
+	bool evenRings = true;
+	bool lastStand = false;
 
 	const size_t m_MaxMinions = 360;
 	std::list<LilRock*> m_ActiveMinions;
