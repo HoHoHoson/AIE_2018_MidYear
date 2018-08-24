@@ -25,7 +25,7 @@ struct AngryRock
 	float m_SetSpeed = 300;
 	float m_Rotation = 0;
 	float m_RotationSpeed = 1;
-	float m_Health = 5;
+	int m_Health = 5;
 };
 
 struct LilRock
@@ -34,7 +34,7 @@ struct LilRock
 	float Y;
 	float speedX;
 	float speedY;
-	float setSpeed = 700;
+	float setSpeed = 600;
 };
 
 struct Bullet
@@ -80,12 +80,22 @@ protected:
 	int getRandom(int min, int max);
 	double getRadians(double degrees);
 	void setAnglesTo(float& moveX, float& moveY, float setSpeed, float currentX, float currentY, float toX, float toY, float deltaTime);
-	float m_Timer = 0.0f;
+	float m_FirerateTimer = 0.0f;
+	float m_GameTimer = 0;
+	float iCantThinkSo = 0;
+	float firerate_LMG = 0;
 
 	aie::Texture* m_shipTexture;
 	aie::Texture* m_asteroidTexture;
 	aie::Texture* m_BulletTexture;
 	aie::Texture* m_smlRockTexture;
+	aie::Texture* m_HealthTexture;
+	aie::Texture* m_BossHealthTexture;
+	aie::Texture* m_ShieldTexture;
+	aie::Texture* m_Crosshair;
+
+	float m_CrosshairX;
+	float m_CrosshairY;
 
 	bool m_makeEven;
 	bool set = false;
@@ -97,10 +107,15 @@ protected:
 	int shipWidth;
 	int shipHeight;
 
+	bool m_YouDed = false;
+	float m_DeathTimer = 0;
 	float m_shipPosX;
 	float m_shipPosY;
 	float m_shipSpeed = 650;
 	float m_shipRotation = 0;
+	int m_ShipHealth = 5;
+	bool m_ShipInvulnerable = false;
+	float m_iCoolDown = 0;
 
 	Asteroid* m_spaceRocks;
 	unsigned int m_asteroidCount;
@@ -118,13 +133,15 @@ protected:
 	{
 		Idle,
 		Charge,
-		RapidFire
+		RapidFire,
+		Dead
 	};
 	BossAI bossState;
 	void bossExplosion();
 	float exTimer = 0;
 	bool evenRings = true;
 	bool lastStand = false;
+	bool m_BossAlive = true;
 
 	const size_t m_MaxMinions = 360;
 	std::list<LilRock*> m_ActiveMinions;
@@ -133,7 +150,8 @@ protected:
 	enum GameState
 	{
 		Menu,
-		Game
+		Game,
+		Instructions
 	};
 	GameState state;
 };
