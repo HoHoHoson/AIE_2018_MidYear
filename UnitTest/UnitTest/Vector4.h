@@ -7,8 +7,6 @@ public:
 	Vector4(float x = 0, float y = 0, float z = 0, float w = 0);
 	~Vector4();
 
-	// the anonymous union lets you access the variables through the array "data" due to the struct grouping all the variables into a single struct variable
-	// and everything inside the union shares the same bits of memory
 	union
 	{
 		struct
@@ -19,11 +17,17 @@ public:
 			float w;
 		};
 
-		float data[4];
+		float data[3];
 	};
 
-	// math operators that most Vector classes have 
 	operator float* ();
+	float& operator[](int index);
+
+	float dot(const Vector4& other);
+	Vector4 cross(const Vector4& other);
+	float magnitude();
+	Vector4& normalise();
+
 	Vector4& operator=(const Vector4& copyFrom);
 	Vector4 operator+(const Vector4& other);
 	Vector4& operator+=(const Vector4& other);
@@ -33,6 +37,9 @@ public:
 	Vector4& operator*=(float scalar);
 	Vector4 operator/(float scalar);
 	Vector4& operator/=(float scalar);
+
+	float getRadians(const Vector4& other);
+	float getDegrees(const Vector4& other);
 
 private:
 

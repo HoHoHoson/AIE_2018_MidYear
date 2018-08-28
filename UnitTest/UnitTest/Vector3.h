@@ -18,11 +18,20 @@ public:
 			float z;
 		};
 
-		float data[3];
+		float data[2];
 	};
 
-	// math operators that most Vector classes have 
+	// ways for accessing the data
 	operator float* ();
+	float& operator[](int index);
+
+	// typical Vector functions
+	float dot(const Vector3& other);
+	Vector3 cross(const Vector3& other);
+	float magnitude();
+	Vector3& normalise();
+
+	// math operators that most Vector classes have 
 	Vector3& operator=(const Vector3& copyFrom);
 	Vector3 operator+(const Vector3& other);
 	Vector3& operator+=(const Vector3& other);
@@ -32,6 +41,9 @@ public:
 	Vector3& operator*=(float scalar);
 	Vector3 operator/(float scalar);
 	Vector3& operator/=(float scalar);
+
+	float getRadians(const Vector3& other);
+	float getDegrees(const Vector3& other);
 
 private:
 
