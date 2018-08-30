@@ -15,7 +15,7 @@ int main()
 	Vector2 test;
 
 	m2c = m2a * m2b;
-	test = m2b * v2a;
+	test = m2a * v2a;
 
 	// this code is for drawing matrices to the console
 	float* draw = m2c;
