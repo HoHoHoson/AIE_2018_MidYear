@@ -4,6 +4,13 @@
 #include <cmath>
 
 
+Vector3::Vector3()
+{
+	float x = 0;
+	float y = 0;
+	float z = 0;
+}
+
 // defined a constructor for Vector3
 Vector3::Vector3(float x, float y, float z)
 {
@@ -173,7 +180,7 @@ Vector3 Vector3::operator/(float scalar)
 Vector3 operator/(float scalar, const Vector3 & other)
 {
 	assert(false && "Can't divide a float by a vector");
-	return NULL;
+	return Vector3();
 }
 
 Vector3 & Vector3::operator/=(float scalar)

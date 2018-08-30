@@ -4,6 +4,12 @@
 #include <cmath>
 
 
+Vector2::Vector2()
+{
+	x = 0;
+	y = 0;
+}
+
 Vector2::Vector2(float x, float y)
 {
 	this->x = x;
@@ -151,7 +157,7 @@ Vector2 Vector2::operator/(float scalar)
 Vector2 operator/(float scalar, const Vector2 & other)
 {
 	assert(false && "Can't divide a float by a vector");
-	return NULL;
+	return Vector2();
 }
 
 Vector2 & Vector2::operator/=(float scalar)

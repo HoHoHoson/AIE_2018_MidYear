@@ -4,7 +4,8 @@
 class Vector3
 {
 public:
-	Vector3(float x = 0, float y = 0, float z = 0);
+	Vector3();
+	Vector3(float x, float y, float z);
 	~Vector3();
 
 	// the anonymous union lets you access the variables through the array "data" due to the struct grouping all the variables into a single struct variable

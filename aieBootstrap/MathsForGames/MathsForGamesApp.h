@@ -2,7 +2,6 @@
 
 #include "Application.h"
 #include "Renderer2D.h"
-#include "Vector3.h"
 
 
 class MathsForGamesApp : public aie::Application {

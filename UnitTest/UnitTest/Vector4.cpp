@@ -4,6 +4,14 @@
 #include <cmath>
 
 
+Vector4::Vector4()
+{
+	float x = 0;
+	float y = 0;
+	float z = 0;
+	float w = 0;
+}
+
 Vector4::Vector4(float x, float y, float z, float w)
 {
 	this->x = x;
@@ -185,7 +193,7 @@ Vector4 Vector4::operator/(float scalar)
 Vector4 operator/(float scalar, const Vector4 & other)
 {
 	assert(false && "Can't divide a float by a vector");
-	return NULL;
+	return Vector4();
 }
 
 Vector4 & Vector4::operator/=(float scalar)

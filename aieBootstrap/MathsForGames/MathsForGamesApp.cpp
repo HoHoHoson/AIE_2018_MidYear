@@ -20,23 +20,6 @@ bool MathsForGamesApp::startup() {
 	// the following path would be used instead: "./font/consolas.ttf"
 	m_font = new aie::Font("../bin/font/consolas.ttf", 32);
 
-	// testing my Vector3 class's functions
-	Vector3 v1(1, 2, 3);
-	Vector3 v2(4, 5, 6);
-	Vector3 v3(0);
-	v3 = v1 / 2;
-	// drawing the test Vector3s
-	std::cout << "Vector3 One\n";
-	for (size_t i = 0; i < 3; ++i)
-		std::cout << v1[i] << std::endl;
-	std::cout << "Vector3 Two\n";
-	for (size_t i = 0; i < 3; ++i)
-		std::cout << v2[i] << std::endl;
-	std::cout << "Vector3 Three\n";
-	for (size_t i = 0; i < 3; ++i)
-		std::cout << v3[i] << std::endl;
-
-
 	return true;
 }
 
