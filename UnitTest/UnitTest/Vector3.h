@@ -40,8 +40,6 @@ public:
 	Vector3& operator-=(const Vector3& other);
 	Vector3 operator*(float scalar);
 	Vector3& operator*=(float scalar);
-	Vector3 operator/(float scalar);
-	Vector3& operator/=(float scalar);
 
 	float getRadians(const Vector3& other);
 	float getDegrees(const Vector3& other);
@@ -52,5 +50,3 @@ private:
 
 // for the people who likes making our lives harder
 Vector3 operator*(float scalar, const Vector3& other);
-// throws an assert for any stupid people that flips the numerator and denominator
-Vector3 operator/(float scalar, const Vector3& other);

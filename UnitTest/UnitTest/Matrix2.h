@@ -1,5 +1,6 @@
 #pragma once
 #include "Vector2.h"
+#include <cmath>
 
 class Matrix2
 {
@@ -24,6 +25,9 @@ public:
 
 	Matrix2& operator=(Matrix2& other);
 	Matrix2 operator*(const Matrix2& other);
+	Matrix2& operator*=(const Matrix2& other);
+
+	Matrix2& setRotate(float radian);
 
 private:
 

@@ -60,6 +60,18 @@ Matrix2 Matrix2::operator*(const Matrix2 & other)
 	return value;
 }
 
+Matrix2& Matrix2::operator*=(const Matrix2 & other)
+{
+	*this = *this * other;
+	return *this;
+}
+
+Matrix2 & Matrix2::setRotate(float radian)
+{
+	Matrix2 temp(cosf(radian), sinf(radian), -sinf(radian), cosf(radian));
+	return (*this *= temp);
+}
+
 Vector2 operator*(const Matrix2 & m, const Vector2 & v)
 {
 	Vector2 result;

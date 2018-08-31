@@ -36,8 +36,6 @@ public:
 	Vector4& operator-=(const Vector4& other);
 	Vector4 operator*(float scalar);
 	Vector4& operator*=(float scalar);
-	Vector4 operator/(float scalar);
-	Vector4& operator/=(float scalar);
 
 	float getRadians(const Vector4& other);
 	float getDegrees(const Vector4& other);
@@ -47,4 +45,3 @@ private:
 };
 
 Vector4 operator*(float scalar, const Vector4& other);
-Vector4 operator/(float scalar, const Vector4& other);

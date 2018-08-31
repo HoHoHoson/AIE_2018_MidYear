@@ -145,25 +145,8 @@ Vector2 & Vector2::operator*=(float scalar)
 	return *this;
 }
 
-Vector2 Vector2::operator/(float scalar)
-{
-	Vector2 temp;
-	temp.x = x / scalar;
-	temp.y = y / scalar;
-
-	return temp;
-}
-
 Vector2 operator/(float scalar, const Vector2 & other)
 {
 	assert(false && "Can't divide a float by a vector");
 	return Vector2();
-}
-
-Vector2 & Vector2::operator/=(float scalar)
-{
-	x /= scalar;
-	y /= scalar;
-
-	return *this;
 }

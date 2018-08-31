@@ -167,29 +167,11 @@ Vector3 & Vector3::operator*=(float scalar)
 	return *this;
 }
 
-Vector3 Vector3::operator/(float scalar)
-{
-	Vector3 temp;
-	temp.x = x / scalar;
-	temp.y = y / scalar;
-	temp.z = z / scalar;
-
-	return temp;
-}
-
 Vector3 operator/(float scalar, const Vector3 & other)
 {
 	assert(false && "Can't divide a float by a vector");
 	return Vector3();
 }
 
-Vector3 & Vector3::operator/=(float scalar)
-{
-	x /= scalar;
-	y /= scalar;
-	z /= scalar;
-
-	return *this;
-}
 
 
