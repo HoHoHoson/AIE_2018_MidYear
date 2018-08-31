@@ -80,7 +80,7 @@ Matrix4 & Matrix4::setRotateX(float radian)
 		0, -sinf(radian), cosf(radian), 0,
 		0, 0, 0, 1);
 
-	return (*this *= temp);
+	return (*this = temp);
 }
 
 Matrix4 & Matrix4::setRotateY(float radian)
@@ -91,7 +91,7 @@ Matrix4 & Matrix4::setRotateY(float radian)
 		sinf(radian), 0, cosf(radian), 0,
 		0, 0, 0, 1);
 
-	return (*this *= temp);
+	return (*this = temp);
 }
 
 Matrix4 & Matrix4::setRotateZ(float radian)
@@ -102,7 +102,7 @@ Matrix4 & Matrix4::setRotateZ(float radian)
 		0, 0, 1, 0,
 		0, 0, 0, 1);
 
-	return (*this *= temp);
+	return (*this = temp);
 }
 
 Vector4 operator*(const Matrix4 & m, const Vector4 & v)

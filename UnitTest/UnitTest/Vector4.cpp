@@ -39,7 +39,7 @@ float Vector4::dot(const Vector4 & other)
 {
 	float dotProduct = 0;
 
-	for (size_t i = 0; i < 3; ++i)
+	for (size_t i = 0; i < 4; ++i)
 		dotProduct += data[i] * other.data[i];
 
 	return dotProduct;

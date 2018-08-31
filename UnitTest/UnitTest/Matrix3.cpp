@@ -74,7 +74,7 @@ Matrix3 & Matrix3::setRotateX(float radian)
 		0, cosf(radian), sinf(radian),
 		0, -sinf(radian), cosf(radian));
 
-	return (*this *= temp);
+	return (*this = temp);
 }
 
 Matrix3 & Matrix3::setRotateY(float radian)
@@ -84,7 +84,7 @@ Matrix3 & Matrix3::setRotateY(float radian)
 		0, 1, 0,
 		sinf(radian), 0, cosf(radian));
 
-	return (*this *= temp);
+	return (*this = temp);
 }
 
 Matrix3 & Matrix3::setRotateZ(float radian)
@@ -94,8 +94,7 @@ Matrix3 & Matrix3::setRotateZ(float radian)
 		-sinf(radian), cosf(radian), 0,
 		0, 0, 1);
 
-	*this = temp;
-	return *this;
+	return (*this = temp);
 }
 
 Vector3 operator*(const Matrix3 & m, const Vector3 & v)
