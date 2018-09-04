@@ -15,15 +15,27 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="MathsForGamesApp.cpp">
+    <ClCompile Include="NotSoSupaCirclagonApp.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="main.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="SceneObj.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="AvoidObj.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="MathsForGamesApp.h">
+    <ClInclude Include="NotSoSupaCirclagonApp.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="SceneObj.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="AvoidObj.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

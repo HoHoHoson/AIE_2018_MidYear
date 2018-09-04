@@ -1,9 +1,9 @@
-#include "MathsForGamesApp.h"
+#include "NotSoSupaCirclagonApp.h"
 
 int main() {
 	
 	// allocation
-	auto app = new MathsForGamesApp();
+	auto app = new NotSoSupaCirclagonApp();
 
 	// initialise and loop
 	app->run("AIE", 1280, 720, false);
