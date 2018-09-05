@@ -24,7 +24,7 @@
     <ClCompile Include="SceneObj.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="AvoidObj.cpp">
+    <ClCompile Include="Circlagon.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -35,7 +35,7 @@
     <ClInclude Include="SceneObj.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="AvoidObj.h">
+    <ClInclude Include="Circlagon.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

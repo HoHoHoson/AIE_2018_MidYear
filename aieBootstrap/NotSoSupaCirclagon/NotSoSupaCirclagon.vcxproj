@@ -162,13 +162,13 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="AvoidObj.cpp" />
+    <ClCompile Include="Circlagon.cpp" />
     <ClCompile Include="NotSoSupaCirclagonApp.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="SceneObj.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="AvoidObj.h" />
+    <ClInclude Include="Circlagon.h" />
     <ClInclude Include="NotSoSupaCirclagonApp.h" />
     <ClInclude Include="SceneObj.h" />
   </ItemGroup>

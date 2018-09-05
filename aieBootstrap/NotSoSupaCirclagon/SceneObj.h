@@ -14,7 +14,7 @@ public:
 
 	Matrix3& getGlobal();
 	Matrix3& getLocal();
-	void addChild(SceneObj* child);
+	void addChild(SceneObj& child);
 
 private:
 

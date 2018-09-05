@@ -32,7 +32,8 @@ bool NotSoSupaCirclagonApp::startup()
 	m_HeightMid = getWindowHeight() / 2;
 
 	m_Origin.getLocal()[2] = { m_WidthMid, m_HeightMid, 1 };
-	m_Origin.addChild(m_PlayerPos);
+	m_Origin.addChild(m_PlayerOrigin);
+	m_PlayerOrigin.addChild(m_PlayerPos);
 
 	return true;
 }
@@ -48,19 +49,12 @@ void NotSoSupaCirclagonApp::update(float deltaTime) {
 	// input example
 	aie::Input* input = aie::Input::getInstance();
 
+	degrees += 50 * deltaTime;
 	m_Origin.updateObj(deltaTime);
-	//m_Origin.getLocal().rotateZ(toRadian(90) * deltaTime);
-	degrees += 5 * deltaTime;
-	//m_PlayerPos->getLocal().setRotateZ(toRadian(270));
-	//m_PlayerPos->getLocal()[2][0] = 150;
-	m_PlayerPos->getLocal()[0][0] = degrees;
-	m_PlayerPos->getLocal()[0][2] = 0;
+	m_PlayerPos.getLocal().rotateZ(toRadian(90) * deltaTime);
+	//m_PlayerPos.getLocal().setRotateZ(toRadian(270));
+	m_PlayerPos.getLocal()[2][0] = degrees;
 
-	float test1 = m_PlayerTex->getWidth() / 2;
-	float test2 = getWindowWidth();
-
-	if (test1 > test2)
-		quit();
 
 	// exit the application
 	if (input->isKeyDown(aie::INPUT_KEY_ESCAPE))
@@ -78,8 +72,8 @@ void NotSoSupaCirclagonApp::draw() {
 	// draw your stuff here!
 	
 	m_2dRenderer->drawSprite(m_SafeTex, 100, 100);
-	m_2dRenderer->drawSpriteTransformed3x3(m_CircleTex, m_Origin.getGlobal());
-	m_2dRenderer->drawSpriteTransformed3x3(m_PlayerTex, m_PlayerPos->getGlobal());
+	m_2dRenderer->drawSpriteTransformed3x3(m_CircleTex, m_PlayerOrigin.getGlobal());
+	m_2dRenderer->drawSpriteTransformed3x3(m_PlayerTex, m_PlayerPos.getGlobal());
 
 	// output some text, uses the last used colour
 	m_2dRenderer->drawText(m_font, "Press ESC to quit", 0, 0);

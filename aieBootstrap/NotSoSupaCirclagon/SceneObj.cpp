@@ -35,9 +35,9 @@ Matrix3 & SceneObj::getLocal()
 	return m_Local;
 }
 
-void SceneObj::addChild(SceneObj* child)
+void SceneObj::addChild(SceneObj& child)
 {
-	child->m_Parent = this;
-	child->m_Global = m_Global;
-	m_Children.push_front(child);
+	child.m_Parent = this;
+	child.m_Global = m_Global;
+	m_Children.push_front(&child);
 }

@@ -1,10 +1,11 @@
 #pragma once
 
+#include <vector>
+
 #include "Application.h"
 #include "Renderer2D.h"
 #include "SceneObj.h"
-#include "AvoidObj.h"
-
+#include "Circlagon.h"
 
 class NotSoSupaCirclagonApp : public aie::Application {
 public:
@@ -32,7 +33,9 @@ protected:
 	float degrees = 0;
 
 	SceneObj m_Origin;
-	SceneObj* m_PlayerPos = new SceneObj;
+	SceneObj m_PlayerOrigin;
+	SceneObj m_PlayerPos;
+	std::vector<Circlagon*> m_Circlagons;
 
 	float toRadian(float degrees);
 	bool isInside(const aie::Texture* s_Obj, Matrix3& s_M, const aie::Texture* l_Obj, Matrix3& l_M, float l_Multi);
