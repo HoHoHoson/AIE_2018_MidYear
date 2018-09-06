@@ -1,8 +1,4 @@
 #include "Vector4.h"
-#include <cassert>
-#define _USE_MATH_DEFINES
-#include <cmath>
-
 
 Vector4::Vector4()
 {

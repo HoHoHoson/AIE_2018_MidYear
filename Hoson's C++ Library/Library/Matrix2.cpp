@@ -14,9 +14,9 @@ Matrix2::Matrix2()
 	}
 }
 
-Matrix2::Matrix2(float x1, float y1, float x2, float y2)
+Matrix2::Matrix2(float Xx, float Xy, float Yx, float Yy)
 {
-	x.x = x1; x.y = y1; y.x = x2; y.y = y2;
+	x.x = Xx; x.y = Xy; y.x = Yx; y.y = Yy;
 }
 
 Matrix2::~Matrix2()
@@ -30,6 +30,7 @@ Matrix2::operator float*()
 
 Vector2& Matrix2::operator[](int index)
 {
+	assert(index == 0 && index == 1 && "Invalid Matrix2 index");
 	return matrix[index];
 }
 
@@ -65,6 +66,22 @@ Matrix2& Matrix2::operator*=(const Matrix2 & other)
 	return (*this = (Matrix2&)(*this * other));
 }
 
+Matrix2 & Matrix2::setIdentity()
+{
+	for (size_t v2 = 0; v2 < 2; ++v2)
+	{
+		for (size_t axis = 0; axis < 2; ++axis)
+		{
+			if (v2 == axis)
+				matrix[v2].data[axis] = 1;
+			else
+				matrix[v2].data[axis] = 0;
+		}
+	}
+
+	return *this;
+}
+
 Matrix2& Matrix2::rotate(float radian)
 {
 	Matrix2 temp(cosf(radian), sinf(radian), -sinf(radian), cosf(radian));
@@ -74,6 +91,13 @@ Matrix2& Matrix2::rotate(float radian)
 Matrix2 & Matrix2::setRotate(float radian)
 {
 	(Matrix2&)*this = (Matrix2&)rotate(radian);
+	return *this;
+}
+
+Matrix2 & Matrix2::scale(float xScale, float yScale)
+{
+	matrix[0][0] *= xScale;
+	matrix[1][1] *= yScale;
 	return *this;
 }
 

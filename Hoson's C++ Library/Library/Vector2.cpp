@@ -1,8 +1,4 @@
 #include "Vector2.h"
-#include <cassert>
-#define _USE_MATH_DEFINES
-#include <cmath>
-
 
 Vector2::Vector2()
 {

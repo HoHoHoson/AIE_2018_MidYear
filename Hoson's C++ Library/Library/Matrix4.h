@@ -39,6 +39,8 @@ public:
 	Matrix4& setRotateX(float radian);
 	Matrix4& setRotateY(float radian);
 	Matrix4& setRotateZ(float radian);
+	Matrix4& scale(float xScale = 1, float yScale = 1, float zScale = 1, float wScale = 1);
+	Matrix4& translate(float xTranslate = 0, float yTranslate = 0, float zTranslate = 0, float wTranslate = 0);
 
 private:
 

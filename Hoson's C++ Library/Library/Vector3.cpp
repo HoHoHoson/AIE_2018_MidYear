@@ -1,8 +1,4 @@
 #include "Vector3.h"
-#include <cassert>
-#define _USE_MATH_DEFINES
-#include <cmath>
-
 
 Vector3::Vector3()
 {

@@ -37,6 +37,7 @@ Matrix4::operator float*()
 
 Vector4 & Matrix4::operator[](const int & index)
 {
+	assert(index >= 0 && index <= 3 && "Invalid Matrix4 index");
 	return matrix[index];
 }
 
@@ -136,6 +137,24 @@ Matrix4 & Matrix4::setRotateZ(float radian)
 		0, 0, 0, 1);
 
 	return (*this = temp);
+}
+
+Matrix4 & Matrix4::scale(float xScale, float yScale, float zScale, float wScale)
+{
+	matrix[0][0] *= xScale;
+	matrix[1][1] *= yScale;
+	matrix[2][2] *= zScale;
+	matrix[3][3] *= wScale;
+	return *this;
+}
+
+Matrix4 & Matrix4::translate(float xTranslate, float yTranslate, float zTranslate, float wTranslate)
+{
+	matrix[3][0] += xTranslate;
+	matrix[3][1] += yTranslate;
+	matrix[3][2] += zTranslate;
+	matrix[3][3] += wTranslate;
+	return *this;
 }
 
 Vector4 operator*(const Matrix4 & m, const Vector4 & v)

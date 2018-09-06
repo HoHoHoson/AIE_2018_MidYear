@@ -10,3 +10,8 @@ Circlagon::Circlagon()
 Circlagon::~Circlagon()
 {
 }
+
+void Circlagon::updateCirclagon(float deltaTime)
+{
+
+}
