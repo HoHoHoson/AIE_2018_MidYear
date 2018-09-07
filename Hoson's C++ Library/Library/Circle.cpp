@@ -2,20 +2,19 @@
 
 Circle::~Circle()
 {
-
 }
 
-Vector2 Circle::getOrigin()
+Vector2 Circle::getOrigin() const
 {
 	return m_CircleOrigin;
 }
 
-float Circle::getRadius()
+float Circle::getRadius() const
 {
 	return m_CircleRadius;
 }
 
-bool Circle::checkCollision(Circle & other)
+bool Circle::checkCollision(const Circle & other) const
 {
 	float sumRadiiPow2 = pow(m_CircleRadius + other.m_CircleRadius, 2);
 	float distancePow2 = magnitudePow2(m_CircleOrigin, other.m_CircleOrigin);

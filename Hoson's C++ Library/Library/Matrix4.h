@@ -14,24 +14,13 @@ public:
 		float Tx, float Ty, float Tz, float Tw);
 	~Matrix4();
 
-	union 
-	{
-		struct
-		{
-			Vector4 x;
-			Vector4 y;
-			Vector4 z;
-			Vector4 t;
-		};
-		Vector4 matrix[3];
-	};
-
 	operator float*();
-	Vector4& operator[](const int& index);
+	Vector4& operator[](int index);
+	Vector4 operator[](int index) const;
 
-	Matrix4& operator=(Matrix4& other);
-	Matrix4 operator*(const Matrix4& other);
+	Matrix4& operator=(const Matrix4& other);
 	Matrix4& operator*=(const Matrix4& other);
+	Matrix4 operator*(const Matrix4& other) const;
 
 	Matrix4& rotateX(float radian);
 	Matrix4& rotateY(float radian);
@@ -44,6 +33,17 @@ public:
 
 private:
 
+	union
+	{
+		struct
+		{
+			Vector4 x;
+			Vector4 y;
+			Vector4 z;
+			Vector4 t;
+		};
+		Vector4 matrix[3];
+	};
 };
 
-Vector4 operator*(const Matrix4& m, const Vector4& v);
+static Vector4 operator*(const Matrix4& m, const Vector4& v);
