@@ -36,9 +36,6 @@
     <ClInclude Include="2D_Collision.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\Hoson%27s C++ Library\Library\Algoritms.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\Hoson%27s C++ Library\Library\Matrix2.cpp">
@@ -66,9 +63,6 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\..\Hoson%27s C++ Library\Library\Plane2D.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\Hoson%27s C++ Library\Library\Ray2D.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

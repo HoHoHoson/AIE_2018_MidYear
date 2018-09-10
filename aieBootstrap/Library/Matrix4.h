@@ -14,7 +14,26 @@ public:
 		float Tx, float Ty, float Tz, float Tw);
 	~Matrix4();
 
-	union 
+	operator float*();
+	Vector4& operator[](int index);
+	Vector4 operator[](int index) const;
+
+	Matrix4& operator=(const Matrix4& other);
+	Matrix4& operator*=(const Matrix4& other);
+	Matrix4 operator*(const Matrix4& other) const;
+
+	Matrix4& rotateX(float radian);
+	Matrix4& rotateY(float radian);
+	Matrix4& rotateZ(float radian);
+	Matrix4& setRotateX(float radian);
+	Matrix4& setRotateY(float radian);
+	Matrix4& setRotateZ(float radian);
+	Matrix4& scale(float xScale = 1, float yScale = 1, float zScale = 1, float wScale = 1);
+	Matrix4& translate(float xTranslate = 0, float yTranslate = 0, float zTranslate = 0, float wTranslate = 0);
+
+private:
+
+	union
 	{
 		struct
 		{
@@ -25,23 +44,6 @@ public:
 		};
 		Vector4 matrix[3];
 	};
-
-	operator float*();
-	Vector4& operator[](const int& index);
-
-	Matrix4& operator=(Matrix4& other);
-	Matrix4 operator*(const Matrix4& other);
-	Matrix4& operator*=(const Matrix4& other);
-
-	Matrix4& rotateX(float radian);
-	Matrix4& rotateY(float radian);
-	Matrix4& rotateZ(float radian);
-	Matrix4& setRotateX(float radian);
-	Matrix4& setRotateY(float radian);
-	Matrix4& setRotateZ(float radian);
-
-private:
-
 };
 
-Vector4 operator*(const Matrix4& m, const Vector4& v);
+static Vector4 operator*(const Matrix4& m, const Vector4& v);

@@ -1,8 +1,4 @@
 #include "Vector4.h"
-#include <cassert>
-#define _USE_MATH_DEFINES
-#include <cmath>
-
 
 Vector4::Vector4()
 {
@@ -35,7 +31,13 @@ float& Vector4::operator[](int index)
 	return data[index];
 }
 
-float Vector4::dot(const Vector4 & other)
+float Vector4::operator[](const int index) const
+{
+	assert(index >= 0 || index <= 3 && "Invalid Vector4 index");
+	return data[index];
+}
+
+float Vector4::dot(const Vector4 & other) const
 {
 	float dotProduct = 0;
 
@@ -45,7 +47,7 @@ float Vector4::dot(const Vector4 & other)
 	return dotProduct;
 }
 
-Vector4 Vector4::cross(const Vector4 & other)
+Vector4 Vector4::cross(const Vector4 & other) const
 {
 	Vector4 temp;
 
@@ -57,7 +59,7 @@ Vector4 Vector4::cross(const Vector4 & other)
 	return temp;
 }
 
-float Vector4::magnitude()
+float Vector4::magnitude() const
 {
 	return sqrt(x * x + y * y + z * z);
 }
@@ -84,7 +86,7 @@ Vector4 & Vector4::operator = (const Vector4 & copyFrom)
 	return *this;
 }
 
-float Vector4::getRadians(const Vector4 & other)
+float Vector4::getRadians(const Vector4 & other) const
 {
 	float radian;
 	Vector4 v4a = *this;
@@ -103,12 +105,12 @@ float Vector4::getRadians(const Vector4 & other)
 	return radian;
 }
 
-float Vector4::getDegrees(const Vector4 & other)
+float Vector4::getDegrees(const Vector4 & other) const
 {
 	return (this->getRadians(other) / (M_PI / 180));
 }
 
-Vector4 Vector4::operator+(const Vector4 & other)
+Vector4 Vector4::operator+(const Vector4 & other) const
 {
 	Vector4 temp;
 
@@ -130,7 +132,7 @@ Vector4 & Vector4::operator+=(const Vector4 & other)
 	return *this;
 }
 
-Vector4 Vector4::operator-(const Vector4 & other)
+Vector4 Vector4::operator-(const Vector4 & other) const
 {
 	Vector4 temp;
 	temp.x = x - other.x;
@@ -151,7 +153,7 @@ Vector4 & Vector4::operator-=(const Vector4 & other)
 	return *this;
 }
 
-Vector4 Vector4::operator*(float scalar)
+Vector4 Vector4::operator*(float scalar) const
 {
 	return scalar * *this;
 }
@@ -159,10 +161,10 @@ Vector4 Vector4::operator*(float scalar)
 Vector4 operator*(float scalar, const Vector4 & other)
 {
 	Vector4 temp;
-	temp.x = other.x * scalar;
-	temp.y = other.y * scalar;
-	temp.z = other.z * scalar;
-	temp.w = other.w * scalar;
+	temp[0] = other[0] * scalar;
+	temp[1] = other[1] * scalar;
+	temp[2] = other[2] * scalar;
+	temp[3] = other[3] * scalar;
 
 	return temp;
 }

@@ -115,6 +115,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="..\..\Hoson%27s C++ Library\Library\Algoritms.h" />
     <ClInclude Include="..\..\Hoson%27s C++ Library\Library\Matrix2.h" />
     <ClInclude Include="..\..\Hoson%27s C++ Library\Library\Matrix3.h" />
     <ClInclude Include="..\..\Hoson%27s C++ Library\Library\Matrix4.h" />
@@ -129,6 +130,7 @@
     <ClCompile Include="..\..\Hoson%27s C++ Library\Library\Matrix3.cpp" />
     <ClCompile Include="..\..\Hoson%27s C++ Library\Library\Matrix4.cpp" />
     <ClCompile Include="..\..\Hoson%27s C++ Library\Library\Plane2D.cpp" />
+    <ClCompile Include="..\..\Hoson%27s C++ Library\Library\Ray2D.cpp" />
     <ClCompile Include="..\..\Hoson%27s C++ Library\Library\Rectangle.cpp" />
     <ClCompile Include="..\..\Hoson%27s C++ Library\Library\Vector2.cpp" />
     <ClCompile Include="..\..\Hoson%27s C++ Library\Library\Vector3.cpp" />

@@ -1,8 +1,4 @@
 #include "Vector3.h"
-#include <cassert>
-#define _USE_MATH_DEFINES
-#include <cmath>
-
 
 Vector3::Vector3()
 {
@@ -34,7 +30,13 @@ float& Vector3::operator[](int index)
 	return data[index];
 }
 
-float Vector3::dot(const Vector3 & other)
+float Vector3::operator[](const int index) const
+{
+	assert(index >= 0 && index <= 2 && "Invalid Vector3 index");
+	return data[index];
+}
+
+float Vector3::dot(const Vector3 & other) const
 {
 	float dotProduct = 0;
 
@@ -44,7 +46,7 @@ float Vector3::dot(const Vector3 & other)
 	return dotProduct;
 }
 
-Vector3 Vector3::cross(const Vector3 & other)
+Vector3 Vector3::cross(const Vector3 & other) const
 {
 	Vector3 temp;
 
@@ -55,7 +57,7 @@ Vector3 Vector3::cross(const Vector3 & other)
 	return temp;
 }
 
-float Vector3::getRadians(const Vector3 & other)
+float Vector3::getRadians(const Vector3 & other) const
 {
 	float radian;
 	Vector3 v3a = *this;
@@ -74,12 +76,12 @@ float Vector3::getRadians(const Vector3 & other)
 	return radian;
 }
 
-float Vector3::getDegrees(const Vector3 & other)
+float Vector3::getDegrees(const Vector3 & other) const
 {
 	return (this->getRadians(other) / (M_PI / 180));
 }
 
-float Vector3::magnitude()
+float Vector3::magnitude() const
 {
 	return sqrt(x * x + y * y + z * z);
 }
@@ -103,7 +105,7 @@ Vector3 & Vector3::operator = (const Vector3 & copyFrom)
 	return *this;
 }
 
-Vector3 Vector3::operator+(const Vector3 & other)
+Vector3 Vector3::operator+(const Vector3 & other) const
 {
 	Vector3 temp;
 
@@ -123,7 +125,7 @@ Vector3 & Vector3::operator+=(const Vector3 & other)
 	return *this;
 }
 
-Vector3 Vector3::operator-(const Vector3 & other)
+Vector3 Vector3::operator-(const Vector3 & other) const
 {
 	Vector3 temp;
 	temp.x = x - other.x;
@@ -143,7 +145,7 @@ Vector3 & Vector3::operator-=(const Vector3 & other)
 }
 
 // this function calls the other multiplication function, just cause I'm lazy
-Vector3 Vector3::operator*(float scalar)
+Vector3 Vector3::operator*(float scalar) const
 {
 	return scalar * *this;
 }
@@ -151,9 +153,9 @@ Vector3 Vector3::operator*(float scalar)
 Vector3 operator*(float scalar, const Vector3 & other)
 {
 	Vector3 temp;
-	temp.x = other.x * scalar;
-	temp.y = other.y * scalar;
-	temp.z = other.z * scalar;
+	temp[0] = other[0] * scalar;
+	temp[1] = other[1] * scalar;
+	temp[2] = other[2] * scalar;
 
 	return temp;
 }

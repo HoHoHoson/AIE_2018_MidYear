@@ -20,8 +20,8 @@
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>15.0</VCProjectVersion>
-    <ProjectGuid>{854D7464-C0F6-4522-A24C-2F5AF2145950}</ProjectGuid>
-    <RootNamespace>MathLib</RootNamespace>
+    <ProjectGuid>{D8B03AC4-E93E-4025-A34F-A9ADB5360390}</ProjectGuid>
+    <RootNamespace>Library</RootNamespace>
     <WindowsTargetPlatformVersion>10.0.17134.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
@@ -69,16 +69,13 @@
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-    <OutDir>$(SolutionDir)temp\$(ProjectName)\$(Platform)\$(Configuration)\</OutDir>
-  </PropertyGroup>
+  <PropertyGroup />
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
       <ConformanceMode>true</ConformanceMode>
-      <PreprocessorDefinitions>MathLib_EXPORT;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -118,20 +115,24 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="..\..\Hoson%27s C++ Library\MathLib\Matrix2.cpp" />
-    <ClCompile Include="..\..\Hoson%27s C++ Library\MathLib\Matrix3.cpp" />
-    <ClCompile Include="..\..\Hoson%27s C++ Library\MathLib\Matrix4.cpp" />
-    <ClCompile Include="..\..\Hoson%27s C++ Library\MathLib\Vector2.cpp" />
-    <ClCompile Include="..\..\Hoson%27s C++ Library\MathLib\Vector3.cpp" />
-    <ClCompile Include="..\..\Hoson%27s C++ Library\MathLib\Vector4.cpp" />
+    <ClInclude Include="..\..\Hoson%27s C++ Library\Library\Matrix2.h" />
+    <ClInclude Include="..\..\Hoson%27s C++ Library\Library\Matrix3.h" />
+    <ClInclude Include="..\..\Hoson%27s C++ Library\Library\Matrix4.h" />
+    <ClInclude Include="2D_Collision.h" />
+    <ClInclude Include="..\..\Hoson%27s C++ Library\Library\Vector2.h" />
+    <ClInclude Include="..\..\Hoson%27s C++ Library\Library\Vector3.h" />
+    <ClInclude Include="..\..\Hoson%27s C++ Library\Library\Vector4.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\..\Hoson%27s C++ Library\MathLib\Matrix2.h" />
-    <ClInclude Include="..\..\Hoson%27s C++ Library\MathLib\Matrix3.h" />
-    <ClInclude Include="..\..\Hoson%27s C++ Library\MathLib\Matrix4.h" />
-    <ClInclude Include="..\..\Hoson%27s C++ Library\MathLib\Vector2.h" />
-    <ClInclude Include="..\..\Hoson%27s C++ Library\MathLib\Vector3.h" />
-    <ClInclude Include="..\..\Hoson%27s C++ Library\MathLib\Vector4.h" />
+    <ClCompile Include="..\..\Hoson%27s C++ Library\Library\Circle.cpp" />
+    <ClCompile Include="..\..\Hoson%27s C++ Library\Library\Matrix2.cpp" />
+    <ClCompile Include="..\..\Hoson%27s C++ Library\Library\Matrix3.cpp" />
+    <ClCompile Include="..\..\Hoson%27s C++ Library\Library\Matrix4.cpp" />
+    <ClCompile Include="..\..\Hoson%27s C++ Library\Library\Plane2D.cpp" />
+    <ClCompile Include="..\..\Hoson%27s C++ Library\Library\Rectangle.cpp" />
+    <ClCompile Include="..\..\Hoson%27s C++ Library\Library\Vector2.cpp" />
+    <ClCompile Include="..\..\Hoson%27s C++ Library\Library\Vector3.cpp" />
+    <ClCompile Include="..\..\Hoson%27s C++ Library\Library\Vector4.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

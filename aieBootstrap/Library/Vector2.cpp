@@ -1,8 +1,4 @@
 #include "Vector2.h"
-#include <cassert>
-#define _USE_MATH_DEFINES
-#include <cmath>
-
 
 Vector2::Vector2()
 {
@@ -30,13 +26,18 @@ float& Vector2::operator[](int index)
 	assert(index == 1 || index == 0 && "Invalid Vector2 index");
 	return data[index];
 }
+float Vector2::operator[](int index) const
+{
+	assert(index == 1 || index == 0 && "Invalid Vector2 index");
+	return data[index];
+}
 
-float Vector2::magnitude()
+float Vector2::magnitude() const
 {
 	return sqrt(x * x + y * y);
 }
 
-float Vector2::dot(const Vector2 & other)
+float Vector2::dot(const Vector2 & other) const
 {
 	float dotProduct = 0;
 
@@ -46,7 +47,7 @@ float Vector2::dot(const Vector2 & other)
 	return dotProduct;
 }
 
-float Vector2::getRadians(const Vector2 & other)
+float Vector2::getRadians(const Vector2 & other) const
 {
 	float radian;
 	Vector2 v2a = *this;
@@ -65,7 +66,7 @@ float Vector2::getRadians(const Vector2 & other)
 	return radian;
 }
 
-float Vector2::getDegrees(const Vector2& other)
+float Vector2::getDegrees(const Vector2& other) const
 {
 	return (this->getRadians(other) / (M_PI / 180));
 }
@@ -88,7 +89,7 @@ Vector2 & Vector2::operator = (const Vector2 & copyFrom)
 	return *this;
 }
 
-Vector2 Vector2::operator+(const Vector2 & other)
+Vector2 Vector2::operator+(const Vector2 & other) const
 {
 	Vector2 temp;
 
@@ -106,7 +107,7 @@ Vector2 & Vector2::operator+=(const Vector2 & other)
 	return *this;
 }
 
-Vector2 Vector2::operator-(const Vector2 & other)
+Vector2 Vector2::operator-(const Vector2 & other) const
 {
 	Vector2 temp;
 	temp.x = x - other.x;
@@ -123,7 +124,7 @@ Vector2 & Vector2::operator-=(const Vector2 & other)
 	return *this;
 }
 
-Vector2 Vector2::operator*(float scalar)
+Vector2 Vector2::operator*(float scalar) const
 {
 	return scalar * *this;
 }
@@ -131,8 +132,8 @@ Vector2 Vector2::operator*(float scalar)
 Vector2 operator*(float scalar, const Vector2 & other)
 {
 	Vector2 temp;
-	temp.x = other.x * scalar;
-	temp.y = other.y * scalar;
+	temp[0] = other[0] * scalar;
+	temp[1] = other[1] * scalar;
 
 	return temp;
 }
