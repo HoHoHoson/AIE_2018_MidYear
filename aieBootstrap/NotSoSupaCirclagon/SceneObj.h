@@ -12,9 +12,15 @@ public:
 	void updateObj(float deltaTime);
 	void updateTransform();
 
-	Matrix3& getGlobal();
-	Matrix3& getLocal();
-	void addChild(SceneObj& child);
+	Vector3& operator[](int index);
+	Vector3 operator[](int index) const;
+	Matrix3 getLocal() const;
+	Matrix3 getGlobal() const;
+	Matrix3& setLocal();
+	Matrix3& setGlobal();
+	void setParent(SceneObj* parent);
+
+	void addChild(SceneObj* child);
 
 private:
 

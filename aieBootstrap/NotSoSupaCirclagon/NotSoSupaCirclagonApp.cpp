@@ -31,9 +31,13 @@ bool NotSoSupaCirclagonApp::startup()
 	m_WidthMid = getWindowWidth() / 2;
 	m_HeightMid = getWindowHeight() / 2;
 
-	m_Origin.getLocal()[2] = { m_WidthMid, m_HeightMid, 1 };
-	m_Origin.addChild(m_PlayerOrigin);
-	m_PlayerOrigin.addChild(m_PlayerPos);
+	m_Origin.setLocal()[2] = { m_WidthMid, m_HeightMid, 1 };
+	m_Origin.addChild(&m_PlayerOrigin);
+	m_PlayerOrigin.addChild(&m_PlayerPos);
+	Circlagon* test = new Circlagon;
+	test->loadCirclagon();
+	m_Origin.addChild(test->loadThis());
+	m_Circlagons.push_back(test);
 
 	return true;
 }
@@ -70,11 +74,17 @@ void NotSoSupaCirclagonApp::draw() {
 	m_2dRenderer->begin();
 
 	// draw your stuff here!
-	
-	m_2dRenderer->drawSprite(m_SafeTex, 100, 100);
-	m_2dRenderer->drawSpriteTransformed3x3(m_CircleTex, m_PlayerOrigin.getGlobal());
-	m_2dRenderer->drawSpriteTransformed3x3(m_PlayerTex, m_PlayerPos.getGlobal());
 
+	//m_2dRenderer->drawSpriteTransformed3x3(m_CircleTex, m_PlayerOrigin.getGlobal(), NULL, NULL, 0);
+	//m_2dRenderer->drawSpriteTransformed3x3(m_PlayerTex, m_PlayerPos.getGlobal(), NULL, NULL, 0);
+
+	for (auto ring : m_Circlagons)
+		if (ring->isActive() == true)
+		{
+			m_2dRenderer->drawSpriteTransformed3x3(m_CircleTex, ring->getBaseGlobal(), NULL, NULL, 1);
+			m_2dRenderer->drawSpriteTransformed3x3(m_SafeTex, ring->getSafeGlobal(), NULL, NULL, 0.5);
+		}
+	
 	// output some text, uses the last used colour
 	m_2dRenderer->drawText(m_font, "Press ESC to quit", 0, 0);
 
@@ -82,12 +92,12 @@ void NotSoSupaCirclagonApp::draw() {
 	m_2dRenderer->end();
 }
 
-float NotSoSupaCirclagonApp::toRadian(float degrees)
+float NotSoSupaCirclagonApp::toRadian(float degrees) const
 {
 	return (degrees * (M_PI / 180));
 }
 
-bool NotSoSupaCirclagonApp::isInside(const aie::Texture* s_Obj, Matrix3& s_M, const aie::Texture* l_Obj, Matrix3& l_M, float l_Multi)
+bool NotSoSupaCirclagonApp::isInside(const aie::Texture* s_Obj, const Matrix3& s_M, const aie::Texture* l_Obj, const Matrix3& l_M, float l_Multi) const
 {
 	float distance = (s_M[2] - l_M[2]).magnitude();
 	float safeZone = (l_Obj->getWidth() / 2) * l_Multi - s_Obj->getWidth() / 2;

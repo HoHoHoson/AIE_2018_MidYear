@@ -1,5 +1,6 @@
 #pragma once
 
+#include "Algoritms.h"
 #include "Vector2.h"
 
 class Rectangle
@@ -47,6 +48,7 @@ public:
 	float getRadius()	const;
 
 	bool checkCollision(const Circle& other) const;
+	bool collisionRectangle(const Rectangle& other) const;
 	Circle& updateCircle(const Vector2& newOrigin);
 
 private:
@@ -71,6 +73,9 @@ public:
 	template<typename T>
 	Plane2D(T from, T to); 	// the normal is on the right side of this line (the collision side)
 	~Plane2D();
+
+	Vector2 getNormal() const;
+	float getScalar() const;
 
 	Vector2 closestPointTo(const Vector2 & other)	const;
 	float distanceTo(const Vector2& other)			const;
@@ -99,7 +104,41 @@ inline Plane2D::Plane2D(T from, T to)
 
 
 
-static float magnitudePow2(const Vector2 v1, const Vector2 v2)
+class Ray2D
+{
+public:
+	template<typename T>
+	Ray2D(T origin, T direction, float length = INFINITY);
+	~Ray2D();
+
+	float getLength()		const;
+	Vector2 getOrigin()		const;
+	Vector2 getDirection()	const;
+
+	Vector2 closestPoint(const Vector2& point)					 const;
+	bool collisionCircle(const Circle& c, Vector2* i = nullptr)	 const;
+	bool collisionPlane(const Plane2D& pl, Vector2* i = nullptr) const;
+	bool collisionRectangle(const Rectangle& r, Vector2* i = nullptr) const;
+
+private:
+
+	Vector2 m_Origin;
+	Vector2 m_Direction;
+	float m_Length;
+};
+
+template<typename T>
+inline Ray2D::Ray2D(T origin, T destination, float length)
+{
+	m_Origin = { origin[0], origin[1] };
+	m_Direction = { destination[0] - origin[0], destination[1] - origin[1] };
+	m_Direction.normalise();
+	m_Length = length;
+}
+
+
+
+static float MagPow2_2D(const Vector2 v1, const Vector2 v2)
 {
 	Vector2 temp = v1 - v2;
 	float magPow2 = pow(temp[0], 2) + pow(temp[1], 2);
@@ -108,17 +147,6 @@ static float magnitudePow2(const Vector2 v1, const Vector2 v2)
 
 static bool checkCollision(const Rectangle& r, const Circle& c)
 {
-	Vector2 topLeft(r.getBottomLeft()[0], r.getTopRight()[1]);
-	Vector2 bottomRight(r.getTopRight()[0], r.getBottomLeft()[1]);
-	float rad = c.getRadius();
-	float rad2 = pow(rad, 2);
 
-	if (magnitudePow2(r.getTopRight(), c.getOrigin()) < rad2 || magnitudePow2(r.getBottomLeft(), c.getOrigin()) < rad2 ||
-		magnitudePow2(topLeft, c.getOrigin()) < rad2 || magnitudePow2(bottomRight, c.getOrigin()) < rad2)
-		return true;
-	else if (r.getTopRight()[0] < c.getOrigin()[0] - rad || r.getBottomLeft()[0] > c.getOrigin()[0] + rad ||
-		r.getTopRight()[1] < c.getOrigin()[1] - rad || r.getBottomLeft()[1] > c.getOrigin()[1] + rad)
-		return false;
-	else
-		return true;
 }
+

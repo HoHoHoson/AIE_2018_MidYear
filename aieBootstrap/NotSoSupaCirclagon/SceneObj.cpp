@@ -25,19 +25,44 @@ void SceneObj::updateTransform()
 		child->updateTransform();
 }
 
-Matrix3& SceneObj::getGlobal()
+Vector3 & SceneObj::operator[](int index)
 {
-	return m_Global;
+	return m_Local[index];
 }
 
-Matrix3 & SceneObj::getLocal()
+Vector3 SceneObj::operator[](int index) const
+{
+	return m_Local[index];
+}
+
+Matrix3  SceneObj::getLocal() const
 {
 	return m_Local;
 }
 
-void SceneObj::addChild(SceneObj& child)
+Matrix3 SceneObj::getGlobal() const
 {
-	child.m_Parent = this;
-	child.m_Global = m_Global;
-	m_Children.push_front(&child);
+	return m_Global;
+}
+
+Matrix3 & SceneObj::setLocal()
+{
+	return m_Local;
+}
+
+Matrix3 & SceneObj::setGlobal()
+{
+	return m_Global;
+}
+
+void SceneObj::setParent(SceneObj * parent)
+{
+	m_Parent = parent;
+}
+
+void SceneObj::addChild(SceneObj* child)
+{
+	child->setParent(this);
+	child->getGlobal() = m_Global;
+	m_Children.push_front(child);
 }

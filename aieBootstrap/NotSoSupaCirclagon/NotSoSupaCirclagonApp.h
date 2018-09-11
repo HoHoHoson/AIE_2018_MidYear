@@ -37,6 +37,6 @@ protected:
 	SceneObj m_PlayerPos;
 	std::vector<Circlagon*> m_Circlagons;
 
-	float toRadian(float degrees);
-	bool isInside(const aie::Texture* s_Obj, Matrix3& s_M, const aie::Texture* l_Obj, Matrix3& l_M, float l_Multi);
+	float toRadian(float degrees) const;
+	bool isInside(const aie::Texture* s_Obj, const Matrix3& s_M, const aie::Texture* l_Obj, const Matrix3& l_M, float l_Multi) const;
 };

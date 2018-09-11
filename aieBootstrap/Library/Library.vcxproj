@@ -18,6 +18,28 @@
       <Platform>x64</Platform>
     </ProjectConfiguration>
   </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="2D_Collision.h" />
+    <ClInclude Include="Algoritms.h" />
+    <ClInclude Include="Matrix2.h" />
+    <ClInclude Include="Matrix3.h" />
+    <ClInclude Include="Matrix4.h" />
+    <ClInclude Include="Vector2.h" />
+    <ClInclude Include="Vector3.h" />
+    <ClInclude Include="Vector4.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="Circle.cpp" />
+    <ClCompile Include="Matrix2.cpp" />
+    <ClCompile Include="Matrix3.cpp" />
+    <ClCompile Include="Matrix4.cpp" />
+    <ClCompile Include="Plane2D.cpp" />
+    <ClCompile Include="Ray2D.cpp" />
+    <ClCompile Include="Rectangle.cpp" />
+    <ClCompile Include="Vector2.cpp" />
+    <ClCompile Include="Vector3.cpp" />
+    <ClCompile Include="Vector4.cpp" />
+  </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>15.0</VCProjectVersion>
     <ProjectGuid>{D8B03AC4-E93E-4025-A34F-A9ADB5360390}</ProjectGuid>
@@ -114,26 +136,6 @@
       <OptimizeReferences>true</OptimizeReferences>
     </Link>
   </ItemDefinitionGroup>
-  <ItemGroup>
-    <ClInclude Include="..\..\Hoson%27s C++ Library\Library\Matrix2.h" />
-    <ClInclude Include="..\..\Hoson%27s C++ Library\Library\Matrix3.h" />
-    <ClInclude Include="..\..\Hoson%27s C++ Library\Library\Matrix4.h" />
-    <ClInclude Include="2D_Collision.h" />
-    <ClInclude Include="..\..\Hoson%27s C++ Library\Library\Vector2.h" />
-    <ClInclude Include="..\..\Hoson%27s C++ Library\Library\Vector3.h" />
-    <ClInclude Include="..\..\Hoson%27s C++ Library\Library\Vector4.h" />
-  </ItemGroup>
-  <ItemGroup>
-    <ClCompile Include="..\..\Hoson%27s C++ Library\Library\Circle.cpp" />
-    <ClCompile Include="..\..\Hoson%27s C++ Library\Library\Matrix2.cpp" />
-    <ClCompile Include="..\..\Hoson%27s C++ Library\Library\Matrix3.cpp" />
-    <ClCompile Include="..\..\Hoson%27s C++ Library\Library\Matrix4.cpp" />
-    <ClCompile Include="..\..\Hoson%27s C++ Library\Library\Plane2D.cpp" />
-    <ClCompile Include="..\..\Hoson%27s C++ Library\Library\Rectangle.cpp" />
-    <ClCompile Include="..\..\Hoson%27s C++ Library\Library\Vector2.cpp" />
-    <ClCompile Include="..\..\Hoson%27s C++ Library\Library\Vector3.cpp" />
-    <ClCompile Include="..\..\Hoson%27s C++ Library\Library\Vector4.cpp" />
-  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>
