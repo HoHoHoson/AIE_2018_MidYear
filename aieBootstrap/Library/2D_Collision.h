@@ -49,7 +49,7 @@ public:
 
 	bool checkCollision(const Circle& other) const;
 	bool collisionRectangle(const Rectangle& other) const;
-	Circle& updateCircle(const Vector2& newOrigin);
+	Circle& updateCircle(const Vector2& newOrigin, float newRadius = NULL);
 
 private:
 

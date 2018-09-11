@@ -18,6 +18,7 @@ public:
 	Matrix3& operator*=(const Matrix3& other);
 	Matrix3 operator*(const Matrix3& other) const;
 
+	Matrix3& setIdentity();
 	Matrix3& rotateX(float radian);
 	Matrix3& rotateY(float radian);
 	Matrix3& rotateZ(float radian);

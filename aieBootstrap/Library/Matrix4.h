@@ -22,6 +22,7 @@ public:
 	Matrix4& operator*=(const Matrix4& other);
 	Matrix4 operator*(const Matrix4& other) const;
 
+	Matrix4& setIdentity();
 	Matrix4& rotateX(float radian);
 	Matrix4& rotateY(float radian);
 	Matrix4& rotateZ(float radian);

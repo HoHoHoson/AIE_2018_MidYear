@@ -4,7 +4,6 @@ Circlagon::Circlagon()
 {
 	m_BaseZone.addChild(&m_SafeZone);
 	m_SafeZone.setLocal().scale(0.75, 0.75);
-	m_Scale = 1.0f;
 	m_IsActive = false;
 }
 
@@ -15,16 +14,24 @@ Circlagon::~Circlagon()
 void Circlagon::loadCirclagon()
 {
 	m_IsActive = true;
+	m_Scale = 10;
 }
 
 void Circlagon::updateCirclagon(float deltaTime)
 {
-	m_Scale -= 0.05f * deltaTime;
+	m_Scale -= 1 * deltaTime;
+	m_BaseZone.setLocal().setIdentity();
+	m_BaseZone.setLocal().scale(m_Scale, m_Scale);
 }
 
 bool Circlagon::isActive() const
 {
 	return m_IsActive;
+}
+
+float Circlagon::getScale() const
+{
+	return m_Scale;
 }
 
 Matrix3 Circlagon::getBaseGlobal() const

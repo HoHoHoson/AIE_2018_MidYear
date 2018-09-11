@@ -42,8 +42,12 @@ bool Circle::collisionRectangle(const Rectangle & r) const
 		return true;
 }
 
-Circle & Circle::updateCircle(const Vector2 & newOrigin)
+Circle & Circle::updateCircle(const Vector2 & newOrigin, float newRadius)
 {
 	m_CircleOrigin = newOrigin;
+
+	if (newRadius != NULL)
+		m_CircleRadius = newRadius;
+
 	return *this;
 }

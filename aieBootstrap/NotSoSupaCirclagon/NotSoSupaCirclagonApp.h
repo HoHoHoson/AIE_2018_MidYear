@@ -4,6 +4,8 @@
 
 #include "Application.h"
 #include "Renderer2D.h"
+#include "2D_Collision.h"
+
 #include "SceneObj.h"
 #include "Circlagon.h"
 
@@ -28,15 +30,18 @@ protected:
 	aie::Texture* m_CircleTex;
 	aie::Texture* m_SafeTex;
 
+	const unsigned int m_RingCount = 1;
+
 	float m_WidthMid;
 	float m_HeightMid;
-	float degrees = 0;
+	float m_RotateSpeed = 360;
 
 	SceneObj m_Origin;
 	SceneObj m_PlayerOrigin;
 	SceneObj m_PlayerPos;
 	std::vector<Circlagon*> m_Circlagons;
+	std::vector<Circle*> m_SafeBounds;
 
 	float toRadian(float degrees) const;
-	bool isInside(const aie::Texture* s_Obj, const Matrix3& s_M, const aie::Texture* l_Obj, const Matrix3& l_M, float l_Multi) const;
+	bool isInside(const Circle& obj, const Circle& bounds) const;
 };

@@ -80,6 +80,22 @@ Matrix4 & Matrix4::operator*=(const Matrix4 & other)
 	return (*this = (Matrix4&)(*this * other));
 }
 
+Matrix4 & Matrix4::setIdentity()
+{
+	for (size_t v = 0; v < 4; ++v)
+	{
+		for (size_t axis = 0; axis < 4; ++axis)
+		{
+			if (v == axis)
+				matrix[v][axis] = 1;
+			else
+				matrix[v][axis] = 0;
+		}
+	}
+
+	return *this;
+}
+
 Matrix4& Matrix4::rotateX(float radian)
 {
 	Matrix4 temp(

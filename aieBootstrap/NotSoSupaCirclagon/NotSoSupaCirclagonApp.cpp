@@ -34,10 +34,14 @@ bool NotSoSupaCirclagonApp::startup()
 	m_Origin.setLocal()[2] = { m_WidthMid, m_HeightMid, 1 };
 	m_Origin.addChild(&m_PlayerOrigin);
 	m_PlayerOrigin.addChild(&m_PlayerPos);
-	Circlagon* test = new Circlagon;
-	test->loadCirclagon();
-	m_Origin.addChild(test->loadThis());
-	m_Circlagons.push_back(test);
+
+	for (size_t i = 0; i < m_RingCount; ++i)
+	{
+		Circlagon* newRing = new Circlagon;
+		m_Origin.addChild(newRing->loadThis());
+		m_Circlagons.push_back(newRing);
+		m_SafeBounds.push_back(new Circle(newRing->getSafeGlobal()[2], m_SafeTex->getWidth() * newRing->getScale()));
+	}
 
 	return true;
 }
@@ -53,12 +57,27 @@ void NotSoSupaCirclagonApp::update(float deltaTime) {
 	// input example
 	aie::Input* input = aie::Input::getInstance();
 
-	degrees += 50 * deltaTime;
-	m_Origin.updateObj(deltaTime);
-	m_PlayerPos.getLocal().rotateZ(toRadian(90) * deltaTime);
-	//m_PlayerPos.getLocal().setRotateZ(toRadian(270));
-	m_PlayerPos.getLocal()[2][0] = degrees;
+	if (input->isKeyDown(aie::INPUT_KEY_LEFT) || input->isKeyDown(aie::INPUT_KEY_A))
+		m_PlayerOrigin.setLocal().rotateZ(toRadian(m_RotateSpeed) * deltaTime);
+	if (input->isKeyDown(aie::INPUT_KEY_RIGHT) || input->isKeyDown(aie::INPUT_KEY_D))
+		m_PlayerOrigin.setLocal().rotateZ(toRadian(-m_RotateSpeed) * deltaTime);
 
+	for (size_t i = 0; i < m_RingCount; ++i)
+	{
+		Circlagon* cIt = m_Circlagons.at(i);
+		if (cIt->isActive() == false)
+			cIt->loadCirclagon();
+		if (cIt->isActive() == true)
+		{
+			cIt->updateCirclagon(deltaTime);
+			m_SafeBounds.at(i)->updateCircle(Vector2(cIt->getSafeGlobal()[2][0], cIt->getSafeGlobal()[2][1]));
+		}
+	}
+
+	m_PlayerPos.setLocal().setIdentity();
+	m_PlayerPos.setLocal().translate(NULL, 100);
+
+	m_Origin.updateObj(deltaTime);
 
 	// exit the application
 	if (input->isKeyDown(aie::INPUT_KEY_ESCAPE))
@@ -75,8 +94,8 @@ void NotSoSupaCirclagonApp::draw() {
 
 	// draw your stuff here!
 
-	//m_2dRenderer->drawSpriteTransformed3x3(m_CircleTex, m_PlayerOrigin.getGlobal(), NULL, NULL, 0);
-	//m_2dRenderer->drawSpriteTransformed3x3(m_PlayerTex, m_PlayerPos.getGlobal(), NULL, NULL, 0);
+	m_2dRenderer->drawSpriteTransformed3x3(m_CircleTex, m_PlayerOrigin.getGlobal(), NULL, NULL, 0);
+	m_2dRenderer->drawSpriteTransformed3x3(m_PlayerTex, m_PlayerPos.getGlobal(), NULL, NULL, 0);
 
 	for (auto ring : m_Circlagons)
 		if (ring->isActive() == true)
@@ -97,13 +116,13 @@ float NotSoSupaCirclagonApp::toRadian(float degrees) const
 	return (degrees * (M_PI / 180));
 }
 
-bool NotSoSupaCirclagonApp::isInside(const aie::Texture* s_Obj, const Matrix3& s_M, const aie::Texture* l_Obj, const Matrix3& l_M, float l_Multi) const
+bool NotSoSupaCirclagonApp::isInside(const Circle& obj, const Circle& bounds) const
 {
-	float distance = (s_M[2] - l_M[2]).magnitude();
-	float safeZone = (l_Obj->getWidth() / 2) * l_Multi - s_Obj->getWidth() / 2;
+	float distanceSqr = MagPow2_2D(bounds.getOrigin(), obj.getOrigin());
+	float safeZoneSqr = pow(bounds.getRadius() - obj.getRadius(), 2);
 
-	if (distance > safeZone)
-		return true;
-	else
+	if (distanceSqr > safeZoneSqr)
 		return false;
+	else
+		return true;
 }

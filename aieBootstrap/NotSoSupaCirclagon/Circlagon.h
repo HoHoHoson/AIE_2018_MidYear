@@ -1,6 +1,5 @@
 #pragma once
 
-#include "Matrix3.h"
 #include "SceneObj.h"
 
 class Circlagon
@@ -13,6 +12,7 @@ public:
 	void updateCirclagon(float deltaTime);
 
 	bool isActive() const;
+	float getScale() const;
 	Matrix3 getBaseGlobal() const;
 	Matrix3 getSafeGlobal() const;
 	SceneObj* loadThis();

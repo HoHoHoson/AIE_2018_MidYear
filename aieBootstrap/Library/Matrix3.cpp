@@ -75,6 +75,22 @@ Matrix3 & Matrix3::operator*=(const Matrix3 & other)
 	return (*this = (Matrix3&)(*this * other));
 }
 
+Matrix3 & Matrix3::setIdentity()
+{
+	for (size_t v = 0; v < 3; ++v)
+	{
+		for (size_t axis = 0; axis < 3; ++axis)
+		{
+			if (v == axis)
+				matrix[v][axis] = 1;
+			else
+				matrix[v][axis] = 0;
+		}
+	}
+
+	return *this;
+}
+
 Matrix3& Matrix3::rotateX(float radian)
 {
 	Matrix3 temp(
