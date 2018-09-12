@@ -1,5 +1,9 @@
 #include "2D_Collision.h"
 
+Rectangle::Rectangle()
+{
+}
+
 Rectangle::~Rectangle()
 {
 }
@@ -26,13 +30,4 @@ bool Rectangle::checkCollision(const Rectangle & other) const
 		return false;
 	else
 		return true;
-}
-
-Rectangle& Rectangle::updateRect(const Vector2 & newOrigin)
-{
-	Vector2 temp = newOrigin - m_RectOrigin;
-	m_RectTopRight += temp;
-	m_RectBottomLeft += temp;
-	m_RectOrigin = newOrigin;
-	return *this;
 }

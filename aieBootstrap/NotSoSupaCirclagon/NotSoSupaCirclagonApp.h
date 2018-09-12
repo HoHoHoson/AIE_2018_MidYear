@@ -4,7 +4,6 @@
 
 #include "Application.h"
 #include "Renderer2D.h"
-#include "2D_Collision.h"
 
 #include "SceneObj.h"
 #include "Circlagon.h"
@@ -34,13 +33,13 @@ protected:
 
 	float m_WidthMid;
 	float m_HeightMid;
-	float m_RotateSpeed = 360;
+	float m_RotateSpeed = 540;
 
 	SceneObj m_Origin;
 	SceneObj m_PlayerOrigin;
 	SceneObj m_PlayerPos;
+	Circle m_PLayerBounds;
 	std::vector<Circlagon*> m_Circlagons;
-	std::vector<Circle*> m_SafeBounds;
 
 	float toRadian(float degrees) const;
 	bool isInside(const Circle& obj, const Circle& bounds) const;

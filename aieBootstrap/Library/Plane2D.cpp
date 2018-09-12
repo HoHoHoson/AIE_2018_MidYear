@@ -1,6 +1,10 @@
 #include "2D_Collision.h"
 
 
+Plane2D::Plane2D()
+{
+}
+
 Plane2D::~Plane2D()
 {
 }

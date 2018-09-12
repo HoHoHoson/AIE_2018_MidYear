@@ -6,6 +6,7 @@
 class Rectangle
 {
 public:
+	Rectangle();
 	template<typename T>
 	Rectangle(T pointVector, unsigned int width, unsigned int height);
 	~Rectangle();
@@ -14,8 +15,9 @@ public:
 	Vector2 getTopRight()	const;
 	Vector2 getBottomLeft()	const;
 
+	template<typename T>
+	Rectangle& updateRect(const T& newOrigin, unsigned int newWidth = NULL, unsigned int newHeight = NULL);
 	bool checkCollision(const Rectangle& other) const;
-	Rectangle& updateRect(const Vector2& newOrigin);
 
 private:
 
@@ -35,26 +37,61 @@ inline Rectangle::Rectangle(T pointVector, unsigned int width, unsigned int heig
 	m_RectBottomLeft[1] = m_RectOrigin[1] - height / 2;
 }
 
+template<typename T>
+inline Rectangle & Rectangle::updateRect(const T & newOrigin, unsigned int newWidth, unsigned int newHeight)
+{
+	int w = newWidth / 2;
+	int h = newHeight / 2;
+	Vector2 temp(newOrigin[0] - m_RectOrigin[0], newOrigin[1] - m_RectOrigin[1]);
+	m_RectOrigin += temp;
+
+	if (newWidth != NULL)
+	{
+		m_RectTopRight[0] = m_RectOrigin[0] + w;
+		m_RectBottomLeft[0] = m_RectOrigin[0] - w;
+	}
+	else
+	{
+		m_RectTopRight[0] += temp[0];
+		m_RectBottomLeft[0] += temp[0];
+	}
+
+	if (newHeight != NULL)
+	{
+		m_RectTopRight[1] = m_RectOrigin[1] + h;
+		m_RectBottomLeft[1] = m_RectOrigin[1] - h;
+	}
+	else
+	{
+		m_RectTopRight[1] += temp[1];
+		m_RectBottomLeft[1] += temp[1];
+	}
+
+	return *this;
+}
+
 
 
 class Circle
 {
 public:
+	Circle();
 	template<typename T>
 	Circle(T pointVector, unsigned int diameter);
 	~Circle();
 
-	Vector2 getOrigin() const;
-	float getRadius()	const;
+	Vector2 getOrigin()		 const;
+	unsigned int getRadius() const;
 
-	bool checkCollision(const Circle& other) const;
+	template<typename T>
+	Circle& updateCircle(const T& newOrigin, unsigned int newDiameter = NULL);
+	bool checkCollision(const Circle& other)		const;
 	bool collisionRectangle(const Rectangle& other) const;
-	Circle& updateCircle(const Vector2& newOrigin, float newRadius = NULL);
 
 private:
 
 	Vector2 m_CircleOrigin;
-	float m_CircleRadius;
+	unsigned int m_CircleRadius;
 };
 
 template<typename T>
@@ -65,17 +102,30 @@ inline Circle::Circle(T pointVector, unsigned int diameter)
 	m_CircleRadius = diameter / 2;
 }
 
+template<typename T>
+inline Circle & Circle::updateCircle(const T & newOrigin, unsigned int newDiameter)
+{
+	m_CircleOrigin[0] = newOrigin[0];
+	m_CircleOrigin[1] = newOrigin[1];
+
+	if (newDiameter != NULL)
+		m_CircleRadius = newDiameter / 2;
+
+	return *this;
+}
+
 
 
 class Plane2D
 {
 public:
+	Plane2D();
 	template<typename T>
 	Plane2D(T from, T to); 	// the normal is on the right side of this line (the collision side)
 	~Plane2D();
 
 	Vector2 getNormal() const;
-	float getScalar() const;
+	float getScalar()	const;
 
 	Vector2 closestPointTo(const Vector2 & other)	const;
 	float distanceTo(const Vector2& other)			const;
@@ -107,6 +157,7 @@ inline Plane2D::Plane2D(T from, T to)
 class Ray2D
 {
 public:
+	Ray2D();
 	template<typename T>
 	Ray2D(T origin, T direction, float length = INFINITY);
 	~Ray2D();
@@ -115,9 +166,9 @@ public:
 	Vector2 getOrigin()		const;
 	Vector2 getDirection()	const;
 
-	Vector2 closestPoint(const Vector2& point)					 const;
-	bool collisionCircle(const Circle& c, Vector2* i = nullptr)	 const;
-	bool collisionPlane(const Plane2D& pl, Vector2* i = nullptr) const;
+	Vector2 closestPoint(const Vector2& point)						  const;
+	bool collisionCircle(const Circle& c, Vector2* i = nullptr)	  	  const;
+	bool collisionPlane(const Plane2D& pl, Vector2* i = nullptr)	  const;
 	bool collisionRectangle(const Rectangle& r, Vector2* i = nullptr) const;
 
 private:
@@ -144,9 +195,3 @@ static float MagPow2_2D(const Vector2 v1, const Vector2 v2)
 	float magPow2 = pow(temp[0], 2) + pow(temp[1], 2);
 	return magPow2;
 }
-
-static bool checkCollision(const Rectangle& r, const Circle& c)
-{
-
-}
-

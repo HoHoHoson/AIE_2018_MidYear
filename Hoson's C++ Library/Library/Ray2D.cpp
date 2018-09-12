@@ -1,6 +1,10 @@
 #include "2D_Collision.h"
 
 
+Ray2D::Ray2D()
+{
+}
+
 Ray2D::~Ray2D()
 {
 }

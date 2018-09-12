@@ -1,5 +1,9 @@
 #include "2D_Collision.h"
 
+Circle::Circle()
+{
+}
+
 Circle::~Circle()
 {
 }
@@ -9,7 +13,7 @@ Vector2 Circle::getOrigin() const
 	return m_CircleOrigin;
 }
 
-float Circle::getRadius() const
+unsigned int Circle::getRadius() const
 {
 	return m_CircleRadius;
 }
@@ -40,14 +44,4 @@ bool Circle::collisionRectangle(const Rectangle & r) const
 		return false;
 	else
 		return true;
-}
-
-Circle & Circle::updateCircle(const Vector2 & newOrigin, float newRadius)
-{
-	m_CircleOrigin = newOrigin;
-
-	if (newRadius != NULL)
-		m_CircleRadius = newRadius;
-
-	return *this;
 }

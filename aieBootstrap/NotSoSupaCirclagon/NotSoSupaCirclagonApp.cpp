@@ -32,15 +32,16 @@ bool NotSoSupaCirclagonApp::startup()
 	m_HeightMid = getWindowHeight() / 2;
 
 	m_Origin.setLocal()[2] = { m_WidthMid, m_HeightMid, 1 };
+
 	m_Origin.addChild(&m_PlayerOrigin);
 	m_PlayerOrigin.addChild(&m_PlayerPos);
+	m_PLayerBounds = { m_PlayerPos.getGlobal()[2], m_PlayerTex->getWidth() };
 
 	for (size_t i = 0; i < m_RingCount; ++i)
 	{
-		Circlagon* newRing = new Circlagon;
+		Circlagon* newRing = new Circlagon(m_CircleTex->getWidth());
 		m_Origin.addChild(newRing->loadThis());
 		m_Circlagons.push_back(newRing);
-		m_SafeBounds.push_back(new Circle(newRing->getSafeGlobal()[2], m_SafeTex->getWidth() * newRing->getScale()));
 	}
 
 	return true;
@@ -62,6 +63,8 @@ void NotSoSupaCirclagonApp::update(float deltaTime) {
 	if (input->isKeyDown(aie::INPUT_KEY_RIGHT) || input->isKeyDown(aie::INPUT_KEY_D))
 		m_PlayerOrigin.setLocal().rotateZ(toRadian(-m_RotateSpeed) * deltaTime);
 
+	m_PLayerBounds.updateCircle(m_PlayerPos.getGlobal()[2]);
+
 	for (size_t i = 0; i < m_RingCount; ++i)
 	{
 		Circlagon* cIt = m_Circlagons.at(i);
@@ -70,12 +73,14 @@ void NotSoSupaCirclagonApp::update(float deltaTime) {
 		if (cIt->isActive() == true)
 		{
 			cIt->updateCirclagon(deltaTime);
-			m_SafeBounds.at(i)->updateCircle(Vector2(cIt->getSafeGlobal()[2][0], cIt->getSafeGlobal()[2][1]));
+
+			if (!isInside(m_PLayerBounds, cIt->getSafeBounds()))
+				quit();
 		}
 	}
 
 	m_PlayerPos.setLocal().setIdentity();
-	m_PlayerPos.setLocal().translate(NULL, 100);
+	m_PlayerPos.setLocal().translate(NULL, (m_CircleTex->getWidth() + m_PlayerTex->getWidth()) / 2 + 10);
 
 	m_Origin.updateObj(deltaTime);
 
@@ -102,6 +107,7 @@ void NotSoSupaCirclagonApp::draw() {
 		{
 			m_2dRenderer->drawSpriteTransformed3x3(m_CircleTex, ring->getBaseGlobal(), NULL, NULL, 1);
 			m_2dRenderer->drawSpriteTransformed3x3(m_SafeTex, ring->getSafeGlobal(), NULL, NULL, 0.5);
+			m_2dRenderer->drawSpriteTransformed3x3(m_SafeTex, ring->getExitGlobal(), NULL, NULL, 0.5);
 		}
 	
 	// output some text, uses the last used colour

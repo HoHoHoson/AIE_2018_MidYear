@@ -35,6 +35,8 @@ int main()
 	Ray2D ray1(Vector2(100, 100), Vector2(0, 0));
 	Vector2 test;
 
+	c1.updateCircle(v4a, 10);
+	r1.updateRect(v4a, 6, 6);
 	m2a.scale(2, 2);
 	m3a.scale(2, 2, 2);
 	m3a.translate(10, 10, 10);
