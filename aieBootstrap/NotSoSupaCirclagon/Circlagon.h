@@ -13,7 +13,8 @@ public:
 	void loadCirclagon();
 	void updateCirclagon(float deltaTime);
 
-	bool isActive()			const;
+	bool& isOut();
+	bool& isActive();
 	float getScale()		const;
 	Matrix3 getBaseGlobal() const;
 	Matrix3 getSafeGlobal() const;
@@ -26,9 +27,11 @@ public:
 
 private:
 
+	bool m_IsOut;
 	bool m_IsActive;
 	float m_Scale;
 
+	const unsigned int m_SetScale = 27;
 	unsigned int m_BaseSize;
 	unsigned int m_SafeSize;
 	unsigned int m_ExitSize;

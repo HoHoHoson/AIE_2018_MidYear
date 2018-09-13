@@ -9,11 +9,6 @@ SceneObj::~SceneObj()
 {
 }
 
-void SceneObj::updateObj(float deltaTime)
-{
-	updateTransform();
-}
-
 void SceneObj::updateTransform()
 {
 	if (m_Parent != nullptr)

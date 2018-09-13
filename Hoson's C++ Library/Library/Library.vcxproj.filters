@@ -36,7 +36,7 @@
     <ClInclude Include="2D_Collision.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\Hoson%27s C++ Library\Library\Algoritms.h">
+    <ClInclude Include="Algorithms.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

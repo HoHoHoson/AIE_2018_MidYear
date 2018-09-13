@@ -9,7 +9,6 @@ public:
 	SceneObj();
 	~SceneObj();
 
-	void updateObj(float deltaTime);
 	void updateTransform();
 
 	Vector3& operator[](int index);

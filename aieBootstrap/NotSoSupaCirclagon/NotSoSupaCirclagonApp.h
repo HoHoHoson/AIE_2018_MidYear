@@ -29,7 +29,10 @@ protected:
 	aie::Texture* m_CircleTex;
 	aie::Texture* m_SafeTex;
 
-	const unsigned int m_RingCount = 1;
+	const unsigned int m_RingCount = 30;
+
+	float m_SpawnTimer = 0;
+	float m_SpawnRate = 1.5;
 
 	float m_WidthMid;
 	float m_HeightMid;
@@ -38,9 +41,8 @@ protected:
 	SceneObj m_Origin;
 	SceneObj m_PlayerOrigin;
 	SceneObj m_PlayerPos;
-	Circle m_PLayerBounds;
+	Circle m_PlayerBounds;
 	std::vector<Circlagon*> m_Circlagons;
 
-	float toRadian(float degrees) const;
 	bool isInside(const Circle& obj, const Circle& bounds) const;
 };

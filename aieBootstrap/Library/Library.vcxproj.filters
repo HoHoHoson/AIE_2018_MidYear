@@ -18,9 +18,6 @@
     <ClInclude Include="2D_Collision.h">
       <Filter>Source Files</Filter>
     </ClInclude>
-    <ClInclude Include="Algoritms.h">
-      <Filter>Source Files</Filter>
-    </ClInclude>
     <ClInclude Include="Matrix2.h">
       <Filter>Source Files</Filter>
     </ClInclude>
@@ -37,6 +34,9 @@
       <Filter>Source Files</Filter>
     </ClInclude>
     <ClInclude Include="Vector4.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Algorithms.h">
       <Filter>Source Files</Filter>
     </ClInclude>
   </ItemGroup>

@@ -20,7 +20,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="2D_Collision.h" />
-    <ClInclude Include="Algoritms.h" />
+    <ClInclude Include="Algorithms.h" />
     <ClInclude Include="Matrix2.h" />
     <ClInclude Include="Matrix3.h" />
     <ClInclude Include="Matrix4.h" />

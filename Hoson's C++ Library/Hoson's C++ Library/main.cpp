@@ -11,6 +11,7 @@
 #include "Matrix3.h"
 #include "Matrix4.h"
 #include "2D_Collision.h"
+#include "Algorithms.h"
 
 int main()
 {
@@ -34,7 +35,7 @@ int main()
 	Plane2D p1(Vector2(0, 4), Vector2(4, 0));
 	Ray2D ray1(Vector2(100, 100), Vector2(0, 0));
 	Vector2 test;
-
+	float radians = toRad
 	c1.updateCircle(v4a, 10);
 	r1.updateRect(v4a, 6, 6);
 	m2a.scale(2, 2);

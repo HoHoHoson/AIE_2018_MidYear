@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Algoritms.h"
+#include "Algorithms.h"
 #include "Vector2.h"
 
 class Rectangle

@@ -3,6 +3,8 @@
 #include "Font.h"
 #include "Input.h"
 
+#include "Algorithms.h"
+
 #define _USE_MATH_DEFINES
 #include <math.h>
 
@@ -35,7 +37,7 @@ bool NotSoSupaCirclagonApp::startup()
 
 	m_Origin.addChild(&m_PlayerOrigin);
 	m_PlayerOrigin.addChild(&m_PlayerPos);
-	m_PLayerBounds = { m_PlayerPos.getGlobal()[2], m_PlayerTex->getWidth() };
+	m_PlayerBounds = { m_PlayerPos.getGlobal()[2], m_PlayerTex->getWidth() };
 
 	for (size_t i = 0; i < m_RingCount; ++i)
 	{
@@ -53,36 +55,58 @@ void NotSoSupaCirclagonApp::shutdown() {
 	delete m_2dRenderer;
 }
 
-void NotSoSupaCirclagonApp::update(float deltaTime) {
-
+void NotSoSupaCirclagonApp::update(float deltaTime) 
+{
 	// input example
 	aie::Input* input = aie::Input::getInstance();
 
+	m_SpawnTimer += deltaTime;
+
 	if (input->isKeyDown(aie::INPUT_KEY_LEFT) || input->isKeyDown(aie::INPUT_KEY_A))
-		m_PlayerOrigin.setLocal().rotateZ(toRadian(m_RotateSpeed) * deltaTime);
+		m_PlayerOrigin.setLocal().rotateZ(HLib::toRadian(m_RotateSpeed) * deltaTime);
 	if (input->isKeyDown(aie::INPUT_KEY_RIGHT) || input->isKeyDown(aie::INPUT_KEY_D))
-		m_PlayerOrigin.setLocal().rotateZ(toRadian(-m_RotateSpeed) * deltaTime);
-
-	m_PLayerBounds.updateCircle(m_PlayerPos.getGlobal()[2]);
-
-	for (size_t i = 0; i < m_RingCount; ++i)
-	{
-		Circlagon* cIt = m_Circlagons.at(i);
-		if (cIt->isActive() == false)
-			cIt->loadCirclagon();
-		if (cIt->isActive() == true)
-		{
-			cIt->updateCirclagon(deltaTime);
-
-			if (!isInside(m_PLayerBounds, cIt->getSafeBounds()))
-				quit();
-		}
-	}
+		m_PlayerOrigin.setLocal().rotateZ(HLib::toRadian(-m_RotateSpeed) * deltaTime);
 
 	m_PlayerPos.setLocal().setIdentity();
-	m_PlayerPos.setLocal().translate(NULL, (m_CircleTex->getWidth() + m_PlayerTex->getWidth()) / 2 + 10);
+	m_PlayerPos.setLocal().translate(NULL, (m_CircleTex->getWidth() + m_PlayerTex->getWidth()) / 2 + 20);
 
-	m_Origin.updateObj(deltaTime);
+	for (auto r : m_Circlagons)
+	{
+		if (r->getBaseBounds().getRadius() < m_CircleTex->getWidth() / 2 && r->isActive() == true)
+			r->isActive() = false;
+
+		if (m_SpawnTimer > m_SpawnRate && r->isActive() == false)
+		{
+			r->loadCirclagon();
+			m_Origin.updateTransform();
+
+			r->isActive() = true;
+			m_SpawnTimer = 0;
+		}
+
+		if (r->isActive() == true)
+			r->updateCirclagon(deltaTime);
+	}
+
+	m_PlayerBounds.updateCircle(m_PlayerPos.getGlobal()[2]);
+
+	m_Origin.updateTransform();
+
+	for (auto r : m_Circlagons)
+		if (r->isActive() == true && r->isOut() == false)
+		{
+			if (!isInside(m_PlayerBounds, r->getSafeBounds()))
+			{
+				if (!isInside(m_PlayerBounds, r->getBaseBounds()) && m_PlayerBounds.checkCollision(r->getExitBounds()))
+				{
+					r->isOut() = true;
+					break;
+				}
+
+				if (!isInside(m_PlayerBounds, r->getExitBounds()))
+					quit();
+			}
+		}
 
 	// exit the application
 	if (input->isKeyDown(aie::INPUT_KEY_ESCAPE))
@@ -102,24 +126,22 @@ void NotSoSupaCirclagonApp::draw() {
 	m_2dRenderer->drawSpriteTransformed3x3(m_CircleTex, m_PlayerOrigin.getGlobal(), NULL, NULL, 0);
 	m_2dRenderer->drawSpriteTransformed3x3(m_PlayerTex, m_PlayerPos.getGlobal(), NULL, NULL, 0);
 
-	for (auto ring : m_Circlagons)
-		if (ring->isActive() == true)
+	for (auto r : m_Circlagons)
+	{
+		if (r->isActive() == true)
 		{
-			m_2dRenderer->drawSpriteTransformed3x3(m_CircleTex, ring->getBaseGlobal(), NULL, NULL, 1);
-			m_2dRenderer->drawSpriteTransformed3x3(m_SafeTex, ring->getSafeGlobal(), NULL, NULL, 0.5);
-			m_2dRenderer->drawSpriteTransformed3x3(m_SafeTex, ring->getExitGlobal(), NULL, NULL, 0.5);
+			// NOTE the renderer depth has a MAX, it will not draw anything that is over the depth limit
+			m_2dRenderer->drawSpriteTransformed3x3(m_CircleTex, r->getBaseGlobal(), NULL, NULL, (r->getBaseBounds().getRadius() + 1) / 10);
+			m_2dRenderer->drawSpriteTransformed3x3(m_SafeTex, r->getSafeGlobal(), NULL, NULL, r->getBaseBounds().getRadius() / 10);
+			m_2dRenderer->drawSpriteTransformed3x3(m_SafeTex, r->getExitGlobal(), NULL, NULL, r->getBaseBounds().getRadius() / 10);
 		}
+	}
 	
 	// output some text, uses the last used colour
 	m_2dRenderer->drawText(m_font, "Press ESC to quit", 0, 0);
 
 	// done drawing sprites
 	m_2dRenderer->end();
-}
-
-float NotSoSupaCirclagonApp::toRadian(float degrees) const
-{
-	return (degrees * (M_PI / 180));
 }
 
 bool NotSoSupaCirclagonApp::isInside(const Circle& obj, const Circle& bounds) const
