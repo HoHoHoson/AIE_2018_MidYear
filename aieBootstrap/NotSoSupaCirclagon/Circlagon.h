@@ -1,16 +1,17 @@
 #pragma once
 
 #include "2D_Collision.h"
+#include "Algorithms.h"
 #include "SceneObj.h"
 
 class Circlagon
 {
 public:
 	Circlagon();
-	Circlagon(unsigned int baseSize);
+	Circlagon(unsigned int baseSize, float& scaleSp);
 	~Circlagon();
 
-	void loadCirclagon();
+	void loadCirclagon(float startingAngle, float RotateSpeed);
 	void updateCirclagon(float deltaTime);
 
 	bool& isOut();
@@ -29,9 +30,14 @@ private:
 
 	bool m_IsOut;
 	bool m_IsActive;
-	float m_Scale;
 
 	const unsigned int m_SetScale = 27;
+	float m_Scale;
+	float* m_ScaleSp;
+
+	float m_Angle;
+	float m_RotateSpeed;
+
 	unsigned int m_BaseSize;
 	unsigned int m_SafeSize;
 	unsigned int m_ExitSize;
@@ -43,4 +49,6 @@ private:
 	Circle m_BaseBounds;
 	Circle m_SafeBounds;
 	Circle m_ExitBounds;
+
+	void updateCircle();
 };

@@ -4,9 +4,10 @@ Circlagon::Circlagon()
 {
 }
 
-Circlagon::Circlagon(unsigned int baseSize)
+Circlagon::Circlagon(unsigned int baseSize, float& scaleSp)
 {
 	m_IsActive = false;
+	m_ScaleSp = &scaleSp;
 
 	m_BaseZone.addChild(&m_SafeZone);
 	m_BaseZone.addChild(&m_ExitZone);
@@ -28,23 +29,25 @@ Circlagon::~Circlagon()
 {
 }
 
-void Circlagon::loadCirclagon()
+void Circlagon::loadCirclagon(float startingAngle, float RotateSpeed)
 {
 	m_IsActive = true;
 	m_IsOut = false;
 	m_Scale = m_SetScale;
+	m_Angle = startingAngle;
+	m_RotateSpeed = RotateSpeed;
 }
 
 void Circlagon::updateCirclagon(float deltaTime)
 {
-	m_Scale -= 10 * deltaTime;
+	m_Scale -= *m_ScaleSp * deltaTime;
+	m_Angle += m_RotateSpeed * deltaTime;
 	m_BaseZone.setLocal().setIdentity();
 	m_BaseZone.setLocal().scale(m_Scale, m_Scale);
-	m_BaseZone.setLocal().rotateZ(10);
 
-	m_BaseBounds.updateCircle(m_BaseZone.getGlobal()[2], m_BaseSize * m_Scale);
-	m_SafeBounds.updateCircle(m_SafeZone.getGlobal()[2], m_SafeSize * m_Scale);
-	m_ExitBounds.updateCircle(m_ExitZone.getGlobal()[2], m_ExitSize * m_Scale);
+	m_BaseZone.setLocal().rotateZ(HLib::toRadian(m_Angle));
+
+	updateCircle();
 }
 
 bool& Circlagon::isActive()
@@ -95,4 +98,11 @@ Circle Circlagon::getExitBounds() const
 SceneObj* Circlagon::loadThis()
 {
 	return &m_BaseZone;
+}
+
+void Circlagon::updateCircle()
+{
+	m_BaseBounds.updateCircle(m_BaseZone.getGlobal()[2], m_BaseSize * m_Scale);
+	m_SafeBounds.updateCircle(m_SafeZone.getGlobal()[2], m_SafeSize * m_Scale);
+	m_ExitBounds.updateCircle(m_ExitZone.getGlobal()[2], m_ExitSize * m_Scale);
 }

@@ -3,14 +3,13 @@
 #include "Font.h"
 #include "Input.h"
 
-#include "Algorithms.h"
-
 #define _USE_MATH_DEFINES
 #include <math.h>
-
+#include <time.h>
 
 NotSoSupaCirclagonApp::NotSoSupaCirclagonApp() 
 {
+	srand((unsigned int)time(nullptr));
 }
 
 NotSoSupaCirclagonApp::~NotSoSupaCirclagonApp()
@@ -41,10 +40,14 @@ bool NotSoSupaCirclagonApp::startup()
 
 	for (size_t i = 0; i < m_RingCount; ++i)
 	{
-		Circlagon* newRing = new Circlagon(m_CircleTex->getWidth());
+		Circlagon* newRing = new Circlagon(m_CircleTex->getWidth(), m_ScaleSpeed);
 		m_Origin.addChild(newRing->loadThis());
 		m_Circlagons.push_back(newRing);
 	}
+
+	m_GameTime = 0;
+	m_IsSet = false;
+	p = Random;
 
 	return true;
 }
@@ -60,12 +63,57 @@ void NotSoSupaCirclagonApp::update(float deltaTime)
 	// input example
 	aie::Input* input = aie::Input::getInstance();
 
+	m_GameTime += deltaTime;
 	m_SpawnTimer += deltaTime;
+	m_RingAngle += m_RingSpeed / 2 * deltaTime;
 
+	if (p == Random)
+	{
+		m_SpawnRate = 1.5;
+
+		if (m_IsSet == false)
+		{
+			int cooldown = (rand() % (10 + 1) + 10) - m_GameTime / 10;
+			cooldown = HLib::clamp(cooldown, 6, 20);
+
+			m_Set = m_GameTime + cooldown;
+			m_IsSet = true;
+		}
+
+		if (m_GameTime > m_Set)
+		{
+			m_IsSet = false;
+			m_SpawnTimer = -1;
+			p = Stairs;
+		}
+	}
+
+	if (p == Stairs)
+	{
+		m_SpawnRate = 0.5;
+
+		if (m_IsSet == false)
+		{
+			if ((rand() % (2 + 1)) == 2)
+				m_RingSpeed = -m_RingSpeed;
+
+			m_Set = m_GameTime + 5;
+			m_IsSet = true;
+		}
+
+		if (m_GameTime > m_Set)
+		{
+			m_IsSet = false;
+			m_SpawnTimer = 0;
+			p = Random;
+		}
+	}
+		
+	
 	if (input->isKeyDown(aie::INPUT_KEY_LEFT) || input->isKeyDown(aie::INPUT_KEY_A))
-		m_PlayerOrigin.setLocal().rotateZ(HLib::toRadian(m_RotateSpeed) * deltaTime);
+		m_PlayerOrigin.setLocal().rotateZ(HLib::toRadian(m_PlayerSpeed) * deltaTime);
 	if (input->isKeyDown(aie::INPUT_KEY_RIGHT) || input->isKeyDown(aie::INPUT_KEY_D))
-		m_PlayerOrigin.setLocal().rotateZ(HLib::toRadian(-m_RotateSpeed) * deltaTime);
+		m_PlayerOrigin.setLocal().rotateZ(HLib::toRadian(-m_PlayerSpeed) * deltaTime);
 
 	m_PlayerPos.setLocal().setIdentity();
 	m_PlayerPos.setLocal().translate(NULL, (m_CircleTex->getWidth() + m_PlayerTex->getWidth()) / 2 + 20);
@@ -77,7 +125,7 @@ void NotSoSupaCirclagonApp::update(float deltaTime)
 
 		if (m_SpawnTimer > m_SpawnRate && r->isActive() == false)
 		{
-			r->loadCirclagon();
+			insertPattern(r);
 			m_Origin.updateTransform();
 
 			r->isActive() = true;
@@ -153,4 +201,30 @@ bool NotSoSupaCirclagonApp::isInside(const Circle& obj, const Circle& bounds) co
 		return false;
 	else
 		return true;
+}
+
+void NotSoSupaCirclagonApp::insertPattern(Circlagon * c)
+{
+	switch (p)
+	{
+	case NotSoSupaCirclagonApp::Stairs:
+		c->loadCirclagon(m_RingAngle, m_RingSpeed); return;
+
+	case NotSoSupaCirclagonApp::Random:
+	{
+		if (m_RingSpeed < 0)
+			m_RingSpeed = -m_RingSpeed;
+
+		int randSpeed = rand() % (m_RingSpeed + m_RingSpeed) - m_RingSpeed;
+
+		if (randSpeed <= 0 && randSpeed > -m_RingSpeed / 2)
+			randSpeed -= m_RingSpeed / 2;
+		else if (randSpeed > 0 && randSpeed < m_RingSpeed / 2)
+			randSpeed += m_RingSpeed / 2;
+
+		c->loadCirclagon(rand() % 360, randSpeed);
+	}
+	default:
+		break;
+	}
 }
