@@ -6,14 +6,14 @@
 namespace HLib
 {
 	template<typename T, typename Y, typename P>
-	static T clamp(const T& value, const Y& min, const P& max)
+	static void clamp(T& value, const Y& min, const P& max)
 	{
 		T temp = value;
 		if (value < min)
 			temp = min;
 		if (value > max)
 			temp = max;
-		return temp;
+		value = temp;
 	}
 
 	template<typename T>
@@ -35,6 +35,35 @@ namespace HLib
 				}
 			}
 		} while (isSwapped);
+	}
+
+	template<typename T>
+	static T roundTo(const T& value, unsigned int decimalPlaces = 0)
+	{
+		T rounded;
+		int pow10 = pow(10, decimalPlaces + 1);
+		int integer = value * pow10;
+		int remainder = integer % 10;
+
+		if (remainder == 0)
+		{
+			rounded = integer / pow10;
+			return rounded;
+		}
+
+		if (remainder < 0)
+			if (remainder > -5)
+				integer -= remainder;
+			else
+				integer += (-10 - remainder);
+		else
+			if (remainder < 5)
+				integer -= remainder;
+			else
+				integer += (10 - remainder);
+
+		rounded = integer; 
+		return rounded / pow10;
 	}
 
 	static float toRadian(float degrees)

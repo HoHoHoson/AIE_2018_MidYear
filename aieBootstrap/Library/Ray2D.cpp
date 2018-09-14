@@ -27,7 +27,8 @@ float Ray2D::getLength() const
 Vector2 Ray2D::closestPoint(const Vector2 & point) const
 {
 	Vector2 difference = point - m_Origin;
-	float t = HLib::clamp(difference.dot(m_Direction), 0, m_Length);
+	float t = difference.dot(m_Direction);
+	HLib::clamp(t, 0, m_Length);
 	return m_Origin + m_Direction * t;
 }
 

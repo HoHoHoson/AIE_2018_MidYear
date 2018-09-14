@@ -99,6 +99,12 @@ void NotSoSupaCirclagonApp::update(float deltaTime)
 			break;
 		}
 
+		if (input->wasKeyPressed(aie::INPUT_KEY_C))
+		{
+			state = Controls;
+			break;
+		}
+
 		if (input->wasKeyPressed(aie::INPUT_KEY_ESCAPE))
 			quit();
 
@@ -117,12 +123,12 @@ void NotSoSupaCirclagonApp::update(float deltaTime)
 		if (p == Random)
 		{
 			m_SpawnRate = 1.75 - m_RingSpeed / 1000;
-			m_SpawnRate = HLib::clamp(m_SpawnRate, 1.5, 1.75);
+			HLib::clamp(m_SpawnRate, 1.5, 1.75);
 
 			if (m_IsSet == false)
 			{
 				int cooldown = (rand() % (10 + 1) + 10) - m_GameTime / 10;
-				cooldown = HLib::clamp(cooldown, 6, 20);
+				HLib::clamp(cooldown, 6, 20);
 
 				m_Set = m_GameTime + cooldown;
 				m_IsSet = true;
@@ -158,9 +164,9 @@ void NotSoSupaCirclagonApp::update(float deltaTime)
 		}
 
 		m_RingSpeed = m_GameTime * 2.5;
-		m_RingSpeed = HLib::clamp(m_RingSpeed, 0, 240);
+		HLib::clamp(m_RingSpeed, 0, 240);
 		m_ScaleSpeed = m_RingSpeed / 8;
-		m_ScaleSpeed = HLib::clamp(m_ScaleSpeed, 5, 20);
+		HLib::clamp(m_ScaleSpeed, 5, 20);
 
 		if (input->isKeyDown(aie::INPUT_KEY_LEFT) || input->isKeyDown(aie::INPUT_KEY_A))
 			m_PlayerOrigin.setLocal().rotateZ(HLib::toRadian(m_PlayerSpeed) * deltaTime);
@@ -275,6 +281,17 @@ void NotSoSupaCirclagonApp::update(float deltaTime)
 		break;
 	}
 
+	case NotSoSupaCirclagonApp::Controls:
+	{
+
+
+		if (input->wasKeyPressed(aie::INPUT_KEY_ESCAPE))
+			state = Menu;
+
+
+		break;
+	}
+
 	default:
 		assert(false && "Update switch statement error!");
 	}
@@ -297,9 +314,12 @@ void NotSoSupaCirclagonApp::draw() {
 	{
 
 
+		m_2dRenderer->drawText(m_font, "NOT SO", getWindowWidth() / 2 - 100, getWindowHeight() / 2 + 240);
+		m_2dRenderer->drawText(m_font, "SUPER CIRCLAGON", getWindowWidth() / 2 - 60, getWindowHeight() / 2 + 200);
 		m_2dRenderer->drawText(m_font, "(P)lay", getWindowWidth() / 2 - 80, getWindowHeight() / 2);
-		m_2dRenderer->drawText(m_font, "(H)ighScores", getWindowWidth() / 2 - 80, getWindowHeight() / 2 - 40);
-		m_2dRenderer->drawText(m_font, "(Esc)ape", getWindowWidth() / 2 - 80, getWindowHeight() / 2 - 80);
+		m_2dRenderer->drawText(m_font, "(C)ontrols", getWindowWidth() / 2 - 80, getWindowHeight() / 2 - 40);
+		m_2dRenderer->drawText(m_font, "(H)ighScores", getWindowWidth() / 2 - 80, getWindowHeight() / 2 - 80);
+		m_2dRenderer->drawText(m_font, "(Esc)ape", getWindowWidth() / 2 - 80, getWindowHeight() / 2 - 120);
 
 
 		break;
@@ -323,6 +343,8 @@ void NotSoSupaCirclagonApp::draw() {
 			}
 		}
 
+		m_2dRenderer->drawText(m_font, std::to_string(HLib::roundTo(m_GameTime, 2)).erase(5).c_str(), 0, 10);
+
 
 		break;
 	}
@@ -343,12 +365,13 @@ void NotSoSupaCirclagonApp::draw() {
 	{
 
 		
-		m_2dRenderer->drawText(m_font, "HIGHSCORE", getWindowWidth() / 2 - 80, getWindowHeight() / 2 + 200);
+		m_2dRenderer->drawText(m_font, "HIGHSCORES", getWindowWidth() / 2 - 80, getWindowHeight() / 2 + 200);
 
 		for (size_t i = 0; i < 10; ++i)
 		{
 			std::string num = std::to_string(i + 1);
-			std::string time = std::to_string(scoreTable[i].time);
+			std::string time = std::to_string(scoreTable[i].time).erase(5);
+			time.push_back('s');
 			char sname[256];
 			strcpy_s(sname, 255, scoreTable[i].name.data());
 
@@ -366,10 +389,29 @@ void NotSoSupaCirclagonApp::draw() {
 	case NotSoSupaCirclagonApp::HighScoreInput:
 	{
 
+		std::string time = std::to_string(HLib::roundTo(m_GameTime, 2)).erase(5);
+		time.push_back('s');
 
 		m_2dRenderer->drawText(m_font, "NEW HIGHSCORE", getWindowWidth() / 2 - 80, getWindowHeight() / 2 + 200);
-		m_2dRenderer->drawText(m_font, "Input a name into the Console", getWindowWidth() / 2 - 240, getWindowHeight() / 2 + 120);
-		m_2dRenderer->drawText(m_font, "Can't be longer than 12 Characters!", getWindowWidth() / 2 - 240, getWindowHeight() / 2 + 80);
+		m_2dRenderer->drawText(m_font, time.c_str(), getWindowWidth() / 2 - 20, getWindowHeight() / 2 + 120);
+		m_2dRenderer->drawText(m_font, "Input a name into the Console.", getWindowWidth() / 2 - 240, getWindowHeight() / 2 - 40);
+		m_2dRenderer->drawText(m_font, "Can't be longer than 12 Characters!", getWindowWidth() / 2 - 280, getWindowHeight() / 2 - 80);
+
+
+		break;
+	}
+
+	case NotSoSupaCirclagonApp::Controls:
+	{
+
+
+		m_2dRenderer->drawText(m_font, "HOW TO PLAY"
+			, getWindowWidth() / 2 - 80, getWindowHeight() / 2 + 200);
+		m_2dRenderer->drawText(m_font, " << Move Left", getWindowWidth() / 2 - 120, getWindowHeight() / 2 + 120);
+		m_2dRenderer->drawText(m_font, "    Move Right >>", getWindowWidth() / 2 - 120, getWindowHeight() / 2 + 80);
+		m_2dRenderer->drawText(m_font, "SPACE to move slower", getWindowWidth() / 2 - 120, getWindowHeight() / 2 + 40);
+		m_2dRenderer->drawText(m_font, "EZ :D", getWindowWidth() * 0.75, getWindowHeight() * 0.25);
+		m_2dRenderer->drawText(m_font, "(Esc)ape", 0, 10);
 
 
 		break;
@@ -386,10 +428,18 @@ void NotSoSupaCirclagonApp::draw() {
 void NotSoSupaCirclagonApp::setDefaultTable()
 {
 	for (size_t i = 0; i < 10; ++i)
-	{
-		scoreTable[i].name = "---";
-		scoreTable[i].time = 0;
-	}
+		scoreTable[i].time = 10.0f;
+	
+	scoreTable[0].name = "What?";
+	scoreTable[1].name = "Where";
+	scoreTable[2].name = "the";
+	scoreTable[3].name = "hell";
+	scoreTable[4].name = "is";
+	scoreTable[5].name = "every";
+	scoreTable[6].name = "one?";
+	scoreTable[7].name = "I'm";
+	scoreTable[8].name = "sad";
+	scoreTable[9].name = "now :(";
 
 	std::fstream file;
 	file.open("scores.dat", std::ios::binary | std::ios::out);
@@ -402,7 +452,7 @@ void NotSoSupaCirclagonApp::saveTable()
 {
 	std::fstream file;
 
-	file.open("scores.dat", std::ios::binary | std::ios::in);
+	file.open("scores.dat", std::ios::binary | std::ios::out);
 	if (file.good())
 	{
 		for (size_t i = 0; i < 10; ++i)
@@ -419,13 +469,13 @@ void NotSoSupaCirclagonApp::loadTable()
 {
 	std::fstream file;
 
-	file.open("scores.dat", std::ios::binary | std::ios::out);
+	file.open("scores.dat", std::ios::binary | std::ios::in);
 	if (file.good())
 	{
 		for (size_t i = 0; i < 10; ++i)
 		{
 			ScoreToData read;
-			file.write((char*)&read, sizeof(ScoreToData));
+			file.read((char*)&read, sizeof(ScoreToData));
 
 			scoreTable[i].name = read.nameData;
 			scoreTable[i].time = read.timeData;

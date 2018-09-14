@@ -5,14 +5,14 @@
 #include "Application.h"
 #include "Renderer2D.h"
 
-#include "FileIO.h"
+#include <fstream>
 #include "SceneObj.h"
 #include "Circlagon.h"
 
 struct Score
 {
 	std::string name;
-	int time;
+	float time;
 };
 
 struct ScoreToData
@@ -24,7 +24,7 @@ struct ScoreToData
 		timeData = store.time;
 	}
 	char nameData[256];
-	int timeData;
+	float timeData;
 };
 
 class NotSoSupaCirclagonApp : public aie::Application {
@@ -84,7 +84,8 @@ protected:
 		Game,
 		GameOver,
 		HighScores,
-		HighScoreInput
+		HighScoreInput,
+		Controls
 	};
 	GameStates state;
 
