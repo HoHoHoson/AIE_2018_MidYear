@@ -5,8 +5,27 @@
 #include "Application.h"
 #include "Renderer2D.h"
 
+#include "FileIO.h"
 #include "SceneObj.h"
 #include "Circlagon.h"
+
+struct Score
+{
+	std::string name;
+	int time;
+};
+
+struct ScoreToData
+{
+	ScoreToData(){}
+	ScoreToData(const Score& store)
+	{
+		strcpy_s(nameData, 255, store.name.data());
+		timeData = store.time;
+	}
+	char nameData[256];
+	int timeData;
+};
 
 class NotSoSupaCirclagonApp : public aie::Application {
 public:
@@ -34,11 +53,12 @@ protected:
 	float m_GameTime;
 
 	float m_SpawnTimer = 0;
-	float m_SpawnRate = 1.5;
+	float m_SpawnRate;
 
 	float m_WidthMid;
 	float m_HeightMid;
-	float m_PlayerSpeed = 360;
+	float m_PlayerSpeed;
+	int m_SetSpeed = 360;
 
 	SceneObj m_Origin;
 	SceneObj m_PlayerOrigin;
@@ -53,11 +73,33 @@ protected:
 	};
 	Patterns p;
 	float m_RingAngle = 0;
-	int m_RingSpeed = 100;
-	float m_ScaleSpeed = 10;
+	int m_RingSpeed;
+	float m_ScaleSpeed;
 	float m_Set;
 	bool m_IsSet = false;
 
+	enum GameStates
+	{
+		Menu,
+		Game,
+		GameOver,
+		HighScores,
+		HighScoreInput
+	};
+	GameStates state;
+
+	Score scoreTable[10];
+
+	void setDefaultTable();
+	void saveTable();
+	void loadTable();
+
 	bool isInside(const Circle& obj, const Circle& bounds) const;
 	void insertPattern(Circlagon* c);
+	void reloadGame();
 };
+
+static bool operator<(const Score& a, const Score& b)
+{
+	return a.time < b.time;
+}

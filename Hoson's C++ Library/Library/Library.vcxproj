@@ -115,6 +115,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="..\..\Hoson%27s C++ Library\Library\FileIO.h" />
     <ClInclude Include="Algorithms.h" />
     <ClInclude Include="..\..\Hoson%27s C++ Library\Library\Matrix2.h" />
     <ClInclude Include="..\..\Hoson%27s C++ Library\Library\Matrix3.h" />

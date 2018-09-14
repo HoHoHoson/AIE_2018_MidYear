@@ -6,7 +6,7 @@ int main() {
 	auto app = new NotSoSupaCirclagonApp();
 
 	// initialise and loop
-	app->run("AIE", 720, 720, false);
+	app->run("AIE", 950, 950, false);
 
 	// deallocation
 	delete app;

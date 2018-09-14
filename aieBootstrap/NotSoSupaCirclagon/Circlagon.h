@@ -31,7 +31,7 @@ private:
 	bool m_IsOut;
 	bool m_IsActive;
 
-	const unsigned int m_SetScale = 27;
+	const unsigned int m_SetScale = 37;
 	float m_Scale;
 	float* m_ScaleSp;
 
