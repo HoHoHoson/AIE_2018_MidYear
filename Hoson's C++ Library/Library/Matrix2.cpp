@@ -30,13 +30,13 @@ Matrix2::operator float*()
 
 Vector2& Matrix2::operator[](int index)
 {
-	assert(index == 0 && index == 1 && "Invalid Matrix2 index");
+	assert(index == 0 || index == 1 && "Invalid Matrix2 index");
 	return matrix[index];
 }
 
 Vector2 Matrix2::operator[](int index) const
 {
-	assert(index == 0 && index == 1 && "Invalid Matrix2 index");
+	assert(index == 0 || index == 1 && "Invalid Matrix2 index");
 	return matrix[index];
 }
 

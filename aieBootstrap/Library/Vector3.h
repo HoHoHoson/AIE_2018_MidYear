@@ -52,4 +52,4 @@ private:
 };
 
 // for the people who likes making our lives harder
-static Vector3 operator*(float scalar, const Vector3& other);
+Vector3 operator*(float scalar, const Vector3& other);

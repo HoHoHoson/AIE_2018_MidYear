@@ -47,4 +47,4 @@ private:
 	};
 };
 
-static Vector4 operator*(float scalar, const Vector4& other);
+Vector4 operator*(float scalar, const Vector4& other);

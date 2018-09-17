@@ -39,6 +39,12 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Library", "Library\Library.vcxproj", "{D8B03AC4-E93E-4025-A34F-A9ADB5360390}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "SkyeNetDotNet", "SkyeNetDotNet\SkyeNetDotNet.vcxproj", "{C0B62905-F545-477D-8D85-E4F50381260E}"
+	ProjectSection(ProjectDependencies) = postProject
+		{AF59BB0B-E059-4773-83DC-728A949647DA} = {AF59BB0B-E059-4773-83DC-728A949647DA}
+		{D8B03AC4-E93E-4025-A34F-A9ADB5360390} = {D8B03AC4-E93E-4025-A34F-A9ADB5360390}
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -107,6 +113,14 @@ Global
 		{D8B03AC4-E93E-4025-A34F-A9ADB5360390}.Release|x64.Build.0 = Release|x64
 		{D8B03AC4-E93E-4025-A34F-A9ADB5360390}.Release|x86.ActiveCfg = Release|Win32
 		{D8B03AC4-E93E-4025-A34F-A9ADB5360390}.Release|x86.Build.0 = Release|Win32
+		{C0B62905-F545-477D-8D85-E4F50381260E}.Debug|x64.ActiveCfg = Debug|x64
+		{C0B62905-F545-477D-8D85-E4F50381260E}.Debug|x64.Build.0 = Debug|x64
+		{C0B62905-F545-477D-8D85-E4F50381260E}.Debug|x86.ActiveCfg = Debug|Win32
+		{C0B62905-F545-477D-8D85-E4F50381260E}.Debug|x86.Build.0 = Debug|Win32
+		{C0B62905-F545-477D-8D85-E4F50381260E}.Release|x64.ActiveCfg = Release|x64
+		{C0B62905-F545-477D-8D85-E4F50381260E}.Release|x64.Build.0 = Release|x64
+		{C0B62905-F545-477D-8D85-E4F50381260E}.Release|x86.ActiveCfg = Release|Win32
+		{C0B62905-F545-477D-8D85-E4F50381260E}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -43,4 +43,4 @@ private:
 	};
 };
 
-static Vector3 operator* (const Matrix3& m, const Vector3& v);
+Vector3 operator* (const Matrix3& m, const Vector3& v);

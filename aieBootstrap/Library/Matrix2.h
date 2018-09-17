@@ -37,4 +37,4 @@ private:
 	};
 };
 
-static Vector2 operator*(const Matrix2& m, const Vector2& v);
+Vector2 operator*(const Matrix2& m, const Vector2& v);

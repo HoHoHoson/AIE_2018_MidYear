@@ -47,4 +47,4 @@ private:
 	};
 };
 
-static Vector4 operator*(const Matrix4& m, const Vector4& v);
+Vector4 operator*(const Matrix4& m, const Vector4& v);
