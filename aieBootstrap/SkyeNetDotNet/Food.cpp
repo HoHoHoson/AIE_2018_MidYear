@@ -3,6 +3,7 @@
 Food::Food(aie::Texture* tex)
 {
 	m_Texture = tex;
+	m_Active = false;
 }
 
 void Food::setup(const Vector2& randPos)
@@ -27,4 +28,9 @@ void Food::render(aie::Renderer2D * renderer)
 bool Food::checkStatus() const
 {
 	return m_Active;
+}
+
+Vector2 Food::getPosition() const
+{
+	return m_Position;
 }

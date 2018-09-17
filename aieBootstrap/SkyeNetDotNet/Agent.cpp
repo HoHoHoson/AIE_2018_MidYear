@@ -18,6 +18,7 @@ void Agent::setVelocity(const Vector2 & pos)
 }
 
 Vector2 Agent::getPosition() const
+
 {
 	return Vector2(m_Transform[3][0], m_Transform[3][1]);
 }

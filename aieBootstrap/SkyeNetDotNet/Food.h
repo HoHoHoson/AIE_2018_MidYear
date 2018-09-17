@@ -17,6 +17,7 @@ public:
 	void render(aie::Renderer2D* renderer);
 
 	bool checkStatus() const;
+	Vector2 getPosition() const;
 
 private:
 
@@ -24,5 +25,5 @@ private:
 	Vector2 m_Position;
 	Circle m_Bounds;
 
-	bool m_Active = false;
+	bool m_Active;
 };

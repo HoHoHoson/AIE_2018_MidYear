@@ -28,11 +28,12 @@ bool SkyeNetDotNetApp::startup() {
 	m_FoodTex = new aie::Texture("../bin/textures/ball.png");
 
 	Ant* a = new Ant(Ant::Red, m_RedAntTex);
+	a->setPosition(Vector2(100, 100));
 	a->setVelocity(Vector2(25, 25));
 	m_Ants.push_back(a);
 
 	a = new Ant(Ant::Blue, m_BlueAntTex);
-	a->setPosition(Vector2(getWindowWidth(), getWindowHeight()));
+	a->setPosition(Vector2(getWindowWidth() - 100, getWindowHeight() - 100));
 	a->setVelocity(Vector2(-25, -25));
 	m_Ants.push_back(a);
 
@@ -77,9 +78,19 @@ void SkyeNetDotNetApp::update(float deltaTime) {
 
 	for (auto* a : m_Ants)
 	{
-		a->update(deltaTime);
+		Vector2 closestYum = Vector2(getWindowWidth(), getWindowHeight());
 		for (auto* f : m_Food)
-			f->update(deltaTime, a->getPosition());
+		{
+			if (f->checkStatus() == true)
+			{
+				f->update(deltaTime, a->getPosition());
+				if (closestYum[0] == 0)
+					closestYum = f->getPosition();
+				if (MagPow2_2D(f->getPosition(), a->getPosition()) < MagPow2_2D(closestYum, a->getPosition()))
+					closestYum = f->getPosition();
+			}
+		}
+		a->update(deltaTime, closestYum);
 	}
 	
 }
