@@ -27,8 +27,14 @@ protected:
 	aie::Texture* m_RedAntTex;
 	aie::Texture* m_BlueAntTex;
 	aie::Texture* m_FoodTex;
+	aie::Texture* m_HoleTex;
+	aie::Texture* m_RedNest;
+	aie::Texture* m_BlueNest;
+
 	std::vector<Ant*> m_Ants;
 	std::vector<Food*> m_Food;
 
+
+	bool m_Add;
 	float m_Timer = 0;
 };

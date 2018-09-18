@@ -13,10 +13,14 @@ void Food::setup(const Vector2& randPos)
 	m_Bounds.updateCircle(randPos, m_Texture->getWidth());
 }
 
-void Food::update(float deltaTime, const Vector2& ant)
+bool Food::checkCollision(float deltaTime, const Vector2& ant)
 {
 	if (m_Bounds.checkCollision(Circle(ant, 0)) && m_Active == true)
+	{
 		m_Active = false;
+		return true;
+	}
+	return false;
 }
 
 void Food::render(aie::Renderer2D * renderer)

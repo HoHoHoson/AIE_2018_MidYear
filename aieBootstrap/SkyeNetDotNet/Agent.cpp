@@ -43,10 +43,10 @@ void Agent::render(aie::Renderer2D * renderer)
 void Agent::updateFacing()
 {
 	Vector3 newDir(m_Velocity[0], m_Velocity[1], 0);
-	newDir.normalise();
-
-	if (newDir.magnitude() == 0)
+	if (newDir[0] == 0 && newDir[1] == 0 && newDir[2] == 0 || newDir.magnitude() == 0)
 		newDir = { 0, 1, 0 };
+	else
+		newDir.normalise();
 
 	Vector3 cross = newDir.cross(Vector3(m_Transform[2][0], m_Transform[2][1], m_Transform[2][2]));
 

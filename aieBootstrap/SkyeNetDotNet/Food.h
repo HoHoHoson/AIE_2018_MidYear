@@ -13,7 +13,7 @@ public:
 	Food(aie::Texture* tex);
 
 	void setup(const Vector2& randPos);
-	void update(float deltaTime, const Vector2& ant);
+	bool checkCollision(float deltaTime, const Vector2& ant);
 	void render(aie::Renderer2D* renderer);
 
 	bool checkStatus() const;

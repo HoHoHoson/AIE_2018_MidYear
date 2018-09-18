@@ -26,6 +26,9 @@ bool SkyeNetDotNetApp::startup() {
 	m_BlueAntTex = new aie::Texture("../bin/textures/blue_ant.png");
 	m_RedAntTex = new aie::Texture("../bin/textures/red_ant.png");
 	m_FoodTex = new aie::Texture("../bin/textures/ball.png");
+	m_HoleTex = new aie::Texture("../bin/textures/ballBlack.png");
+	m_RedNest = new aie::Texture("../bin/textures/ballRed.png");
+	m_BlueNest = new aie::Texture("../bin/textures/ballBlue.png");
 
 	Ant* a = new Ant(Ant::Red, m_RedAntTex);
 	a->setPosition(Vector2(100, 100));
@@ -60,7 +63,7 @@ void SkyeNetDotNetApp::update(float deltaTime) {
 	// exit the application
 	if (input->isKeyDown(aie::INPUT_KEY_ESCAPE))
 		quit();
-
+	HLib::clamp(deltaTime, 0, 0.1);
 	m_Timer += deltaTime;
 
 	if (m_Timer > 3)
@@ -70,29 +73,65 @@ void SkyeNetDotNetApp::update(float deltaTime) {
 		{
 			if (f->checkStatus() == false)
 			{
-				f->setup(Vector2(rand() % getWindowHeight(), rand() % getWindowHeight()));
+				f->setup(Vector2(rand() % getWindowWidth(), rand() % getWindowHeight()));
 				break;
 			}
 		}
 	}
-
-	for (auto* a : m_Ants)
+		/*for (auto a : m_Ants)
+		a->update(deltaTime, a->getPosition());*/
+	auto antIt = m_Ants.begin();
+	while (antIt != m_Ants.end())
 	{
-		Vector2 closestYum = Vector2(getWindowWidth(), getWindowHeight());
-		for (auto* f : m_Food)
-		{
-			if (f->checkStatus() == true)
+		Food* closestYum = nullptr;
+		auto a = (*antIt);
+
+		if (a->getState() != a->Home)
+			for (auto* f : m_Food)
 			{
-				f->update(deltaTime, a->getPosition());
-				if (closestYum[0] == 0)
-					closestYum = f->getPosition();
-				if (MagPow2_2D(f->getPosition(), a->getPosition()) < MagPow2_2D(closestYum, a->getPosition()))
-					closestYum = f->getPosition();
+				if (f->checkStatus() == true)
+				{
+					if (f->checkCollision(deltaTime, a->getPosition()) == true)
+					{
+						aie::Texture* temp;
+						if (a->getTeam() == a->Blue)
+							temp = m_BlueAntTex;
+						else
+							temp = m_RedAntTex;
+						m_Ants.push_back(new Ant(a->getTeam(), temp));
+						m_Add = true;
+						a->setState(a->Home);
+						break;
+					}
+
+					if (closestYum == nullptr)
+						closestYum = f;
+					if (MagPow2_2D(f->getPosition(), a->getPosition()) < MagPow2_2D(closestYum->getPosition(), a->getPosition()))
+						closestYum = f;
+				}
 			}
+		
+		if (a->getState() != a->Home)
+			if (closestYum != nullptr)
+			{
+				a->setState(a->Seek);
+				a->update(deltaTime, closestYum->getPosition());
+			}
+			else
+			{
+				a->setState(a->Wander);
+				a->update(deltaTime, a->getPosition());
+			}
+		else
+			a->update(deltaTime, a->getPosition());
+
+		if (m_Add == true)
+		{
+			m_Add = false;
+			break;
 		}
-		a->update(deltaTime, closestYum);
-	}
-	
+		antIt++;
+	};
 }
 
 void SkyeNetDotNetApp::draw() {
@@ -111,6 +150,14 @@ void SkyeNetDotNetApp::draw() {
 
 	for (auto* a : m_Ants)
 		a->render(m_2dRenderer);
+
+	unsigned int nestScale = m_HoleTex->getWidth() * 2;
+
+	m_2dRenderer->drawSprite(m_HoleTex, 100, 100, NULL, NULL, NULL, 0.9);
+	m_2dRenderer->drawSprite(m_RedNest, 100, 100, nestScale, nestScale, NULL, 1);
+
+	m_2dRenderer->drawSprite(m_HoleTex, 1180, 620, NULL, NULL, NULL, 0.9);
+	m_2dRenderer->drawSprite(m_BlueNest, 1180, 620, nestScale, nestScale, NULL, 1);
 
 	// output some text, uses the last used colour
 	m_2dRenderer->drawText(m_font, "Press ESC to quit", 0, 0);
