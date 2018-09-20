@@ -30,6 +30,9 @@ bool SkyeNetDotNetApp::startup() {
 	m_RedNest = new aie::Texture("../bin/textures/ballRed.png");
 	m_BlueNest = new aie::Texture("../bin/textures/ballBlue.png");
 
+	m_TankBarrel = new aie::Texture("../bin/textures/barrelBeige.png");
+	m_BlueTankTex = new aie::Texture("../bin/textures/tankBlue.png");
+
 	Ant* a = new Ant(Ant::Red, m_RedAntTex);
 	a->setPosition(Vector2(100, 100));
 	a->setVelocity(Vector2(25, 25));
@@ -46,6 +49,11 @@ bool SkyeNetDotNetApp::startup() {
 		m_Food.push_back(f);
 	}
 	
+	base = new AIBase(m_BlueAntTex);
+	base->setVelocity(Vector2(25, 25));
+	m_Origin = new SceneObject;
+	m_Origin->addChild(base->getSceneObj());
+
 	return true;
 }
 
@@ -132,6 +140,9 @@ void SkyeNetDotNetApp::update(float deltaTime) {
 		}
 		antIt++;
 	};
+
+	base->update(deltaTime);
+	m_Origin->update();
 }
 
 void SkyeNetDotNetApp::draw() {
@@ -158,6 +169,8 @@ void SkyeNetDotNetApp::draw() {
 
 	m_2dRenderer->drawSprite(m_HoleTex, 1180, 620, NULL, NULL, NULL, 0.9);
 	m_2dRenderer->drawSprite(m_BlueNest, 1180, 620, nestScale, nestScale, NULL, 1);
+
+	base->draw(m_2dRenderer);
 
 	// output some text, uses the last used colour
 	m_2dRenderer->drawText(m_font, "Press ESC to quit", 0, 0);

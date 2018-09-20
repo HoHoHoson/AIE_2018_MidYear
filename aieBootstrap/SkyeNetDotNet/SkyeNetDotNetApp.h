@@ -3,6 +3,7 @@
 #include "Application.h"
 #include "Renderer2D.h"
 #include <vector>
+#include "AIBase.h"
 
 class Ant;
 class Food;
@@ -31,9 +32,14 @@ protected:
 	aie::Texture* m_RedNest;
 	aie::Texture* m_BlueNest;
 
+	aie::Texture* m_TankBarrel;
+	aie::Texture* m_BlueTankTex;
+
 	std::vector<Ant*> m_Ants;
 	std::vector<Food*> m_Food;
 
+	SceneObject* m_Origin;
+	AIBase* base;
 
 	bool m_Add;
 	float m_Timer = 0;

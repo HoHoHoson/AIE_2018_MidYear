@@ -27,6 +27,9 @@
     <ClCompile Include="Food.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="AIBase.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="SkyeNetDotNetApp.h">
@@ -39,6 +42,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Food.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="AIBase.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

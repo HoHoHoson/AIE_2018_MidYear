@@ -115,6 +115,8 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="..\..\Hoson%27s C++ Library\Library\BitSet.h" />
+    <ClInclude Include="..\..\Hoson%27s C++ Library\Library\SceneObject.h" />
     <ClInclude Include="Algorithms.h" />
     <ClInclude Include="..\..\Hoson%27s C++ Library\Library\Matrix2.h" />
     <ClInclude Include="..\..\Hoson%27s C++ Library\Library\Matrix3.h" />
@@ -125,6 +127,7 @@
     <ClInclude Include="..\..\Hoson%27s C++ Library\Library\Vector4.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\..\Hoson%27s C++ Library\Library\BitSet.cpp" />
     <ClCompile Include="..\..\Hoson%27s C++ Library\Library\Circle.cpp" />
     <ClCompile Include="..\..\Hoson%27s C++ Library\Library\Matrix2.cpp" />
     <ClCompile Include="..\..\Hoson%27s C++ Library\Library\Matrix3.cpp" />
@@ -132,6 +135,7 @@
     <ClCompile Include="..\..\Hoson%27s C++ Library\Library\Plane2D.cpp" />
     <ClCompile Include="..\..\Hoson%27s C++ Library\Library\Ray2D.cpp" />
     <ClCompile Include="..\..\Hoson%27s C++ Library\Library\Rectangle.cpp" />
+    <ClCompile Include="..\..\Hoson%27s C++ Library\Library\SceneObject.cpp" />
     <ClCompile Include="..\..\Hoson%27s C++ Library\Library\Vector2.cpp" />
     <ClCompile Include="..\..\Hoson%27s C++ Library\Library\Vector3.cpp" />
     <ClCompile Include="..\..\Hoson%27s C++ Library\Library\Vector4.cpp" />

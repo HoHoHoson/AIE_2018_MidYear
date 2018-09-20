@@ -12,6 +12,8 @@
 #include "Matrix4.h"
 #include "2D_Collision.h"
 #include "Algorithms.h"
+#include "SceneObject.h"
+#include "BitSet.h"
 
 
 int main()
@@ -38,6 +40,14 @@ int main()
 	Vector2 test;
 	float f = -10.2525;
 	float round = HLib::roundTo(f, 2);
+	SceneObject origin;
+	SceneObject soTest;
+	BitSet bits;
+
+	bits.setBit(4);
+	bits.printValues();
+	origin.addChild(&soTest);
+	origin.update();
 
 	c1.updateCircle(v4a, 10);
 	r1.updateRect(v4a, 6, 6);
