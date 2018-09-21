@@ -42,9 +42,6 @@
     <ClInclude Include="..\..\Hoson%27s C++ Library\Library\SceneObject.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\Hoson%27s C++ Library\Library\BitSet.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\Hoson%27s C++ Library\Library\Matrix2.cpp">
@@ -78,9 +75,6 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\..\Hoson%27s C++ Library\Library\SceneObject.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\Hoson%27s C++ Library\Library\BitSet.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

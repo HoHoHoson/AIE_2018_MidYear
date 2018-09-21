@@ -50,7 +50,7 @@ bool SkyeNetDotNetApp::startup() {
 	}
 	
 	base = new AIBase(m_BlueAntTex);
-	base->setVelocity(Vector2(25, 25));
+	base->setPosition(Vector4(getWindowWidth() / 2, getWindowHeight() / 2, 0, 0));
 	m_Origin = new SceneObject;
 	m_Origin->addChild(base->getSceneObj());
 
@@ -94,30 +94,30 @@ void SkyeNetDotNetApp::update(float deltaTime) {
 		Food* closestYum = nullptr;
 		auto a = (*antIt);
 
-		if (a->getState() != a->Home)
-			for (auto* f : m_Food)
-			{
-				if (f->checkStatus() == true)
-				{
-					if (f->checkCollision(deltaTime, a->getPosition()) == true)
-					{
-						aie::Texture* temp;
-						if (a->getTeam() == a->Blue)
-							temp = m_BlueAntTex;
-						else
-							temp = m_RedAntTex;
-						m_Ants.push_back(new Ant(a->getTeam(), temp));
-						m_Add = true;
-						a->setState(a->Home);
-						break;
-					}
+		//if (a->getState() != a->Home)
+		//	for (auto* f : m_Food)
+		//	{
+		//		if (f->checkStatus() == true)
+		//		{
+		//			if (f->checkCollision(deltaTime, a->getPosition()) == true)
+		//			{
+		//				aie::Texture* temp;
+		//				if (a->getTeam() == a->Blue)
+		//					temp = m_BlueAntTex;
+		//				else
+		//					temp = m_RedAntTex;
+		//				m_Ants.push_back(new Ant(a->getTeam(), temp));
+		//				m_Add = true;
+		//				a->setState(a->Home);
+		//				break;
+		//			}
 
-					if (closestYum == nullptr)
-						closestYum = f;
-					if (MagPow2_2D(f->getPosition(), a->getPosition()) < MagPow2_2D(closestYum->getPosition(), a->getPosition()))
-						closestYum = f;
-				}
-			}
+		//			if (closestYum == nullptr)
+		//				closestYum = f;
+		//			if (MagPow2_2D(f->getPosition(), a->getPosition()) < MagPow2_2D(closestYum->getPosition(), a->getPosition()))
+		//				closestYum = f;
+		//		}
+		//	}
 		
 		if (a->getState() != a->Home)
 			if (closestYum != nullptr)
@@ -141,6 +141,8 @@ void SkyeNetDotNetApp::update(float deltaTime) {
 		antIt++;
 	};
 
+	base->m_SteeringForce = { 0,0,0,0 };
+	base->m_SteeringForce += base->wanderForce(deltaTime);
 	base->update(deltaTime);
 	m_Origin->update();
 }

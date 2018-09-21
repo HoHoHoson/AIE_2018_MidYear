@@ -189,9 +189,10 @@ inline Ray2D::Ray2D(T origin, T destination, float length)
 
 
 
-static float MagPow2_2D(const Vector2 v1, const Vector2 v2)
+template<typename T, typename Y>
+static float MagPow2_2D(const T& v1, const Y& v2)
 {
-	Vector2 temp = v1 - v2;
+	Vector2 temp(v1[0] - v2[0], v1[1] - v2[1]);
 	float magPow2 = pow(temp[0], 2) + pow(temp[1], 2);
 	return magPow2;
 }
