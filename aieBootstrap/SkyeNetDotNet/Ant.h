@@ -76,9 +76,10 @@ public:
 				moveTo(m_Home, deltaTime);
 			else
 			{
-				setVelocity(getVelocity() * (MagPow2_2D(m_Home, getPosition()) / pow(20, 2)));
+				Vector2 t = getVelocity() * (MagPow2_2D(m_Home, getPosition()) / pow(20, 2));
+				setVelocity(t);
 				moveTo(m_Home, deltaTime);
-				if (MagPow2_2D(m_Home, getPosition()) < pow(15, 2))
+				if (MagPow2_2D(m_Home, getPosition()) < pow(20, 2))
 					m_State = Wander;
 			}
 		}

@@ -4,14 +4,14 @@ AIBase::AIBase(aie::Texture* tex)
 {
 	m_Texture = tex;
 	m_SteeringForce = { 0, 0, 0, 0 };
-	m_Velocity = { 25, 25, 1, 1 };
 	m_WanderForce = { 0, 0, 0, 0 };
+	m_Velocity = { 25, 25, 1, 1 };
 }
 
-void AIBase::update(float dTime)
+void AIBase::update(float deltaTime)
 {
-	setVelocity(limitVector(getVelocity() + limitVector(m_SteeringForce, m_MaxForce), m_MaxSpeed) * dTime);
-	setLocal().translate(getVelocity()[0], getVelocity()[1], 0, 0);
+	setVelocity(getVelocity() + m_SteeringForce * deltaTime);
+	setLocal().translate(getVelocity()[0] * deltaTime, getVelocity()[1] * deltaTime, 0, 0);
 
 	Vector4 newDir(getVelocity()[0], getVelocity()[1], 0, 0);
 	newDir.normalise();
@@ -72,9 +72,7 @@ Vector4 AIBase::wanderForce(float deltaTime)
 	wanderPoint *= c.getRadius();
 	wanderPoint += Vector4(c.getOrigin()[0], c.getOrigin()[1], 0, 0);
 
-	wanderPoint = (wanderPoint - getPosition()).normalise() * m_MaxSpeed - (Vector4(c.getOrigin()[0], c.getOrigin()[1], 0, 0) - getPosition()).normalise() * m_MaxSpeed;
-	m_WanderForce += (wanderPoint - getVelocity()) * deltaTime;
-	m_WanderForce = limitVector(m_WanderForce, m_MaxForce);
+	m_WanderForce += seekForce(wanderPoint, true) * deltaTime;
 
 	return m_WanderForce * m_WanderWeight;
 }

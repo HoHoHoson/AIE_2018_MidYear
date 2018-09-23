@@ -47,9 +47,9 @@ private:
 
 	Vector4 m_Velocity;
 
-	float m_MaxSpeed = 50;
+	float m_MaxSpeed = 40;
 	float m_MaxForce = 40;
-	unsigned int m_CicleDistance = 100;
+	unsigned int m_CicleDistance = 50;
 	unsigned int m_CircleDiameter = 100;
 	Vector4 m_WanderForce;
 };
