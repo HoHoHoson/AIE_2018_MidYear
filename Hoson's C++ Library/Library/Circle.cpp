@@ -29,7 +29,7 @@ bool Circle::checkCollision(const Circle & other) const
 		return false;
 }
 
-bool Circle::collisionRectangle(const Rectangle & r) const
+bool Circle::checkCollision(const Rectangle & r) const
 {
 	Vector2 topLeft(r.getBottomLeft()[0], r.getTopRight()[1]);
 	Vector2 bottomRight(r.getTopRight()[0], r.getBottomLeft()[1]);

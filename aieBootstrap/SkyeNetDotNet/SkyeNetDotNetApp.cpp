@@ -142,8 +142,20 @@ void SkyeNetDotNetApp::update(float deltaTime) {
 	};
 
 	base->m_SteeringForce = { 0,0,0,0 };
+	Vector2 threat = { 0,0 };
+	for (auto a : m_Ants)
+	{
+		if (MagPow2_2D(base->getPosition(), a->getPosition()) < MagPow2_2D(base->getPosition(), threat))
+			threat = a->getPosition();
+	}
+	base->m_SteeringForce += base->collisionAvoidance(Circle(threat, m_BlueAntTex->getHeight() / 2));
 	//base->m_SteeringForce += base->seekForce(Vector4(m_Ants.at(0)->getPosition()[0], m_Ants.at(0)->getPosition()[1], 0, 0));
-	base->m_SteeringForce += base->wanderForce(deltaTime);
+	//base->m_SteeringForce += base->seekForce(Vector4(input->getMouseX(), input->getMouseY(), 0, 0));
+	//base->arrivalForce(Vector4(500, 500, 1, 0), base->getVelocity().magnitude(), m_BlueAntTex->getHeight() / 2);
+	//base->m_SteeringForce += base->fleeForce(Vector4(m_Ants.at(0)->getPosition()[0], m_Ants.at(0)->getPosition()[1], 0, 0));
+	//base->m_SteeringForce += base->wanderForce(deltaTime);
+	//base->m_SteeringForce += base->pursuitForce(Vector4(m_Ants.at(0)->getPosition()[0], m_Ants.at(0)->getPosition()[1], 0, 0), Vector4(m_Ants.at(0)->getVelocity()[0], m_Ants.at(0)->getVelocity()[1], 0, 0));
+	//base->m_SteeringForce += base->evadeForce(Vector4(m_Ants.at(0)->getPosition()[0], m_Ants.at(0)->getPosition()[1], 0, 0), Vector4(m_Ants.at(0)->getVelocity()[0], m_Ants.at(0)->getVelocity()[1], 0, 0));
 	base->update(deltaTime);
 	m_Origin->update();
 }

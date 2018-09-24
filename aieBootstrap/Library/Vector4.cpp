@@ -2,10 +2,10 @@
 
 Vector4::Vector4()
 {
-	float x = 0;
-	float y = 0;
-	float z = 0;
-	float w = 1;
+	x = 0;
+	y = 0;
+	z = 0;
+	w = 1;
 }
 
 Vector4::Vector4(float x, float y, float z, float w)
@@ -67,6 +67,9 @@ float Vector4::magnitude() const
 Vector4 & Vector4::normalise()
 {
 	float mag = this->magnitude();
+
+	if (mag == 0)
+		return *this = { 0,0,0,0 };
 
 	for (size_t i = 0; i < 3; ++i)
 		data[i] = data[i] / mag;

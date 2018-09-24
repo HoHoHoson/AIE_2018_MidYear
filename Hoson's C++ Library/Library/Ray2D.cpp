@@ -32,7 +32,7 @@ Vector2 Ray2D::closestPoint(const Vector2 & point) const
 	return m_Origin + m_Direction * t;
 }
 
-bool Ray2D::collisionCircle(const Circle & c, Vector2* i) const
+bool Ray2D::checkCollision(const Circle & c, Vector2* i) const
 {
 	float length = (c.getOrigin() - m_Origin).dot(m_Direction);
 	float toClosestPoint = MagPow2_2D(closestPoint(c.getOrigin()), c.getOrigin());
@@ -47,7 +47,7 @@ bool Ray2D::collisionCircle(const Circle & c, Vector2* i) const
 	return true;
 }
 
-bool Ray2D::collisionPlane(const Plane2D & pl, Vector2 * i) const
+bool Ray2D::checkCollision(const Plane2D & pl, Vector2 * i) const
 {
 	float dir = m_Direction.dot(pl.getNormal());
 	float length = pl.distanceTo(m_Origin);
@@ -73,7 +73,7 @@ bool Ray2D::collisionPlane(const Plane2D & pl, Vector2 * i) const
 	}
 }
 
-bool Ray2D::collisionRectangle(const Rectangle & r, Vector2 * i) const
+bool Ray2D::checkCollision(const Rectangle & r, Vector2 * i) const
 {
 	float xMin, xMax, yMin, yMax;
 

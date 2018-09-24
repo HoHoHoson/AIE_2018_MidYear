@@ -13,7 +13,6 @@
 #include "2D_Collision.h"
 #include "Algorithms.h"
 #include "SceneObject.h"
-#include "BitSet.h"
 
 
 int main()
@@ -42,21 +41,18 @@ int main()
 	float round = HLib::roundTo(f, 2);
 	SceneObject origin;
 	SceneObject soTest;
-	BitSet bits;
 
-	bits.setBit(4);
-	bits.printValues();
 	origin.addChild(&soTest);
 	origin.update();
 
 	c1.updateCircle(v4a, 10);
-	r1.updateRect(v4a, 6, 6);
+	r1.updateRect(v4a + Vector4(15,15,0,0), 6, 6);
 	m2a.scale(2, 2);
 	m3a.scale(2, 2, 2);
 	m3a.translate(10, 10, 10);
 	m4a.scale(2, 2, 2, 2);
 	m4a.translate(10, 10, 10, 10);
-	if (c1.collisionRectangle(r1))
+	if (c1.checkCollision(c1))
 		std::cout << "Kaboom\n";
 	else
 		std::cout << "Never touched\n";

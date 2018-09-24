@@ -5,7 +5,7 @@ AIBase::AIBase(aie::Texture* tex)
 	m_Texture = tex;
 	m_SteeringForce = { 0, 0, 0, 0 };
 	m_WanderForce = { 0, 0, 0, 0 };
-	m_Velocity = { 25, 25, 1, 1 };
+	m_Velocity = { 0, 0, 0, 0 };
 }
 
 void AIBase::update(float deltaTime)
@@ -14,9 +14,14 @@ void AIBase::update(float deltaTime)
 	setLocal().translate(getVelocity()[0] * deltaTime, getVelocity()[1] * deltaTime, 0, 0);
 
 	Vector4 newDir(getVelocity()[0], getVelocity()[1], 0, 0);
-	newDir.normalise();
+	float check = MagPow2_2D(Vector4(0,0,0,0), newDir);
 
-	Vector4 cross = newDir.cross(Vector4(setLocal()[2][0], setLocal()[2][1], setLocal()[2][2], setLocal()[2][3]));
+	if (check == 0)
+		newDir = { 0,1,0,0 };
+	else
+		newDir.normalise();
+
+	Vector4 cross = newDir.cross(Vector4(getLocal()[2][0], getLocal()[2][1], getLocal()[2][2], getLocal()[2][3]));
 
 	setLocal()[1] = { newDir[0], newDir[1], newDir[2], 0 };
 	setLocal()[0] = { cross[0], cross[1], cross[2], 0 };
@@ -44,25 +49,33 @@ void AIBase::setVelocity(const Vector4 & vector)
 
 Vector4 AIBase::seekForce(const Vector4& dest, bool calledFromSeperateFunction) const
 {
-	Vector4 dir = (dest - getPosition()).normalise() * m_MaxSpeed;
-	dir = dir - getVelocity();
+	Vector4 force = (dest - getPosition()).normalise() * m_MaxSpeed;
+	force = force - getVelocity();
 
  	if (calledFromSeperateFunction == true)
-		return dir;
+		return force;
 	else
-		return dir * m_SeekWeight;
+		return force * m_SeekWeight;
 }
 
-Vector4 AIBase::fleeForce(const Vector4 & fleeFrom) const
+Vector4 AIBase::fleeForce(const Vector4 & fleeFrom, bool fromSeperateFunction) const
 {
-	Vector4 f = seekForce(fleeFrom, true);
+	Vector4 force = (getPosition() - fleeFrom).normalise() * m_MaxSpeed;
+	force = force - getVelocity();
 
-	return Vector4(-f[0], -f[1], -f[2], -f[3]) * m_FleeWeight;
+	if (fromSeperateFunction == true)
+		return force;
+	else
+		return force * m_FleeWeight;
 }
 
 Vector4 AIBase::wanderForce(float deltaTime) 
 {
-	Circle c(getPosition() + getVelocity().normalise() * m_CicleDistance, m_CircleDiameter);
+	Vector4 temp = { 0,0,0,0 };
+	if (MagPow2_2D(temp, getVelocity()) != 0)
+		temp = getVelocity().normalise();
+
+	Circle c(getPosition() + temp * m_CicleDistance, m_CircleDiameter);
 	Vector4 wanderPoint(0,1,0,0);
 	Matrix4 m4;
 
@@ -75,6 +88,26 @@ Vector4 AIBase::wanderForce(float deltaTime)
 	m_WanderForce += seekForce(wanderPoint, true) * deltaTime;
 
 	return m_WanderForce * m_WanderWeight;
+}
+
+Vector4 AIBase::pursuitForce(const Vector4 & hotPursuitPos, const Vector4 & hotPursuitVel) const
+{
+	return seekForce(hotPursuitPos + hotPursuitVel, true) * m_PursuitWeight;
+}
+
+Vector4 AIBase::evadeForce(const Vector4 & evadePos, const Vector4 & evadeVel) const
+{
+	return fleeForce(evadePos + evadeVel, true) * m_EvadeWeight;
+}
+
+void AIBase::arrivalForce(const Vector4 & dest, unsigned int radius, unsigned int offset)
+{
+	float quotient = (MagPow2_2D(dest, getPosition()) - pow(offset, 2)) / pow(radius, 2);
+
+	if (quotient < 0)
+		setVelocity(Vector4(0,0,0,0));
+	else if (quotient < 1)
+		setVelocity(getVelocity() * quotient);
 }
 
 Vector4 AIBase::limitVector(const Vector4& v, float maxValue)

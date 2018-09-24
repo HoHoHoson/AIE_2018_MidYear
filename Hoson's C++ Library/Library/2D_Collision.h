@@ -85,8 +85,8 @@ public:
 
 	template<typename T>
 	Circle& updateCircle(const T& newOrigin, unsigned int newDiameter = NULL);
-	bool checkCollision(const Circle& other)		const;
-	bool collisionRectangle(const Rectangle& other) const;
+	bool checkCollision(const Circle& other)	const;
+	bool checkCollision(const Rectangle& other) const;
 
 private:
 
@@ -130,9 +130,9 @@ public:
 	Vector2 closestPointTo(const Vector2 & other)	const;
 	float distanceTo(const Vector2& other)			const;
 
-	bool collisionPoint(const Vector2& p)			const;
-	bool collisionCircle(const Circle& c)			const;
-	bool collisionRectangle(const Rectangle& r)		const;
+	bool checkCollision(const Vector2& p)			const;
+	bool checkCollision(const Circle& c)			const;
+	bool checkCollision(const Rectangle& r)			const;
 
 private:
 
@@ -166,10 +166,10 @@ public:
 	Vector2 getOrigin()		const;
 	Vector2 getDirection()	const;
 
-	Vector2 closestPoint(const Vector2& point)						  const;
-	bool collisionCircle(const Circle& c, Vector2* i = nullptr)	  	  const;
-	bool collisionPlane(const Plane2D& pl, Vector2* i = nullptr)	  const;
-	bool collisionRectangle(const Rectangle& r, Vector2* i = nullptr) const;
+	Vector2 closestPoint(const Vector2& point)						const;
+	bool checkCollision(const Circle& c, Vector2* i = nullptr)	  	const;
+	bool checkCollision(const Plane2D& pl, Vector2* i = nullptr)	const;
+	bool checkCollision(const Rectangle& r, Vector2* i = nullptr)	const;
 
 private:
 

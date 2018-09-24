@@ -2,9 +2,9 @@
 
 Vector3::Vector3()
 {
-	float x = 0;
-	float y = 0;
-	float z = 0;
+	x = 0;
+	y = 0;
+	z = 0;
 }
 
 // defined a constructor for Vector3
@@ -89,6 +89,9 @@ float Vector3::magnitude() const
 Vector3 & Vector3::normalise()
 {
 	float mag = this->magnitude();
+
+	if (mag == 0)
+		return *this = { 0,0,0 };
 
 	for (size_t i = 0; i < 3; ++i)
 		data[i] = data[i] / mag;

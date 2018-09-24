@@ -75,6 +75,9 @@ Vector2 & Vector2::normalise()
 {
 	float mag = this->magnitude();
 
+	if (mag == 0)
+		return *this = { 0,0 };
+
 	for (size_t i = 0; i < 2; ++i)
 		data[i] = data[i] / mag;
 
