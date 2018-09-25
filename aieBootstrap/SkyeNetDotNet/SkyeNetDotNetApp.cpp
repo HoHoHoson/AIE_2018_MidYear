@@ -39,7 +39,7 @@ bool SkyeNetDotNetApp::startup() {
 	m_Ants.push_back(a);
 
 	a = new Ant(Ant::Blue, m_BlueAntTex);
-	a->setPosition(Vector2(getWindowWidth() - 100, getWindowHeight() - 100));
+	a->setPosition(Vector2((float)getWindowWidth() - 100, (float)getWindowHeight() - 100));
 	a->setVelocity(Vector2(-25, -25));
 	m_Ants.push_back(a);
 
@@ -50,7 +50,7 @@ bool SkyeNetDotNetApp::startup() {
 	}
 	
 	base = new AIBase(m_BlueAntTex);
-	base->setPosition(Vector4(getWindowWidth() / 2, getWindowHeight() / 2, 0, 0));
+	base->setPosition(Vector4((float)getWindowWidth() / 2, (float)getWindowHeight() / 2, 0, 0));
 	m_Origin = new SceneObject;
 	m_Origin->addChild(base->getSceneObj());
 
@@ -81,7 +81,7 @@ void SkyeNetDotNetApp::update(float deltaTime) {
 		{
 			if (f->checkStatus() == false)
 			{
-				f->setup(Vector2(rand() % getWindowWidth(), rand() % getWindowHeight()));
+				f->setup(Vector2((float)(rand() % getWindowWidth()), (float)(rand() % getWindowHeight())));
 				break;
 			}
 		}
@@ -114,7 +114,7 @@ void SkyeNetDotNetApp::update(float deltaTime) {
 
 					if (closestYum == nullptr)
 						closestYum = f;
-					if (MagPow2_2D(f->getPosition(), a->getPosition()) < MagPow2_2D(closestYum->getPosition(), a->getPosition()))
+					if (HLib::MagPow2_2D(f->getPosition(), a->getPosition()) < HLib::MagPow2_2D(closestYum->getPosition(), a->getPosition()))
 						closestYum = f;
 				}
 			}
@@ -141,20 +141,19 @@ void SkyeNetDotNetApp::update(float deltaTime) {
 		antIt++;
 	};
 
-	base->m_SteeringForce = { 0,0,0,0 };
-	Vector2 threat = { 0,0 };
-	for (auto a : m_Ants)
-	{
-		if (MagPow2_2D(base->getPosition(), a->getPosition()) < MagPow2_2D(base->getPosition(), threat))
-			threat = a->getPosition();
-	}
-	base->m_SteeringForce += base->collisionAvoidance(Circle(threat, m_BlueAntTex->getHeight() / 2));
-	//base->m_SteeringForce += base->seekForce(Vector4(m_Ants.at(0)->getPosition()[0], m_Ants.at(0)->getPosition()[1], 0, 0));
+	//Vector2 threat = { 0,0 };
+	//for (auto a : m_Ants)
+	//{
+	//	if (HLib::MagPow2_2D(base->getPosition(), a->getPosition()) < HLib::MagPow2_2D(base->getPosition(), threat))
+	//		threat = a->getPosition();
+	//}
+	//base->m_SteeringForce += base->collisionAvoidance(Circle(threat, m_BlueAntTex->getHeight() / 2));
+	//base->seekForce(Vector4(m_Ants.at(0)->getPosition()[0], m_Ants.at(0)->getPosition()[1], 0, 0));
 	//base->m_SteeringForce += base->seekForce(Vector4(input->getMouseX(), input->getMouseY(), 0, 0));
 	//base->arrivalForce(Vector4(500, 500, 1, 0), base->getVelocity().magnitude(), m_BlueAntTex->getHeight() / 2);
 	//base->m_SteeringForce += base->fleeForce(Vector4(m_Ants.at(0)->getPosition()[0], m_Ants.at(0)->getPosition()[1], 0, 0));
-	//base->m_SteeringForce += base->wanderForce(deltaTime);
-	//base->m_SteeringForce += base->pursuitForce(Vector4(m_Ants.at(0)->getPosition()[0], m_Ants.at(0)->getPosition()[1], 0, 0), Vector4(m_Ants.at(0)->getVelocity()[0], m_Ants.at(0)->getVelocity()[1], 0, 0));
+	base->wanderForce(deltaTime);
+	//base->pursuitForce(Vector4(m_Ants.at(0)->getPosition()[0], m_Ants.at(0)->getPosition()[1], 0, 0), Vector4(m_Ants.at(0)->getVelocity()[0], m_Ants.at(0)->getVelocity()[1], 0, 0));
 	//base->m_SteeringForce += base->evadeForce(Vector4(m_Ants.at(0)->getPosition()[0], m_Ants.at(0)->getPosition()[1], 0, 0), Vector4(m_Ants.at(0)->getVelocity()[0], m_Ants.at(0)->getVelocity()[1], 0, 0));
 	base->update(deltaTime);
 	m_Origin->update();
@@ -177,13 +176,13 @@ void SkyeNetDotNetApp::draw() {
 	for (auto* a : m_Ants)
 		a->render(m_2dRenderer);
 
-	unsigned int nestScale = m_HoleTex->getWidth() * 2;
+	float nestScale = (float)m_HoleTex->getWidth() * 2;
 
-	m_2dRenderer->drawSprite(m_HoleTex, 100, 100, NULL, NULL, NULL, 0.9);
-	m_2dRenderer->drawSprite(m_RedNest, 100, 100, nestScale, nestScale, NULL, 1);
+	m_2dRenderer->drawSprite(m_HoleTex, 100, 100, NULL, NULL, NULL, 0.9f);
+	m_2dRenderer->drawSprite(m_RedNest, 100, 100, nestScale, nestScale, NULL, 1.0f);
 
-	m_2dRenderer->drawSprite(m_HoleTex, 1180, 620, NULL, NULL, NULL, 0.9);
-	m_2dRenderer->drawSprite(m_BlueNest, 1180, 620, nestScale, nestScale, NULL, 1);
+	m_2dRenderer->drawSprite(m_HoleTex, 1180, 620, NULL, NULL, NULL, 0.9f);
+	m_2dRenderer->drawSprite(m_BlueNest, 1180, 620, nestScale, nestScale, NULL, 1.0f);
 
 	base->draw(m_2dRenderer);
 

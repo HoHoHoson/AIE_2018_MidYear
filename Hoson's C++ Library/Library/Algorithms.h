@@ -10,9 +10,9 @@ namespace HLib
 	{
 		T temp = value;
 		if (value < min)
-			temp = min;
+			temp = (T)min;
 		if (value > max)
-			temp = max;
+			temp = (T)max;
 		value = temp;
 	}
 
@@ -41,13 +41,13 @@ namespace HLib
 	static T roundTo(const T& value, unsigned int decimalPlaces = 0)
 	{
 		T rounded;
-		int pow10 = pow(10, decimalPlaces + 1);
-		int integer = value * pow10;
+		int pow10 = (int)pow(10, decimalPlaces + 1);
+		int integer = (int)value * pow10;
 		int remainder = integer % 10;
 
 		if (remainder == 0)
 		{
-			rounded = integer / pow10;
+			rounded = (float)(integer / pow10);
 			return rounded;
 		}
 
@@ -62,12 +62,28 @@ namespace HLib
 			else
 				integer += (10 - remainder);
 
-		rounded = integer; 
+		rounded = (float)integer;
 		return rounded / pow10;
 	}
 
 	static float toRadian(float degrees)
 	{
-		return (degrees * (M_PI / 180));
+		return (float)(degrees * (M_PI / 180));
+	}
+
+	template<typename T, typename Y>
+	static float MagPow2_2D(const T& v1, const Y& v2)
+	{
+		float x = v1[0] - v2[0]; 
+		float y = v1[1] - v2[1];
+
+		float magPow2 = powf(x, 2) + powf(y, 2);
+
+		return magPow2;
+	}
+	template<typename T>
+	static float MagPow2_2D(const T& v)
+	{
+		return powf(v[0], 2) + powf(v[1], 2);
 	}
 }

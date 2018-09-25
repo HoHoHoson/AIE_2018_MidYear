@@ -48,11 +48,11 @@ public:
 		{
 		case Ant::Wander:
 		{
-			Circle c(getPosition() + getVelocity().normalise() * m_WanderCircleDistance, m_WanderCircleWidth);
+			Circle c(getPosition() + getVelocity().normalise() * (float)m_WanderCircleDistance, (float)m_WanderCircleWidth);
 			Vector2 wanderPoint(0, 1);
 
 			m_M2.setIdentity();
-			m_M2.setRotate(HLib::toRadian(rand() % 360));
+			m_M2.setRotate((float)HLib::toRadian(rand() % 360));
 
 			wanderPoint = m_M2 * wanderPoint;
 			wanderPoint *= c.getRadius();
@@ -72,14 +72,14 @@ public:
 		}
 		case Ant::Home:
 		{
-			if (MagPow2_2D(m_Home, getPosition()) > pow(20, 2))
+			if (HLib::MagPow2_2D(m_Home, getPosition()) > pow(20, 2))
 				moveTo(m_Home, deltaTime);
 			else
 			{
-				Vector2 t = getVelocity() * (MagPow2_2D(m_Home, getPosition()) / pow(20, 2));
+				Vector2 t = getVelocity() * (HLib::MagPow2_2D(m_Home, getPosition()) / powf(20, 2));
 				setVelocity(t);
 				moveTo(m_Home, deltaTime);
-				if (MagPow2_2D(m_Home, getPosition()) < pow(20, 2))
+				if (HLib::MagPow2_2D(m_Home, getPosition()) < pow(20, 2))
 					m_State = Wander;
 			}
 		}
@@ -97,12 +97,12 @@ public:
 		setVelocity(getVelocity() + limitVector(dir, m_MaxForce) * dTime);
 	}
 
-	Vector2 limitVector(const Vector2& vel, int maxVal)
+	Vector2 limitVector(const Vector2& vel, float maxVal)
 	{
 		Vector2 temp = vel;
 		temp.normalise();
 
-		if (MagPow2_2D(vel, getPosition()) > MagPow2_2D(temp * maxVal, getPosition()))
+		if (HLib::MagPow2_2D(vel, getPosition()) > HLib::MagPow2_2D(temp * maxVal, getPosition()))
 			return temp * maxVal;
 		else
 			return vel;
@@ -120,10 +120,10 @@ public:
 	
 private:
 
-	int m_MaxSpeed = 50;
-	int m_MaxForce = 40;
-	int m_WanderCircleWidth = 100;
-	int m_WanderCircleDistance = 100;
+	float m_MaxSpeed = 50;
+	float m_MaxForce = 40;
+	float m_WanderCircleWidth = 100;
+	float m_WanderCircleDistance = 100;
 
 	Team m_Team;
 	State m_State = Wander;

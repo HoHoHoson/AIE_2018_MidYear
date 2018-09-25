@@ -487,7 +487,7 @@ void NotSoSupaCirclagonApp::loadTable()
 
 bool NotSoSupaCirclagonApp::isInside(const Circle& obj, const Circle& bounds) const
 {
-	float distanceSqr = MagPow2_2D(bounds.getOrigin(), obj.getOrigin());
+	float distanceSqr = HLib::MagPow2_2D(bounds.getOrigin(), obj.getOrigin());
 	float safeZoneSqr = pow(bounds.getRadius() - obj.getRadius(), 2);
 
 	if (distanceSqr > safeZoneSqr)

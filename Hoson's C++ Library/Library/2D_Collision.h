@@ -81,7 +81,7 @@ public:
 	~Circle();
 
 	Vector2 getOrigin()		 const;
-	unsigned int getRadius() const;
+	float getRadius()		 const;
 
 	template<typename T>
 	Circle& updateCircle(const T& newOrigin, unsigned int newDiameter = NULL);
@@ -91,7 +91,7 @@ public:
 private:
 
 	Vector2 m_CircleOrigin;
-	unsigned int m_CircleRadius;
+	float m_CircleRadius;
 };
 
 template<typename T>
@@ -99,7 +99,7 @@ inline Circle::Circle(T pointVector, unsigned int diameter)
 {
 	m_CircleOrigin[0] = pointVector[0];
 	m_CircleOrigin[1] = pointVector[1];
-	m_CircleRadius = diameter / 2;
+	m_CircleRadius = (float)diameter / 2;
 }
 
 template<typename T>
@@ -109,7 +109,7 @@ inline Circle & Circle::updateCircle(const T & newOrigin, unsigned int newDiamet
 	m_CircleOrigin[1] = newOrigin[1];
 
 	if (newDiameter != NULL)
-		m_CircleRadius = newDiameter / 2;
+		m_CircleRadius = (float)newDiameter / 2;
 
 	return *this;
 }
@@ -185,14 +185,4 @@ inline Ray2D::Ray2D(T origin, T destination, float length)
 	m_Direction = { destination[0] - origin[0], destination[1] - origin[1] };
 	m_Direction.normalise();
 	m_Length = length;
-}
-
-
-
-template<typename T, typename Y>
-static float MagPow2_2D(const T& v1, const Y& v2)
-{
-	Vector2 temp(v1[0] - v2[0], v1[1] - v2[1]);
-	float magPow2 = pow(temp[0], 2) + pow(temp[1], 2);
-	return magPow2;
 }

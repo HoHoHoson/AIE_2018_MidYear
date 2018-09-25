@@ -17,30 +17,31 @@
 
 int main()
 {
-	Vector2 v2a(1, 2);
+	Vector2 v2a(3, 4);
 	Vector3 v3a(1, 2, 3);
 	Vector4 v4a(1, 2, 3, 4);
 	Matrix2 m2a(
-		1.1, 1.2, 
-		2.1, 2.2);
+		1.1f, 1.2f, 
+		2.1f, 2.2f);
 	Matrix3 m3a(
-		1.1, 1.2, 1.3, 
-		2.1, 2.2, 2.3, 
-		3.1, 3.2, 3.3);
+		1.1f, 1.2f, 1.3f, 
+		2.1f, 2.2f, 2.3f, 
+		3.1f, 3.2f, 3.3f);
 	Matrix4 m4a(
-		1.1, 1.2, 1.3, 1.4, 
-		2.1, 2.2, 2.3, 2.4, 
-		3.1, 3.2, 3.3, 3.4, 
-		4.1, 4.2, 4.3, 4.4);
+		1.1f, 1.2f, 1.3f, 1.4f, 
+		2.1f, 2.2f, 2.3f, 2.4f, 
+		3.1f, 3.2f, 3.3f, 3.4f, 
+		4.1f, 4.2f, 4.3f, 4.4f);
 	Rectangle r1(Vector2(0, 0), 10, 10);
 	Circle c1(Vector2(0, 0), 200);
 	Plane2D p1(Vector2(0, 4), Vector2(4, 0));
 	Ray2D ray1(Vector2(100, 100), Vector2(0, 0));
 	Vector2 test;
-	float f = -10.2525;
+	float f = -10.2525f;
 	float round = HLib::roundTo(f, 2);
 	SceneObject origin;
 	SceneObject soTest;
+	float magTest = HLib::MagPow2_2D(v2a, Vector2());
 
 	origin.addChild(&soTest);
 	origin.update();

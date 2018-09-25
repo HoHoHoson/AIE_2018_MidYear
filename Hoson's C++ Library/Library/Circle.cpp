@@ -13,15 +13,15 @@ Vector2 Circle::getOrigin() const
 	return m_CircleOrigin;
 }
 
-unsigned int Circle::getRadius() const
+float Circle::getRadius() const
 {
 	return m_CircleRadius;
 }
 
 bool Circle::checkCollision(const Circle & other) const
 {
-	float sumRadiiPow2 = pow(m_CircleRadius + other.m_CircleRadius, 2);
-	float distancePow2 = MagPow2_2D(m_CircleOrigin, other.m_CircleOrigin);
+	float sumRadiiPow2 = powf(m_CircleRadius + other.m_CircleRadius, 2);
+	float distancePow2 = HLib::MagPow2_2D(m_CircleOrigin, other.m_CircleOrigin);
 	
 	if (distancePow2 <= sumRadiiPow2)
 		return true;
@@ -36,8 +36,8 @@ bool Circle::checkCollision(const Rectangle & r) const
 	float rad = m_CircleRadius;
 	float rad2 = pow(rad, 2);
 
-	if (MagPow2_2D(r.getTopRight(), m_CircleOrigin) < rad2 || MagPow2_2D(r.getBottomLeft(), m_CircleOrigin) < rad2 ||
-		MagPow2_2D(topLeft, m_CircleOrigin) < rad2 || MagPow2_2D(bottomRight, m_CircleOrigin) < rad2)
+	if (HLib::MagPow2_2D(r.getTopRight(), m_CircleOrigin) < rad2 || HLib::MagPow2_2D(r.getBottomLeft(), m_CircleOrigin) < rad2 ||
+		HLib::MagPow2_2D(topLeft, m_CircleOrigin) < rad2 || HLib::MagPow2_2D(bottomRight, m_CircleOrigin) < rad2)
 		return true;
 	else if (r.getTopRight()[0] < m_CircleOrigin[0] - rad || r.getBottomLeft()[0] > m_CircleOrigin[0] + rad ||
 		r.getTopRight()[1] < m_CircleOrigin[1] - rad || r.getBottomLeft()[1] > m_CircleOrigin[1] + rad)

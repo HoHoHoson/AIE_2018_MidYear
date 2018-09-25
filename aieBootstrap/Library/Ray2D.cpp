@@ -35,8 +35,8 @@ Vector2 Ray2D::closestPoint(const Vector2 & point) const
 bool Ray2D::checkCollision(const Circle & c, Vector2* i) const
 {
 	float length = (c.getOrigin() - m_Origin).dot(m_Direction);
-	float toClosestPoint = MagPow2_2D(closestPoint(c.getOrigin()), c.getOrigin());
-	float radiusSqr = pow(c.getRadius(), 2);
+	float toClosestPoint = HLib::MagPow2_2D(closestPoint(c.getOrigin()), c.getOrigin());
+	float radiusSqr = powf(c.getRadius(), 2);
 
 	if (toClosestPoint > radiusSqr)
 		return false;
