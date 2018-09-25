@@ -42,12 +42,12 @@ namespace HLib
 	{
 		T rounded;
 		int pow10 = (int)pow(10, decimalPlaces + 1);
-		int integer = (int)value * pow10;
+		int integer = (int)(value * pow10);
 		int remainder = integer % 10;
 
 		if (remainder == 0)
 		{
-			rounded = (float)(integer / pow10);
+			rounded = (T)(integer / pow10);
 			return rounded;
 		}
 
@@ -62,7 +62,7 @@ namespace HLib
 			else
 				integer += (10 - remainder);
 
-		rounded = (float)integer;
+		rounded = (T)integer;
 		return rounded / pow10;
 	}
 

@@ -115,6 +115,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="..\..\Hoson%27s C++ Library\Library\AIBase.h" />
     <ClInclude Include="..\..\Hoson%27s C++ Library\Library\SceneObject.h" />
     <ClInclude Include="Algorithms.h" />
     <ClInclude Include="..\..\Hoson%27s C++ Library\Library\Matrix2.h" />
@@ -126,6 +127,7 @@
     <ClInclude Include="..\..\Hoson%27s C++ Library\Library\Vector4.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\..\Hoson%27s C++ Library\Library\AIBase.cpp" />
     <ClCompile Include="..\..\Hoson%27s C++ Library\Library\Circle.cpp" />
     <ClCompile Include="..\..\Hoson%27s C++ Library\Library\Matrix2.cpp" />
     <ClCompile Include="..\..\Hoson%27s C++ Library\Library\Matrix3.cpp" />
