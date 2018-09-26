@@ -1,21 +1,16 @@
 #pragma once
 
-#include "Renderer2D.h"
 #include "SceneObject.h"
 #include "2D_Collision.h"
 
-namespace aie
-{
-	class Texture;
-}
 
-class AIBase : SceneObject
+class AIBase : public SceneObject
 {
 public:
-	AIBase(aie::Texture* tex);
+	AIBase();
+	~AIBase();
 
 	void update(float deltaTime);
-	void draw(aie::Renderer2D* r);
 
 	void setPosition(const Vector4& position);
 	void setVelocity(const Vector4& vector);
@@ -29,7 +24,7 @@ public:
 	void wanderForce(float deltaTime, float weight = 1);
 	void pursuitForce(const Vector4 & hotPursuitPos, const Vector4 & hotPursuitVel, float weight = 1);
 	void evadeForce(const Vector4 & evadePos, const Vector4 & evadeVel, float weight = 1);
-	void arrivalForce(const Vector4& dest, unsigned int radius, unsigned int offset = 0, float weight = 1);
+	void arrivalForce(const Vector4& dest, float radius, float offset = 0, float weight = 1);
 
 	template<typename T>
 	Vector4 collisionAvoidance(const T& objBounds);
@@ -43,16 +38,15 @@ private:
 	float m_EvadeWeight;
 	float m_AvoidanceWeight;
 
-	aie::Texture* m_Texture;
-
 	Vector4 m_Velocity;
 	Vector4 m_SteeringForce;
 
+	bool m_WanderFlip = false;
 	float m_MaxSpeed = 50;
 	float m_MaxForce = 50;
 	unsigned int m_Radius = 0;
 	unsigned int m_CicleDistance = 100;
-	unsigned int m_CircleDiameter = 20;
+	unsigned int m_CircleDiameter = 15;
 	unsigned int m_CollisionDetectRange = 50;
 
 	void sumSteerForce(const Vector4& addForce);
@@ -62,8 +56,8 @@ private:
 template<typename T>
 inline Vector4 AIBase::collisionAvoidance(const T & objBounds)
 {
-	Vector4 avoidanceForce;
 	unsigned int dynamicLength = HLib::MagPow2_2D(Vector4(), getVelocity()) / m_MaxSpeed;
+	Vector4 avoidanceForce;
 	Ray2D detectorRay(getPosition(), getPosition() + getVelocity().normalise() * dynamicLength, dynamicLength);
 
 	if (detectorRay.checkCollision(objBounds) == true)

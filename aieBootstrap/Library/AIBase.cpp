@@ -1,10 +1,13 @@
 #include "AIBase.h"
 
-AIBase::AIBase(aie::Texture* tex)
+AIBase::AIBase()
 {
-	m_Texture = tex;
 	m_SteeringForce = { 0, 0, 0, 0 };
 	m_Velocity = { 0, 0, 0, 0 };
+}
+
+AIBase::~AIBase()
+{
 }
 
 void AIBase::update(float deltaTime)
@@ -26,11 +29,6 @@ void AIBase::update(float deltaTime)
 
 	setLocal()[1] = { newDir[0], newDir[1], newDir[2], 0 };
 	setLocal()[0] = { cross[0], cross[1], cross[2], 0 };
-}
-
-void AIBase::draw(aie::Renderer2D* r)
-{
-	r->drawSpriteTransformed4x4(m_Texture, getGlobal());
 }
 
 SceneObject * AIBase::getSceneObj()
@@ -57,7 +55,7 @@ Vector4 AIBase::seekForce(const Vector4& dest, bool calledFromSeperateFunction, 
 
  	if (calledFromSeperateFunction != true)
 		sumSteerForce(force * m_SeekWeight);
-	else
+
 		return force;
 }
 
@@ -70,7 +68,7 @@ Vector4 AIBase::fleeForce(const Vector4 & fleeFrom, bool fromSeperateFunction, f
 
 	if (fromSeperateFunction == true)
 		sumSteerForce(force * m_FleeWeight);
-	else
+
 		return force;
 }
 
@@ -78,22 +76,29 @@ void AIBase::wanderForce(float deltaTime, float weight)
 {
 	m_WanderWeight = weight;
 
-	Vector4 wanderForce = { 0,0,0,0 };
-	if (HLib::MagPow2_2D(wanderForce, getVelocity()) != 0)
-		wanderForce = getVelocity().normalise();
+	Vector4 wanderPoint = { 0,0,0,0 };
+	if (HLib::MagPow2_2D(wanderPoint, getVelocity()) != 0)
+		wanderPoint = getVelocity().normalise();
 	else
-		wanderForce = { 0,1,0,0 };
+		wanderPoint = { 0,1,0,0 };
 
-	Circle c(getPosition() + wanderForce * (float)m_CicleDistance, (float)m_CircleDiameter);
+	Circle c(getPosition() + wanderPoint * (float)m_CicleDistance, m_CircleDiameter);
 	Matrix4 m4;
 
-	m4.setRotateZ((float)HLib::toRadian((rand() % 360)));
+	if (rand() % 100 < 2)
+		m_WanderFlip = !m_WanderFlip;
 
-	wanderForce = m4 * wanderForce;
-	wanderForce *= (float)c.getRadius();
-	wanderForce += Vector4(c.getOrigin()[0], c.getOrigin()[1], 0, 0);
+	int flip = 1;
+	if (m_WanderFlip == true)
+		flip = -1;
 
-	wanderForce = seekForce(wanderForce, true) * (1 / deltaTime);
+	m4.setRotateZ((float)HLib::toRadian((float)(rand() % 15)) * flip);
+
+	wanderPoint = m4 * wanderPoint;
+	wanderPoint *= (float)c.getRadius();
+	wanderPoint += Vector4(c.getOrigin()[0], c.getOrigin()[1], 0, 0);
+
+	Vector4 wanderForce = seekForce(wanderPoint, true) * m_MaxForce;
 
 	sumSteerForce(wanderForce * m_WanderWeight);
 }
@@ -112,7 +117,7 @@ void AIBase::evadeForce(const Vector4 & evadePos, const Vector4 & evadeVel, floa
 	sumSteerForce(fleeForce(evadePos + evadeVel, true) * m_EvadeWeight);
 }
 
-void AIBase::arrivalForce(const Vector4 & dest, unsigned int radius, unsigned int offset, float weight)
+void AIBase::arrivalForce(const Vector4 & dest, float radius, float offset, float weight)
 {
 	m_AvoidanceWeight = weight;
 

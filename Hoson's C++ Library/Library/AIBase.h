@@ -4,7 +4,7 @@
 #include "2D_Collision.h"
 
 
-class AIBase : SceneObject
+class AIBase : public SceneObject
 {
 public:
 	AIBase();
@@ -41,11 +41,12 @@ private:
 	Vector4 m_Velocity;
 	Vector4 m_SteeringForce;
 
+	bool m_WanderFlip = false;
 	float m_MaxSpeed = 50;
 	float m_MaxForce = 50;
 	unsigned int m_Radius = 0;
 	unsigned int m_CicleDistance = 100;
-	unsigned int m_CircleDiameter = 20;
+	unsigned int m_CircleDiameter = 15;
 	unsigned int m_CollisionDetectRange = 50;
 
 	void sumSteerForce(const Vector4& addForce);

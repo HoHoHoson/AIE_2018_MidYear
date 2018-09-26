@@ -42,6 +42,9 @@
     <ClInclude Include="SceneObject.h">
       <Filter>Source Files</Filter>
     </ClInclude>
+    <ClInclude Include="AIBase.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Circle.cpp">
@@ -75,6 +78,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="SceneObject.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="AIBase.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

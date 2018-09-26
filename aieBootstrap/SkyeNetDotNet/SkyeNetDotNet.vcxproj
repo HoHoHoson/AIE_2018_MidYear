@@ -163,18 +163,13 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="Agent.cpp" />
-    <ClCompile Include="AIBase.cpp" />
-    <ClCompile Include="Food.cpp" />
     <ClCompile Include="SkyeNetDotNetApp.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="Tank.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Agent.h" />
-    <ClInclude Include="AIBase.h" />
-    <ClInclude Include="Ant.h" />
-    <ClInclude Include="Food.h" />
     <ClInclude Include="SkyeNetDotNetApp.h" />
+    <ClInclude Include="Tank.h" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Library\Library.vcxproj">
