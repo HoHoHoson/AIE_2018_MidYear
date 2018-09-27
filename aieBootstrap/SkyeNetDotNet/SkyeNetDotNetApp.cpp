@@ -2,6 +2,7 @@
 #include "Texture.h"
 #include "Font.h"
 #include "Input.h"
+#include <iostream>
 #include <time.h>
 
 SkyeNetDotNetApp::SkyeNetDotNetApp() 
@@ -24,6 +25,10 @@ bool SkyeNetDotNetApp::startup() {
 	m_TankBarrelTex = new aie::Texture("../bin/textures/barrelBeige.png");
 	m_SkyeNetTankTex = new aie::Texture("../bin/textures/tankYellow.png");
 	m_PlayerTankTex = new aie::Texture("../bin/textures/tankBlue.png");
+	m_MapTex = new aie::Texture("../bin/textures/map.png");
+	m_RedDot = new aie::Texture("../bin/textures/redDot.png");
+
+	createNavMesh();
 
 	for (size_t i = 0; i < m_TankPoolCount; ++i)
 	{
@@ -60,12 +65,6 @@ void SkyeNetDotNetApp::update(float deltaTime) {
 		t->update(deltaTime, Vector4(input->getMouseX(), input->getMouseY(), 0, 0));
 	}
 
-	const unsigned char* c = m_SkyeNetTankTex->getPixels();
-	c[0];
-	c[1];
-	c[2];
-	c[3];
-
 	m_Origin->update();
 }
 
@@ -78,7 +77,11 @@ void SkyeNetDotNetApp::draw() {
 	m_2dRenderer->begin();
 
 	// draw your stuff here!
+	m_2dRenderer->drawSprite(m_MapTex, 0, 0, NULL, NULL, NULL, 100.0f, 0.0f, 0.0f);
 	
+	for (auto dot : m_MapNodes)
+		m_2dRenderer->drawSprite(m_RedDot, (*dot)[0], (*dot)[1]);
+
 	for (auto t : m_Tanks)
 		t->draw(m_2dRenderer);
 
@@ -86,4 +89,68 @@ void SkyeNetDotNetApp::draw() {
 	m_2dRenderer->drawText(m_font, "Press ESC to quit", 0, 0);
 	// done drawing sprites
 	m_2dRenderer->end();
+}
+
+void SkyeNetDotNetApp::createNavMesh()
+{
+	unsigned int yNodeCount = getWindowHeight() / m_NodeSpacing;
+	unsigned int xNodeCount = getWindowWidth() / m_NodeSpacing;
+	unsigned int x, y;
+
+	for (size_t yNode = 0; yNode <= yNodeCount; ++yNode)
+		for (size_t xNode = 0; xNode <= xNodeCount; ++xNode)
+		{
+			x = xNode * m_NodeSpacing;
+			y = yNode * m_NodeSpacing;
+
+			if (isEdge(m_MapTex, x, y) == true)
+			{
+				Vector2* newV2 = new Vector2(x, getWindowHeight() - y);
+				m_MapNodes.push_back(newV2);
+			}
+		}	
+}
+
+unsigned int SkyeNetDotNetApp::getRGB(const aie::Texture * texture, unsigned int xCoord, unsigned int yCoord, unsigned int RGB) const
+{
+	unsigned int w = texture->getWidth();
+	unsigned int h = texture->getHeight();
+
+	assert(xCoord <= w && xCoord >= 0 && "Invalid image xCoord number");
+	assert(yCoord <= h && yCoord >= 0 && "Invalid image yCoord number");
+	assert(RGB >= 0 && RGB <= 2 && "Invalid RGB value");
+
+	unsigned int y = yCoord, x = xCoord;
+
+	if (y == 0)
+		y++;
+	if (x == 0)
+		x++;
+
+	const unsigned char* c = texture->getPixels();
+	unsigned int RGBValue = c[(y - 1) * w * 3 + (x - 1) * 3 + RGB];
+
+	return RGBValue;
+}
+
+bool SkyeNetDotNetApp::isEqualRGB(aie::Texture* texture, unsigned int x, unsigned int y)
+{
+	if (getRGB(texture, x, y, 0) == m_Red &&
+		getRGB(texture, x, y, 1) == m_Green &&
+		getRGB(texture, x, y, 2) == m_Blue)
+		return true;
+	else
+		return false;
+}
+
+bool SkyeNetDotNetApp::isEdge(aie::Texture * texture, unsigned int x, unsigned int y)
+{
+	if (isEqualRGB(m_MapTex, x, y) == true)
+	{
+		if (x == 0 || x == getWindowWidth() || y == 0 || y == getWindowHeight() || 
+			isEqualRGB(m_MapTex, x + 5, y) == false || isEqualRGB(m_MapTex, x - 5, y) == false ||
+			isEqualRGB(m_MapTex, x, y + 5) == false || isEqualRGB(m_MapTex, x, y - 5) == false)
+			return true;	
+	}
+	return false;
 }
