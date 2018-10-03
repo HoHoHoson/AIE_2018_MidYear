@@ -54,7 +54,8 @@ bool Ray2D::checkCollision(const Plane2D & pl, Vector2 * i) const
 
 	if (length == 0)
 	{
-		*i = m_Origin;
+		if (i != nullptr)
+			*i = m_Origin;
 		return true;
 	}
 

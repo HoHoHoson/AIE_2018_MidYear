@@ -44,6 +44,7 @@ int main()
 	float magTest = HLib::MagPow2_2D(v2a, Vector2());
 	AIBase AlDusty;
 
+	float length = p1.getLength();
 	origin.addChild(&soTest);
 	origin.update();
 

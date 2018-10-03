@@ -126,6 +126,7 @@ public:
 
 	Vector2 getNormal() const;
 	float getScalar()	const;
+	float getLength()	const;
 
 	Vector2 closestPointTo(const Vector2 & other)	const;
 	float distanceTo(const Vector2& other)			const;
@@ -138,6 +139,7 @@ private:
 
 	Vector2 normal;
 	float scalar;
+	float length;
 };
 
 template<typename T>
@@ -147,6 +149,7 @@ inline Plane2D::Plane2D(T from, T to)
 	normal[0] = -temp[1];
 	normal[1] = temp[0];
 	scalar = to.dot(normal);
+	length = (from - to).magnitude();
 
 	if (normal[0] != normal[0] && normal[1] != normal[1])
 		assert(false && "Can't create a Plane2D with only one point!");
@@ -159,7 +162,7 @@ class Ray2D
 public:
 	Ray2D();
 	template<typename T>
-	Ray2D(T origin, T direction, float length = INFINITY);
+	Ray2D(T origin, T destination, float length = INFINITY);
 	~Ray2D();
 
 	float getLength()		const;

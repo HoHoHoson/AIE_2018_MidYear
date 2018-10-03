@@ -79,8 +79,11 @@ void SkyeNetDotNetApp::draw() {
 	// draw your stuff here!
 	m_2dRenderer->drawSprite(m_MapTex, 0, 0, NULL, NULL, NULL, 100.0f, 0.0f, 0.0f);
 	
-	for (auto dot : m_MapNodes)
-		m_2dRenderer->drawSprite(m_RedDot, (*dot)[0], (*dot)[1]);
+	for (auto mNode : m_MeshNodes)
+	{
+		m_2dRenderer->drawSprite(m_RedDot, (*mNode).position[0], (*mNode).position[1]);
+		m_2dRenderer->drawLine(mNode->position[0], mNode->position[1], mNode->nextNode->position[0], mNode->nextNode->position[1], 2, 0.1f);
+	}
 
 	for (auto t : m_Tanks)
 		t->draw(m_2dRenderer);
@@ -97,6 +100,10 @@ void SkyeNetDotNetApp::createNavMesh()
 	unsigned int xNodeCount = getWindowWidth() / m_NodeSpacing;
 	unsigned int x, y;
 
+	int width = m_MapTex->getWidth();
+	int height = m_MapTex->getHeight();
+	isEqualRGB(m_MapTex, width / 2, height / 2);
+
 	for (size_t yNode = 0; yNode <= yNodeCount; ++yNode)
 		for (size_t xNode = 0; xNode <= xNodeCount; ++xNode)
 		{
@@ -104,11 +111,106 @@ void SkyeNetDotNetApp::createNavMesh()
 			y = yNode * m_NodeSpacing;
 
 			if (isEdge(m_MapTex, x, y) == true)
-			{
-				Vector2* newV2 = new Vector2(x, getWindowHeight() - y);
-				m_MapNodes.push_back(newV2);
-			}
+				m_MeshNodes.push_back(new MeshNode(Vector2(x, getWindowHeight() - y)));
 		}	
+
+	for (auto n : m_MeshNodes)
+	{
+		if (n->nextNode == nullptr && n->prevNode == nullptr)
+		{
+			auto it = n;
+
+			do
+			{
+				for (auto node : m_MeshNodes)
+				{
+					if (node->prevNode == nullptr && node != it->prevNode && node != it)
+					{
+						if (it->nextNode == nullptr)
+							it->nextNode = node;
+						else
+						{
+							float set = HLib::MagPow2_2D(it->position, it->nextNode->position);
+							float other = HLib::MagPow2_2D(it->position, node->position);
+
+							if (other < set)
+								it->nextNode = node;
+						}
+					}
+				}
+				it->nextNode->prevNode = it;
+				it = it->nextNode;
+
+			} while (it != n);
+		}
+	}
+
+	bool hasErased;
+	auto it = m_MeshNodes.begin();
+	while (it != m_MeshNodes.end())
+	{
+		hasErased = false;
+		auto n = (*it);
+
+		if (!isVertex(m_MapTex, n->position[0], getWindowHeight() - n->position[1]))
+		{
+			n->prevNode->nextNode = n->nextNode;
+			n->nextNode->prevNode = n->prevNode;
+			it = m_MeshNodes.erase(it);
+			hasErased = true;
+		}
+
+		if (hasErased == false)
+			it++;
+	}
+
+	for (auto n : m_MeshNodes)
+	{
+		Vector2 nextVec = n->nextNode->position - n->position;
+		Vector2 prevVec = n->prevNode->position - n->position;
+		float nextAngle = atan2(nextVec[0], nextVec[1]);
+		float prevAngle = atan2(prevVec[0], prevVec[1]);
+
+		if (nextAngle >= prevAngle)
+		{
+			n->greaterRadian = nextAngle;
+			n->lesserRadian = prevAngle;
+		}
+		else
+		{
+			n->greaterRadian = prevAngle;
+			n->lesserRadian = nextAngle;
+		}
+
+		Vector2 outsidePoint;
+		Vector2 left(n->position[0] - m_NodeSpacing, n->position[1]);
+		Vector2 right(n->position[0] + m_NodeSpacing, n->position[1]);
+		Vector2 bottom(n->position[0], n->position[1] - m_NodeSpacing);
+		Vector2 top(n->position[0], n->position[1] + m_NodeSpacing);
+
+		if (n->position[0] == 0)
+			outsidePoint = left;
+		else if (n->position[0] == m_MapTex->getWidth())
+			outsidePoint = right;
+		else if (n->position[1] == 0)
+			outsidePoint = bottom;
+		else if (n->position[1] == m_MapTex->getHeight())
+			outsidePoint = top;
+		else if (isEqualRGB(m_MapTex, n->position[0], n->position[1] + m_NodeSpacing) == false)
+			outsidePoint = top;
+		else if (isEqualRGB(m_MapTex, n->position[0], n->position[1] - m_NodeSpacing) == false)
+			outsidePoint = bottom;
+		else if (isEqualRGB(m_MapTex, n->position[0] + m_NodeSpacing, n->position[1]) == false)
+			outsidePoint = right;
+		else if (isEqualRGB(m_MapTex, n->position[0] - m_NodeSpacing, n->position[1]) == false)
+			outsidePoint = left;
+
+		Vector2 invalidVec = outsidePoint - n->position;
+		float check = atan2(invalidVec[0], invalidVec[1]);
+
+		if (check > n->lesserRadian && check < n->greaterRadian)
+			n->flipAngle = true;
+	}
 }
 
 unsigned int SkyeNetDotNetApp::getRGB(const aie::Texture * texture, unsigned int xCoord, unsigned int yCoord, unsigned int RGB) const
@@ -145,12 +247,44 @@ bool SkyeNetDotNetApp::isEqualRGB(aie::Texture* texture, unsigned int x, unsigne
 
 bool SkyeNetDotNetApp::isEdge(aie::Texture * texture, unsigned int x, unsigned int y)
 {
-	if (isEqualRGB(m_MapTex, x, y) == true)
+	if (isEqualRGB(texture, x, y) == true)
 	{
-		if (x == 0 || x == getWindowWidth() || y == 0 || y == getWindowHeight() || 
-			isEqualRGB(m_MapTex, x + 5, y) == false || isEqualRGB(m_MapTex, x - 5, y) == false ||
-			isEqualRGB(m_MapTex, x, y + 5) == false || isEqualRGB(m_MapTex, x, y - 5) == false)
-			return true;	
+		if (x == 0 || y == 0 || y == getWindowHeight() || x == getWindowWidth() ||
+			isEqualRGB(texture, x, y + m_NodeSpacing) == false || isEqualRGB(texture, x, y - m_NodeSpacing) == false ||
+			isEqualRGB(texture, x + m_NodeSpacing, y) == false || isEqualRGB(texture, x - m_NodeSpacing, y) == false)
+			return true;
+	}
+
+	return false;
+}
+
+bool SkyeNetDotNetApp::isVertex(aie::Texture * texture, unsigned int x, unsigned int y)
+{
+	if (isEdge(texture, x, y) == true)
+	{
+		if (x == 0 && y == 0 || x == 0 && y == getWindowHeight() || y == 0 && x == getWindowWidth() || y == getWindowHeight() && x == getWindowWidth())
+			return true;
+
+		if (x == 0 || x == getWindowWidth())
+		{
+			if (isEdge(texture, x, y + m_NodeSpacing) == true && isEdge(texture, x, y - m_NodeSpacing) == true)
+				return false;
+			return true;
+		}
+		if (y == 0 || y == getWindowHeight())
+		{
+			if (isEdge(texture, x + m_NodeSpacing, y) == true && isEdge(texture, x - m_NodeSpacing, y) == true)
+				return false;
+			return true;
+		}
+
+		if (isEdge(texture, x, y + m_NodeSpacing) == true && isEdge(texture, x, y - m_NodeSpacing) == true ||
+			isEdge(texture, x + m_NodeSpacing, y) == true && isEdge(texture, x - m_NodeSpacing, y) == true ||
+			isEdge(texture, x - m_NodeSpacing, y - m_NodeSpacing) == true && isEdge(texture, x + m_NodeSpacing, y + m_NodeSpacing) == true ||
+			isEdge(texture, x - m_NodeSpacing, y + m_NodeSpacing) == true && isEdge(texture, x + m_NodeSpacing, y - m_NodeSpacing) == true)
+			return false;
+
+		return true;
 	}
 	return false;
 }
