@@ -4,11 +4,12 @@
 #include "Renderer2D.h"
 #include <vector>
 #include <list>
+#include <set>
 #include "Tank.h"
 
 struct MeshNode
 {
-	MeshNode(const Vector2 pos)
+	MeshNode(const Vector2& pos)
 	{
 		position = pos;
 	}
@@ -17,6 +18,8 @@ struct MeshNode
 
 	MeshNode* nextNode = nullptr;
 	MeshNode* prevNode = nullptr;
+	Plane2D toNext;
+
 	float greaterRadian;
 	float lesserRadian;
 	bool flipAngle = false;
@@ -24,7 +27,33 @@ struct MeshNode
 
 struct Triangle
 {
+	Triangle(MeshNode* m1, MeshNode* m2, MeshNode* m3)
+	{
+		vertexA = m1;
+		vertexB = m2;
+		vertexC = m3;
+		position = Vector2((m1->position[0] + m2->position[0] + m3->position[0]) / 3, (m1->position[1] + m2->position[1] + m3->position[1]) / 3);
+	}
+	Vector2 position;
 
+	MeshNode* vertexA;
+	MeshNode* vertexB;
+	MeshNode* vertexC;
+	std::set<Triangle*> connections;
+};
+
+struct PathNode
+{
+	PathNode(Triangle* t)
+	{
+		triangle = t;
+	}
+	Triangle* triangle;
+
+	float fScore = 0;
+	float hScore = 0;
+	float gScore = 0;
+	PathNode* parent = nullptr;
 };
 
 class Ant;
@@ -43,6 +72,7 @@ public:
 	virtual void draw();
 
 	void createNavMesh();
+	void pathFind(Tank* ai, const Vector2& destination);
 
 protected:
 
@@ -60,6 +90,7 @@ protected:
 	std::vector<Tank*> m_Tanks;
 	unsigned int m_TankPoolCount = 1;
 
+	std::list<Triangle*>m_Triangles;
 	std::list<MeshNode*> m_MeshNodes;
 	unsigned int m_NodeSpacing = 20;
 	unsigned int m_Red = 195, m_Green = 195, m_Blue = 195;
@@ -71,4 +102,6 @@ protected:
 	bool isEqualRGB(aie::Texture* texture, unsigned int x, unsigned int y);
 	bool isEdge(aie::Texture* texture, unsigned int x, unsigned int y);
 	bool isVertex(aie::Texture* texture, unsigned int x, unsigned int y);
+
+	bool isConnectionValid(const MeshNode& from, const Vector2& to);
 };

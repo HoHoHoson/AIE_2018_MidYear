@@ -20,8 +20,17 @@ Tank::~Tank()
 
 void Tank::update(float deltaTime, const Vector4& des)
 {
-	m_TurretObj.setLocal().rotateZ(HLib::toRadian(1));
-	AIBase::wanderForce(deltaTime);
+	if (m_Pathfind.empty() == false)
+	{
+		seekForce(Vector4(m_Pathfind.back()[0], m_Pathfind.back()[1], 0, 0));
+		Circle destination(m_Pathfind.back(), 15);
+
+		if (destination.checkCollision(Circle(AIBase::getPosition(), 10)))
+		{
+			m_Pathfind.pop_back();
+		}
+	}
+
 	AIBase::update(deltaTime);
 }
 
@@ -49,4 +58,9 @@ void Tank::draw(aie::Renderer2D * m_Render)
 void Tank::setTeam(Team setTo)
 {
 	m_Team = setTo;
+}
+
+std::vector<Vector2>& Tank::setPath()
+{
+	return m_Pathfind;
 }

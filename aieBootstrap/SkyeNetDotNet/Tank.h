@@ -2,6 +2,7 @@
 
 #include "Renderer2D.h"
 #include "AIBase.h"
+#include <vector>
 
 namespace aie
 {
@@ -25,6 +26,7 @@ public:
 	void draw(aie::Renderer2D* m_Render);
 
 	void setTeam(Team setTo);
+	std::vector<Vector2>& setPath();
 
 private:
 
@@ -36,4 +38,6 @@ private:
 
 	SceneObject m_TurretObj;
 	SceneObject m_BarrelObj;
+
+	std::vector<Vector2> m_Pathfind;
 };

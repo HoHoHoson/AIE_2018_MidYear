@@ -66,6 +66,8 @@ void SkyeNetDotNetApp::update(float deltaTime) {
 	}
 
 	m_Origin->update();
+	if (m_Tanks.front()->setPath().empty() == true)
+		pathFind(m_Tanks.front(), Vector2(10, 10));
 }
 
 void SkyeNetDotNetApp::draw() {
@@ -85,6 +87,14 @@ void SkyeNetDotNetApp::draw() {
 		m_2dRenderer->drawLine(mNode->position[0], mNode->position[1], mNode->nextNode->position[0], mNode->nextNode->position[1], 2, 0.1f);
 	}
 
+	for (auto tri : m_Triangles)
+	{
+		m_2dRenderer->drawSprite(m_RedDot, tri->position[0], tri->position[1]);
+		m_2dRenderer->drawLine(tri->vertexA->position[0], tri->vertexA->position[1], tri->vertexB->position[0], tri->vertexB->position[1], 2, 0.1f);
+		m_2dRenderer->drawLine(tri->vertexB->position[0], tri->vertexB->position[1], tri->vertexC->position[0], tri->vertexC->position[1], 2, 0.1f);
+		m_2dRenderer->drawLine(tri->vertexC->position[0], tri->vertexC->position[1], tri->vertexA->position[0], tri->vertexA->position[1], 2, 0.1f);
+	}
+
 	for (auto t : m_Tanks)
 		t->draw(m_2dRenderer);
 
@@ -102,8 +112,8 @@ void SkyeNetDotNetApp::createNavMesh()
 
 	int width = m_MapTex->getWidth();
 	int height = m_MapTex->getHeight();
-	isEqualRGB(m_MapTex, width / 2, height / 2);
 
+	// finds all the nodes that make up the edge between safe and out of bounds
 	for (size_t yNode = 0; yNode <= yNodeCount; ++yNode)
 		for (size_t xNode = 0; xNode <= xNodeCount; ++xNode)
 		{
@@ -114,6 +124,7 @@ void SkyeNetDotNetApp::createNavMesh()
 				m_MeshNodes.push_back(new MeshNode(Vector2(x, getWindowHeight() - y)));
 		}	
 
+	// links up edges to form complete loops where needed
 	for (auto n : m_MeshNodes)
 	{
 		if (n->nextNode == nullptr && n->prevNode == nullptr)
@@ -138,6 +149,7 @@ void SkyeNetDotNetApp::createNavMesh()
 						}
 					}
 				}
+				it->toNext = Plane2D(it->position, it->nextNode->position);
 				it->nextNode->prevNode = it;
 				it = it->nextNode;
 
@@ -145,6 +157,7 @@ void SkyeNetDotNetApp::createNavMesh()
 		}
 	}
 
+	// removes all non vertex nodes 
 	bool hasErased;
 	auto it = m_MeshNodes.begin();
 	while (it != m_MeshNodes.end())
@@ -164,12 +177,21 @@ void SkyeNetDotNetApp::createNavMesh()
 			it++;
 	}
 
+	// gives each node a valid cone of vision for nodes that can be connected to
 	for (auto n : m_MeshNodes)
 	{
+		if (n->position[0] == 720 && n->position[1] == 520)
+			int inn = 0;
+
 		Vector2 nextVec = n->nextNode->position - n->position;
 		Vector2 prevVec = n->prevNode->position - n->position;
-		float nextAngle = atan2(nextVec[0], nextVec[1]);
-		float prevAngle = atan2(prevVec[0], prevVec[1]);
+		float nextAngle = atan2(nextVec[1], nextVec[0]);
+		float prevAngle = atan2(prevVec[1], prevVec[0]);
+
+		if (nextAngle < 0)
+			nextAngle += M_PI * 2;
+		if (prevAngle < 0)
+			prevAngle += M_PI * 2;
 
 		if (nextAngle >= prevAngle)
 		{
@@ -182,34 +204,218 @@ void SkyeNetDotNetApp::createNavMesh()
 			n->lesserRadian = nextAngle;
 		}
 
-		Vector2 outsidePoint;
-		Vector2 left(n->position[0] - m_NodeSpacing, n->position[1]);
-		Vector2 right(n->position[0] + m_NodeSpacing, n->position[1]);
-		Vector2 bottom(n->position[0], n->position[1] - m_NodeSpacing);
-		Vector2 top(n->position[0], n->position[1] + m_NodeSpacing);
+		float checkRadian = 0;
 
 		if (n->position[0] == 0)
-			outsidePoint = left;
+			checkRadian = M_PI;
 		else if (n->position[0] == m_MapTex->getWidth())
-			outsidePoint = right;
+			checkRadian = 0;
 		else if (n->position[1] == 0)
-			outsidePoint = bottom;
+			checkRadian = M_PI * 1.5f;
 		else if (n->position[1] == m_MapTex->getHeight())
-			outsidePoint = top;
-		else if (isEqualRGB(m_MapTex, n->position[0], n->position[1] + m_NodeSpacing) == false)
-			outsidePoint = top;
-		else if (isEqualRGB(m_MapTex, n->position[0], n->position[1] - m_NodeSpacing) == false)
-			outsidePoint = bottom;
+			checkRadian = M_PI * 0.5f;
+		else if (isEqualRGB(m_MapTex, n->position[0], getWindowHeight() - n->position[1] + m_NodeSpacing) == false)
+			checkRadian = M_PI * 1.5f;
+		else if (isEqualRGB(m_MapTex, n->position[0], getWindowHeight() - n->position[1] - m_NodeSpacing) == false)
+			checkRadian = M_PI * 0.5f;
 		else if (isEqualRGB(m_MapTex, n->position[0] + m_NodeSpacing, n->position[1]) == false)
-			outsidePoint = right;
+			checkRadian = 0;
 		else if (isEqualRGB(m_MapTex, n->position[0] - m_NodeSpacing, n->position[1]) == false)
-			outsidePoint = left;
+			checkRadian = M_PI;
 
-		Vector2 invalidVec = outsidePoint - n->position;
-		float check = atan2(invalidVec[0], invalidVec[1]);
-
-		if (check > n->lesserRadian && check < n->greaterRadian)
+		if (checkRadian > n->lesserRadian && checkRadian < n->greaterRadian)
 			n->flipAngle = true;
+	}
+
+	Triangle* curTriangle = nullptr;
+	Triangle* prevTriangle = nullptr;
+	Ray2D ray;
+	Vector2 midRay;
+	MeshNode* node1 = m_MeshNodes.front();
+	MeshNode* node2 = node1->nextNode;
+	MeshNode* node3 = nullptr;
+
+	do
+	{
+		node3 = nullptr;
+		ray = Ray2D(node1->position, node2->position, (node2->position - node1->position).magnitude());
+		midRay = ray.getOrigin() + ray.getDirection() * (ray.getLength() * 0.5f);
+
+		for (auto n : m_MeshNodes)
+		{
+			if (n->position[0] == 920 && n->position[1] == 720)
+				ray = ray;
+
+			if (isConnectionValid(*node1, n->position) && isConnectionValid(*node2, n->position))
+			{
+				bool empty = true;
+
+				Vector2 checkValid1 = n->position - node1->position;
+				Vector2 checkValid2 = n->position - node2->position;
+				checkValid1.normalise();
+				checkValid2.normalise();
+				float dotCheck1 = HLib::roundTo(checkValid1.dot(ray.getDirection()), 3);
+				float dotCheck2 = HLib::roundTo(checkValid2.dot(ray.getDirection()), 3);
+
+				if (dotCheck1 == 1 || dotCheck1 == -1 || dotCheck2 == 1 || dotCheck2 == -1)
+					empty = false;
+				else
+					for (auto tri : m_Triangles)
+					{
+						if (tri->vertexA == n || tri->vertexB == n || tri->vertexC == n)
+						{
+							empty = false;
+							break;
+						}
+					}
+
+				if (empty == true)
+					if (node3 == nullptr)
+						node3 = n;
+					else
+					{
+						float set = HLib::MagPow2_2D(node3->position, midRay);
+						float to = HLib::MagPow2_2D(n->position, midRay);
+
+						if (to < set)
+							node3 = n;
+					}
+			}
+		}
+
+		if (node3 != nullptr)
+		{
+			curTriangle = new Triangle(node1, node2, node3);
+			m_Triangles.push_back(curTriangle);
+
+			if (prevTriangle != nullptr)
+			{
+				prevTriangle->connections.insert(curTriangle);
+				curTriangle->connections.insert(prevTriangle);
+			}
+			prevTriangle = curTriangle;
+	
+			if (node3 == node1->nextNode || node3 == node1->prevNode)
+				node1 = node3;
+			else
+				node2 = node3;
+		}
+
+	} while (node3 != nullptr);
+}
+
+void SkyeNetDotNetApp::pathFind(Tank* ai, const Vector2 & destination)
+{
+	PathNode* start = nullptr;
+	PathNode* end = nullptr;
+	PathNode* current = nullptr;
+	PathNode* temp = nullptr;
+
+	Triangle* closest = nullptr;
+	for (auto tri : m_Triangles)
+	{
+		if (closest == nullptr)
+			closest = tri;
+		else if (closest != tri)
+		{
+			Vector4 test = ai->getPosition();
+			float set = HLib::MagPow2_2D(closest->position, ai->getPosition());
+			float to = HLib::MagPow2_2D(tri->position, ai->getPosition());
+
+			if (to < set)
+				closest = tri;
+		}
+	}
+
+	start = new PathNode(closest);
+	closest = nullptr;
+
+	for (auto tri : m_Triangles)
+	{
+		if (closest == nullptr)
+			closest = tri;
+		else if (closest != tri)
+		{
+			float set = HLib::MagPow2_2D(closest->position, destination);
+			float to = HLib::MagPow2_2D(tri->position, destination);
+
+			if (to < set)
+				closest = tri;
+		}
+	}
+
+	end = new PathNode(closest);
+	closest = nullptr;
+
+	std::list<PathNode*> openNodes;
+	std::list<PathNode*> closedNodes;
+
+	start->gScore = 0;
+	start->hScore = HLib::MagPow2_2D(start->triangle->position, end->triangle->position);
+	start->fScore = start->hScore + start->gScore;
+
+	openNodes.push_back(start);
+
+	while (openNodes.empty() != true)
+	{
+		for (auto open : openNodes)
+		{
+			if (current == nullptr)
+				current = open;
+			else
+				if (open->fScore < current->fScore)
+					current = open;
+		}
+
+		openNodes.remove(current);
+		closedNodes.push_back(current);
+
+		if (current->triangle == end->triangle)
+			break;
+
+		for (auto child : current->triangle->connections)
+		{
+			bool closed = false;
+
+			for (auto c : closedNodes)
+				if (c->triangle == child)
+					closed = true;
+
+			if (closed == false)
+			{
+				for (auto o : openNodes)
+					if (o->triangle == child)
+						temp = o;
+
+				PathNode* newNode = new PathNode(child);
+				newNode->parent = current;
+				newNode->gScore = HLib::MagPow2_2D(child->position, current->triangle->position) + current->gScore;
+				newNode->hScore = HLib::MagPow2_2D(child->position, end->triangle->position);
+				newNode->fScore = newNode->hScore + newNode->gScore;
+
+				if (temp != nullptr)
+					if (newNode->gScore < temp->gScore)
+					{
+						openNodes.remove(temp);
+						delete temp;
+						temp = nullptr;
+					}
+
+				openNodes.push_back(newNode);
+			}
+		}
+
+		current = nullptr;
+	}
+
+	if (current != nullptr)
+	{
+		ai->setPath().clear();
+		do
+		{
+			ai->setPath().push_back(current->triangle->position);
+			current = current->parent;
+		} while (current != nullptr);
 	}
 }
 
@@ -287,4 +493,29 @@ bool SkyeNetDotNetApp::isVertex(aie::Texture * texture, unsigned int x, unsigned
 		return true;
 	}
 	return false;
+}
+
+bool SkyeNetDotNetApp::isConnectionValid(const MeshNode & from, const Vector2 & to)
+{
+	if (from.position[0] == to[0] && from.position[1] == to[1])
+		return false;
+
+	float destRadian = atan2(to[1] - from.position[1], to[0] - from.position[0]);
+	if (destRadian < 0)
+		destRadian += M_PI * 2;
+
+	if (from.flipAngle == true)
+	{
+		if (destRadian <= from.lesserRadian)
+			destRadian += M_PI * 2;
+		if (destRadian >= from.greaterRadian || destRadian == 0)
+			return true;
+		else
+			return false;
+	}
+	else
+		if (destRadian >= from.lesserRadian && destRadian <= from.greaterRadian)
+			return true;
+		else
+			return false;
 }
