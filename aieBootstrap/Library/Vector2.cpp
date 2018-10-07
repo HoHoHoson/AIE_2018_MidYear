@@ -84,6 +84,20 @@ Vector2 & Vector2::normalise()
 	return *this;
 }
 
+bool Vector2::operator==(const Vector2 & other) const
+{
+	if (x == other.x &&
+		y == other.y)
+		return true;
+	else
+		return false;
+}
+
+bool Vector2::operator!=(const Vector2 & other) const
+{
+	return !(*this == other);
+}
+
 Vector2 & Vector2::operator = (const Vector2 & copyFrom)
 {
 	x = copyFrom.x;

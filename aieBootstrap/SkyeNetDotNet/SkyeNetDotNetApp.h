@@ -29,16 +29,14 @@ struct Triangle
 {
 	Triangle(MeshNode* m1, MeshNode* m2, MeshNode* m3)
 	{
-		vertexA = m1;
-		vertexB = m2;
-		vertexC = m3;
+		vertices.push_back(m1);
+		vertices.push_back(m2);
+		vertices.push_back(m3);
 		position = Vector2((m1->position[0] + m2->position[0] + m3->position[0]) / 3, (m1->position[1] + m2->position[1] + m3->position[1]) / 3);
 	}
 	Vector2 position;
 
-	MeshNode* vertexA;
-	MeshNode* vertexB;
-	MeshNode* vertexC;
+	std::vector<MeshNode*> vertices;
 	std::set<Triangle*> connections;
 };
 
@@ -104,4 +102,6 @@ protected:
 	bool isVertex(aie::Texture* texture, unsigned int x, unsigned int y);
 
 	bool isConnectionValid(const MeshNode& from, const Vector2& to);
+
+	Vector2 ball;
 };

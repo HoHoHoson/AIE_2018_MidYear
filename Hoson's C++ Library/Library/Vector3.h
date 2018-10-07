@@ -22,6 +22,8 @@ public:
 	Vector3 cross(const Vector3& other) const;
 	Vector3& normalise();
 
+	bool operator== (const Vector3& other) const;
+	bool operator!= (const Vector3& other) const;
 	// math operators that most Vector classes have 
 	Vector3& operator=(const Vector3& copyFrom);
 	Vector3& operator+=(const Vector3& other);

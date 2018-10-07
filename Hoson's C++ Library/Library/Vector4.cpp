@@ -79,6 +79,20 @@ Vector4 & Vector4::normalise()
 	return *this;
 }
 
+bool Vector4::operator==(const Vector4 & other) const
+{
+	return (
+		x == other.x &&
+		y == other.y &&
+		z == other.z &&
+		w == other.w);
+}
+
+bool Vector4::operator!=(const Vector4 & other) const
+{
+	return !(*this == other);
+}
+
 Vector4 & Vector4::operator = (const Vector4 & copyFrom)
 {
 	x = copyFrom.x;

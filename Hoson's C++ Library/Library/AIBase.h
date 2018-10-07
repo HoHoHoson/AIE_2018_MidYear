@@ -14,6 +14,11 @@ public:
 
 	void setPosition(const Vector4& position);
 	void setVelocity(const Vector4& vector);
+	void setMaxSpeed(float newSpeed);
+	void setMaxForce(float newForce);
+	void setAIRadiusSize(unsigned int newRadius);
+	void setWanderCircle(unsigned int circleDistance = 0, unsigned int circleDiameter = 0);
+	void setCollisionDetectDistance(unsigned int newRange);
 
 	Vector4 getPosition() const;
 	Vector4 getVelocity() const;

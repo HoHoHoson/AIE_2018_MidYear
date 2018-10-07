@@ -19,11 +19,6 @@ float Plane2D::getScalar() const
 	return scalar;
 }
 
-float Plane2D::getLength() const
-{
-	return length;
-}
-
 Vector2 Plane2D::closestPointTo(const Vector2 & other) const
 {
 	return (other - normal * distanceTo(other));

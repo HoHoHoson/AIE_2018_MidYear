@@ -126,7 +126,6 @@ public:
 
 	Vector2 getNormal() const;
 	float getScalar()	const;
-	float getLength()	const;
 
 	Vector2 closestPointTo(const Vector2 & other)	const;
 	float distanceTo(const Vector2& other)			const;
@@ -139,7 +138,6 @@ private:
 
 	Vector2 normal;
 	float scalar;
-	float length;
 };
 
 template<typename T>
@@ -149,7 +147,6 @@ inline Plane2D::Plane2D(T from, T to)
 	normal[0] = -temp[1];
 	normal[1] = temp[0];
 	scalar = to.dot(normal);
-	length = (from - to).magnitude();
 
 	if (normal[0] != normal[0] && normal[1] != normal[1])
 		assert(false && "Can't create a Plane2D with only one point!");
@@ -168,8 +165,10 @@ public:
 	float getLength()		const;
 	Vector2 getOrigin()		const;
 	Vector2 getDirection()	const;
+	Vector2 getEnd()		const;
 
 	Vector2 closestPoint(const Vector2& point)						const;
+	bool checkCollision(const Ray2D& ray)							const;
 	bool checkCollision(const Circle& c, Vector2* i = nullptr)	  	const;
 	bool checkCollision(const Plane2D& pl, Vector2* i = nullptr)	const;
 	bool checkCollision(const Rectangle& r, Vector2* i = nullptr)	const;
@@ -177,6 +176,7 @@ public:
 private:
 
 	Vector2 m_Origin;
+	Vector2 m_End;
 	Vector2 m_Direction;
 	float m_Length;
 };
@@ -188,4 +188,5 @@ inline Ray2D::Ray2D(T origin, T destination, float length)
 	m_Direction = { destination[0] - origin[0], destination[1] - origin[1] };
 	m_Direction.normalise();
 	m_Length = length;
+	m_End = m_Origin + m_Direction * m_Length;
 }

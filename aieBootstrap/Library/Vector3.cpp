@@ -99,6 +99,19 @@ Vector3 & Vector3::normalise()
 	return *this;
 }
 
+bool Vector3::operator==(const Vector3 & other) const
+{
+	return (
+		x == other.x &&
+		y == other.y &&
+		z == other.z);
+}
+
+bool Vector3::operator!=(const Vector3 & other) const
+{
+	return !(*this == other);
+}
+
 Vector3 & Vector3::operator = (const Vector3 & copyFrom)
 {
 	x = copyFrom.x;

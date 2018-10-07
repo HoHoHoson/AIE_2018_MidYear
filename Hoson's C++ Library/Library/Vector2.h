@@ -19,6 +19,8 @@ public:
 	float dot(const Vector2& other)		const;
 	Vector2& normalise();
 
+	bool operator== (const Vector2& other) const;
+	bool operator!= (const Vector2& other) const;
 	Vector2& operator=	(const Vector2& copyFrom);
 	Vector2& operator+=	(const Vector2& other);
 	Vector2& operator-=	(const Vector2& other);

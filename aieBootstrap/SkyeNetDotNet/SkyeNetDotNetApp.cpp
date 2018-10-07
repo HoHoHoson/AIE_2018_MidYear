@@ -22,8 +22,8 @@ bool SkyeNetDotNetApp::startup() {
 	// the following path would be used instead: "./font/consolas.ttf"
 	m_font = new aie::Font("../bin/font/consolas.ttf", 32);
 
-	m_TankBarrelTex = new aie::Texture("../bin/textures/barrelBeige.png");
-	m_SkyeNetTankTex = new aie::Texture("../bin/textures/tankYellow.png");
+	m_TankBarrelTex = new aie::Texture("../bin/textures/ball.png");
+	m_SkyeNetTankTex = new aie::Texture("../bin/textures/blue_ant.png");
 	m_PlayerTankTex = new aie::Texture("../bin/textures/tankBlue.png");
 	m_MapTex = new aie::Texture("../bin/textures/map.png");
 	m_RedDot = new aie::Texture("../bin/textures/redDot.png");
@@ -34,12 +34,14 @@ bool SkyeNetDotNetApp::startup() {
 	{
 		Tank* newTank = new Tank(m_SkyeNetTankTex, m_PlayerTankTex, m_TankBarrelTex);
 
-		newTank->setPosition(Vector4(getWindowWidth() / 2, getWindowHeight() / 2, 0, 0));
+		newTank->setPosition(Vector4(10, 700, 0, 0));
 		m_Tanks.push_back(newTank);
 	}
 
 	m_Origin = new SceneObject;
 	m_Origin->addChild(m_Tanks.at(0)->getSceneObj());
+
+	ball = { (float)(getWindowWidth() / 2), 700 };
 
 	return true;
 }
@@ -60,14 +62,40 @@ void SkyeNetDotNetApp::update(float deltaTime) {
 		quit();
 	HLib::clamp(deltaTime, 0, 0.1);
 
+	Circle ballC(ball, 30);
+
 	for (auto t : m_Tanks)
 	{
-		t->update(deltaTime, Vector4(input->getMouseX(), input->getMouseY(), 0, 0));
+		if (t->m_state == t->find)
+		{
+			if (t->setPath().empty() == true)
+				pathFind(m_Tanks.front(), ball);
+
+			if (ballC.checkCollision(Circle(t->getPosition(), 30)) == true)
+			{
+				Vector2 newPOS;
+				do
+				{
+					newPOS = { (float)(rand() % (getWindowWidth() - 40) + 20), (float)(rand() % (getWindowHeight() - 40) + 20) };
+
+				} while (isEqualRGB(m_MapTex, newPOS[0], (getWindowHeight() - newPOS[1])) == false);
+			
+				ball = newPOS;
+				t->setPath().clear();
+				t->m_state = t->home;
+			}
+		}
+		else
+		{
+			if (t->setPath().empty() == true)
+				pathFind(m_Tanks.front(), t->homeVec);
+
+		}
+		t->update(deltaTime, Vector4(ball[0], ball[1], 0, 0));
 	}
 
 	m_Origin->update();
-	if (m_Tanks.front()->setPath().empty() == true)
-		pathFind(m_Tanks.front(), Vector2(10, 10));
+
 }
 
 void SkyeNetDotNetApp::draw() {
@@ -81,6 +109,8 @@ void SkyeNetDotNetApp::draw() {
 	// draw your stuff here!
 	m_2dRenderer->drawSprite(m_MapTex, 0, 0, NULL, NULL, NULL, 100.0f, 0.0f, 0.0f);
 	
+	m_2dRenderer->drawSprite(m_TankBarrelTex, ball[0], ball[1]);
+
 	for (auto mNode : m_MeshNodes)
 	{
 		m_2dRenderer->drawSprite(m_RedDot, (*mNode).position[0], (*mNode).position[1]);
@@ -90,9 +120,9 @@ void SkyeNetDotNetApp::draw() {
 	for (auto tri : m_Triangles)
 	{
 		m_2dRenderer->drawSprite(m_RedDot, tri->position[0], tri->position[1]);
-		m_2dRenderer->drawLine(tri->vertexA->position[0], tri->vertexA->position[1], tri->vertexB->position[0], tri->vertexB->position[1], 2, 0.1f);
-		m_2dRenderer->drawLine(tri->vertexB->position[0], tri->vertexB->position[1], tri->vertexC->position[0], tri->vertexC->position[1], 2, 0.1f);
-		m_2dRenderer->drawLine(tri->vertexC->position[0], tri->vertexC->position[1], tri->vertexA->position[0], tri->vertexA->position[1], 2, 0.1f);
+		m_2dRenderer->drawLine(tri->vertices.at(0)->position[0], tri->vertices.at(0)->position[1], tri->vertices.at(1)->position[0], tri->vertices.at(1)->position[1], 2, 0.1f);
+		m_2dRenderer->drawLine(tri->vertices.at(1)->position[0], tri->vertices.at(1)->position[1], tri->vertices.at(2)->position[0], tri->vertices.at(2)->position[1], 2, 0.1f);
+		m_2dRenderer->drawLine(tri->vertices.at(2)->position[0], tri->vertices.at(2)->position[1], tri->vertices.at(0)->position[0], tri->vertices.at(0)->position[1], 2, 0.1f);
 	}
 
 	for (auto t : m_Tanks)
@@ -261,13 +291,12 @@ void SkyeNetDotNetApp::createNavMesh()
 					empty = false;
 				else
 					for (auto tri : m_Triangles)
-					{
-						if (tri->vertexA == n || tri->vertexB == n || tri->vertexC == n)
-						{
-							empty = false;
-							break;
-						}
-					}
+						for (auto usedVertex : tri->vertices)
+							if (n == usedVertex)
+							{
+								empty = false;
+								break;
+							}
 
 				if (empty == true)
 					if (node3 == nullptr)
@@ -410,13 +439,188 @@ void SkyeNetDotNetApp::pathFind(Tank* ai, const Vector2 & destination)
 
 	if (current != nullptr)
 	{
-		ai->setPath().clear();
-		do
+		ai->setPath().push_back(destination);
+		while (current != nullptr)
 		{
 			ai->setPath().push_back(current->triangle->position);
 			current = current->parent;
-		} while (current != nullptr);
+		}
 	}
+
+	//if (current != nullptr)
+	//{
+	//	ai->setPath().clear();
+
+	//	std::list<Triangle*> funnel;
+	//	do
+	//	{
+	//		funnel.push_front(current->triangle);
+	//		current = current->parent;
+
+	//	} while (current != nullptr);
+
+	//	Vector2 rayOrigin(ai->getPosition()[0], ai->getPosition()[1]);
+	//	std::list<Vector2*> rayPath;
+	//	std::vector<MeshNode*> portalPath;
+
+	//	Triangle* previous = nullptr;
+	//	for (auto tri : funnel)
+	//	{
+	//		if (previous == nullptr)
+	//			previous = tri;
+	//		else
+	//		{
+	//			for (auto pv : previous->vertices)
+	//				for (auto nv : tri->vertices)
+	//					if (pv == nv)
+	//					{
+	//						bool dupe = false;
+	//						for (auto node : portalPath)
+	//							if (node == pv)
+	//							{
+	//								dupe = true;
+	//								break;
+	//							}
+
+	//						if (dupe == false)
+	//							portalPath.push_back(pv);
+	//					}
+	//		}
+	//		previous = tri;
+	//	}
+
+	//	std::vector<Ray2D*> portalEdges;
+	//	std::vector<Vector2*> ray1Path;
+	//	std::vector<Vector2*> ray2Path;
+
+	//	for (size_t i = 0; i < portalPath.size(); ++i)
+	//		if (i % 2 == 0)
+	//			ray2Path.push_back(new Vector2(portalPath.at(i)->position));
+	//		else
+	//			ray1Path.push_back(new Vector2(portalPath.at(i)->position));
+
+	//	ray1Path.push_back(new Vector2(destination));
+	//	ray2Path.push_back(new Vector2(destination));
+
+	//	std::set<Vector2*>collided;
+	//	auto ray1End = ray1Path.begin();
+	//	auto ray2End = ray2Path.begin();
+	//	auto ray1Prev = ray1End;
+	//	auto ray2Prev = ray2End;
+
+	//	while(**ray1End != destination && **ray2End != destination)
+	//	{
+	//		if (ray1End != ray1Path.end())
+	//			ray1Prev = ray1End++;
+	//		if (ray2End != ray2Path.end())
+	//			ray2Prev = ray2End++;
+
+	//		Ray2D r1Path(**ray1Prev, **ray1End, (**ray1End - **ray1Prev).magnitude());
+	//		Ray2D r2Path(**ray2Prev, **ray2End, (**ray2End - **ray2Prev).magnitude());
+	//		if (r1Path.checkCollision(r2Path) == true)
+	//		{
+	//			Vector2 temp1 = **ray1End;
+	//			Vector2 temp2 = **ray2End;
+
+	//			for (auto r1 : ray1Path)
+	//				if (r1 == *ray1End)
+	//				{
+	//					*r1 = temp2;
+	//					break;
+	//				}
+	//			for (auto r2 : ray2Path)
+	//				if (r2 == *ray2End)
+	//				{
+	//					*r2 = temp1;
+	//					break;
+	//				}
+
+	//			if (**ray1End != destination && **ray2End != destination)
+	//			{
+	//				ray1End = ray1Path.begin();
+	//				ray2End = ray2Path.begin();
+	//			}
+	//		}
+	//	}
+
+	//	for (size_t i = 0; i < ray1Path.size(); ++i)
+	//	{
+	//		if (i != 0)
+	//			portalEdges.push_back(new Ray2D(*ray1Path.at(i - 1), *ray1Path.at(i), (*ray1Path.at(i) - *ray1Path.at(i - 1)).magnitude()));
+	//	}
+
+	//	for (size_t i = 0; i < ray2Path.size(); ++i)
+	//	{
+	//		if (i != 0)
+	//			portalEdges.push_back(new Ray2D(*ray2Path.at(i - 1), *ray2Path.at(i), (*ray2Path.at(i) - *ray2Path.at(i - 1)).magnitude()));
+	//	}
+
+	//	ray1End = ray1Path.begin();
+	//	ray2End = ray2Path.begin();
+
+	//	do
+	//	{
+	//		while (collided.size() != 2)
+	//		{
+
+	//			if (collided.find(*ray1End) != collided.end() == false)
+	//			{
+	//				Ray2D r1(rayOrigin, **ray1End, (**ray1End - rayOrigin).magnitude());
+
+	//				for (auto plane : portalEdges)
+	//					if (plane->getOrigin() != rayOrigin && plane->getEnd() != rayOrigin && plane->getOrigin() != **ray1End && plane->getEnd() != **ray1End)
+	//						if (r1.checkCollision(*plane))
+	//						{
+	//							ray1End--;
+	//							collided.insert(*ray1End);
+	//							break;
+	//						}
+
+	//				if (**ray1End == destination)
+	//					break;
+	//				if (collided.find(*ray1End) != collided.end() == false)
+	//					ray1End++;
+	//			}
+
+	//			if (collided.find(*ray2End) != collided.end() == false)
+	//			{
+	//				Ray2D r2(rayOrigin, **ray2End, (**ray2End - rayOrigin).magnitude());
+
+	//				for (auto plane : portalEdges)
+	//					if (plane->getOrigin() != rayOrigin && plane->getEnd() != rayOrigin && plane->getOrigin() != **ray2End && plane->getEnd() != **ray2End)
+	//						if (r2.checkCollision(*plane))
+	//						{
+	//							ray2End--;
+	//							collided.insert(*ray2End);
+	//							break;
+	//						}
+
+	//				if (**ray2End == destination)
+	//					break;
+	//				if (collided.find(*ray2End) != collided.end() == false && **ray2End != destination)
+	//					ray2End++;
+	//			}
+	//		}
+	//		if (**ray1End != destination && **ray2End != destination)
+	//		{
+	//			ai->setPath().push_front(**collided.begin());
+	//			rayOrigin = **collided.begin();
+	//			collided.clear();
+	//		}
+	//		else
+	//		{
+	//			ai->setPath().push_front(destination);
+	//			break;
+	//		}
+
+	//	} while (true);
+	//} 
+
+
+	for (auto openData : openNodes)
+		delete openData;
+	for (auto closedData : closedNodes)
+		delete closedData;
 }
 
 unsigned int SkyeNetDotNetApp::getRGB(const aie::Texture * texture, unsigned int xCoord, unsigned int yCoord, unsigned int RGB) const

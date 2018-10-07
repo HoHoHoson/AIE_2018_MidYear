@@ -46,6 +46,31 @@ void AIBase::setVelocity(const Vector4 & vector)
 	m_Velocity = vector;
 }
 
+void AIBase::setMaxSpeed(float newSpeed)
+{
+	m_MaxSpeed = newSpeed;
+}
+
+void AIBase::setMaxForce(float newForce)
+{
+	m_MaxForce = newForce;
+}
+
+void AIBase::setAIRadiusSize(unsigned int newRadius)
+{
+	m_Radius = newRadius;
+}
+
+void AIBase::setWanderCircle(unsigned int circleDistance, unsigned int circleDiameter)
+{
+	m_CicleDistance = circleDistance;
+}
+
+void AIBase::setCollisionDetectDistance(unsigned int newRange)
+{
+	m_CollisionDetectRange = newRange;
+}
+
 Vector4 AIBase::seekForce(const Vector4& dest, bool calledFromSeperateFunction, float weight)
 {
 	m_SeekWeight = weight;

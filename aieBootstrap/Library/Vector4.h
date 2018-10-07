@@ -20,6 +20,8 @@ public:
 	Vector4 cross(const Vector4& other) const;
 	Vector4& normalise();
 
+	bool operator== (const Vector4& other) const;
+	bool operator!= (const Vector4& other) const;
 	Vector4& operator=(const Vector4& copyFrom);
 	Vector4& operator+=(const Vector4& other);
 	Vector4& operator-=(const Vector4& other);

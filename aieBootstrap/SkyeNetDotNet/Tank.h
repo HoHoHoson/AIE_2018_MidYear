@@ -13,6 +13,14 @@ class Tank : public AIBase
 {
 public:
 
+	enum state
+	{
+		find,
+		home
+	};
+
+	state m_state;
+
 	enum Team
 	{
 		Player,
@@ -26,9 +34,11 @@ public:
 	void draw(aie::Renderer2D* m_Render);
 
 	void setTeam(Team setTo);
-	std::vector<Vector2>& setPath();
+	std::list<Vector2>& setPath();
+	Vector2 homeVec;
 
 private:
+
 
 	Team m_Team;
 
@@ -39,5 +49,6 @@ private:
 	SceneObject m_TurretObj;
 	SceneObject m_BarrelObj;
 
-	std::vector<Vector2> m_Pathfind;
+	std::list<Vector2> m_Pathfind;
+
 };

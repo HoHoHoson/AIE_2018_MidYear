@@ -19,6 +19,11 @@ Vector2 Ray2D::getDirection() const
 	return m_Direction;
 }
 
+Vector2 Ray2D::getEnd() const
+{
+	return m_End;
+}
+
 float Ray2D::getLength() const
 {
 	return m_Length;
@@ -30,6 +35,21 @@ Vector2 Ray2D::closestPoint(const Vector2 & point) const
 	float t = difference.dot(m_Direction);
 	HLib::clamp(t, 0, m_Length);
 	return m_Origin + m_Direction * t;
+}
+
+bool Ray2D::checkCollision(const Ray2D & ray) const
+{
+	float denominator = ((m_End[0] - m_Origin[0]) * (ray.m_End[1] - ray.m_Origin[1])) - ((m_End[1] - m_Origin[1]) * (ray.m_End[0] - ray.m_Origin[0]));
+	float numerator1 = ((m_Origin[1] - ray.m_Origin[1]) * (ray.m_End[0] - ray.m_Origin[0])) - ((m_Origin[0] - ray.m_Origin[0]) * (ray.m_End[1] - ray.m_Origin[1]));
+	float numerator2 = ((m_Origin[1] - ray.m_Origin[1]) * (m_End[0] - m_Origin[0])) - ((m_Origin[0] - ray.m_Origin[0]) * (m_End[0] - m_Origin[1]));
+
+	if (denominator == 0) 
+		return (numerator1 == 0 && numerator2 == 0);
+
+	float r = numerator1 / denominator;
+	float s = numerator2 / denominator;
+
+	return (r >= 0 && r <= 1) && (s >= 0 && s <= 1);
 }
 
 bool Ray2D::checkCollision(const Circle & c, Vector2* i) const
