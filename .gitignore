@@ -212,3 +212,9 @@ Hoson's C\+\+ Library/x64/
 UnitTest/Release/
 
 UnitTest/UnitTest/Release/
+
+NavMesh Editor/\.vs/
+
+NavMesh Editor/NavMesh Editor/bin/Debug/
+
+NavMesh Editor/NavMesh Editor/obj/Debug/
