@@ -11,7 +11,7 @@ namespace NavMesh_Editor
     {
         public void doThing()
         {
-            MyBox newBox = new MyBox();
+            MeshEditor newBox = new MeshEditor();
             newBox.Show();
         }
 

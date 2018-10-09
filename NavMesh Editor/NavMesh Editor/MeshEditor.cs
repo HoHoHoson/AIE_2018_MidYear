@@ -10,19 +10,17 @@ using System.Windows.Forms;
 
 namespace NavMesh_Editor
 {
-    public partial class MyBox : Form
+    public partial class MeshEditor : Form
     {
-        public MyBox()
+        public MeshEditor()
         {
             InitializeComponent();
         }
 
-        private void MyBox_FormClosed(object sender, FormClosedEventArgs e)
+        private void MeshEditor_FormClosing(object sender, FormClosingEventArgs e)
         {
-            MyBox b = new MyBox();
-            b.Show();
-            MyBox o = new MyBox();
-            o.Show();
+            Hide();
+            e.Cancel = true;
         }
     }
 }
