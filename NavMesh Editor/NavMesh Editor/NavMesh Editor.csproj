@@ -45,26 +45,17 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="doStuff.cs" />
     <Compile Include="MainApp.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="MainApp.Designer.cs">
       <DependentUpon>MainApp.cs</DependentUpon>
     </Compile>
-    <Compile Include="MeshEditor.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="MeshEditor.Designer.cs">
-      <DependentUpon>MeshEditor.cs</DependentUpon>
-    </Compile>
+    <Compile Include="NavMesh.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <EmbeddedResource Include="MainApp.resx">
       <DependentUpon>MainApp.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="MeshEditor.resx">
-      <DependentUpon>MeshEditor.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>

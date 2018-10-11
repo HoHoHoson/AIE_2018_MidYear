@@ -30,68 +30,86 @@
         {
             this.loadButton = new System.Windows.Forms.Button();
             this.loadMapDialog = new System.Windows.Forms.OpenFileDialog();
-            this.loadedImageName = new System.Windows.Forms.Label();
-            this.panel1 = new System.Windows.Forms.Panel();
-            this.pictureBox1 = new System.Windows.Forms.PictureBox();
-            this.panel1.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
+            this.loadedImagePanel = new System.Windows.Forms.Panel();
+            this.loadedImageDisplay = new System.Windows.Forms.PictureBox();
+            this.imageDirectoryText = new System.Windows.Forms.TextBox();
+            this.loadedImagePanel.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.loadedImageDisplay)).BeginInit();
             this.SuspendLayout();
             // 
             // loadButton
             // 
-            this.loadButton.Location = new System.Drawing.Point(131, 69);
+            this.loadButton.BackColor = System.Drawing.Color.Transparent;
+            this.loadButton.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.loadButton.Location = new System.Drawing.Point(84, 38);
             this.loadButton.Name = "loadButton";
             this.loadButton.Size = new System.Drawing.Size(75, 23);
             this.loadButton.TabIndex = 2;
             this.loadButton.Text = "Load";
-            this.loadButton.UseVisualStyleBackColor = true;
+            this.loadButton.UseVisualStyleBackColor = false;
             this.loadButton.Click += new System.EventHandler(this.loadButton_Click);
             // 
             // loadMapDialog
             // 
             this.loadMapDialog.FileName = "LoadSomething.png";
+            this.loadMapDialog.FileOk += new System.ComponentModel.CancelEventHandler(this.loadMapDialog_FileOk);
             // 
-            // loadedImageName
+            // loadedImagePanel
             // 
-            this.loadedImageName.AutoSize = true;
-            this.loadedImageName.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
-            this.loadedImageName.Location = new System.Drawing.Point(212, 74);
-            this.loadedImageName.Name = "loadedImageName";
-            this.loadedImageName.Size = new System.Drawing.Size(2, 15);
-            this.loadedImageName.TabIndex = 3;
+            this.loadedImagePanel.AllowDrop = true;
+            this.loadedImagePanel.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.loadedImagePanel.AutoScroll = true;
+            this.loadedImagePanel.BackColor = System.Drawing.SystemColors.Control;
+            this.loadedImagePanel.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.loadedImagePanel.CausesValidation = false;
+            this.loadedImagePanel.Controls.Add(this.loadedImageDisplay);
+            this.loadedImagePanel.Location = new System.Drawing.Point(254, -2);
+            this.loadedImagePanel.Name = "loadedImagePanel";
+            this.loadedImagePanel.Size = new System.Drawing.Size(1011, 685);
+            this.loadedImagePanel.TabIndex = 4;
+            this.loadedImagePanel.DragDrop += new System.Windows.Forms.DragEventHandler(this.loadedImagePanel_DragDrop);
+            this.loadedImagePanel.DragEnter += new System.Windows.Forms.DragEventHandler(this.loadedImagePanel_DragEnter);
+            this.loadedImagePanel.Resize += new System.EventHandler(this.loadedImagePanel_Resize);
             // 
-            // panel1
+            // loadedImageDisplay
             // 
-            this.panel1.AutoScroll = true;
-            this.panel1.Controls.Add(this.pictureBox1);
-            this.panel1.Location = new System.Drawing.Point(254, 100);
-            this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(462, 318);
-            this.panel1.TabIndex = 4;
+            this.loadedImageDisplay.BackColor = System.Drawing.Color.Transparent;
+            this.loadedImageDisplay.Location = new System.Drawing.Point(0, 0);
+            this.loadedImageDisplay.Name = "loadedImageDisplay";
+            this.loadedImageDisplay.Size = new System.Drawing.Size(377, 232);
+            this.loadedImageDisplay.SizeMode = System.Windows.Forms.PictureBoxSizeMode.AutoSize;
+            this.loadedImageDisplay.TabIndex = 0;
+            this.loadedImageDisplay.TabStop = false;
+            this.loadedImageDisplay.Click += new System.EventHandler(this.loadedImageDisplay_Click);
             // 
-            // pictureBox1
+            // imageDirectoryText
             // 
-            this.pictureBox1.Location = new System.Drawing.Point(48, 48);
-            this.pictureBox1.Name = "pictureBox1";
-            this.pictureBox1.Size = new System.Drawing.Size(377, 232);
-            this.pictureBox1.SizeMode = System.Windows.Forms.PictureBoxSizeMode.AutoSize;
-            this.pictureBox1.TabIndex = 0;
-            this.pictureBox1.TabStop = false;
-            this.pictureBox1.Click += new System.EventHandler(this.pictureBox1_Click);
+            this.imageDirectoryText.CausesValidation = false;
+            this.imageDirectoryText.Location = new System.Drawing.Point(12, 12);
+            this.imageDirectoryText.Name = "imageDirectoryText";
+            this.imageDirectoryText.ReadOnly = true;
+            this.imageDirectoryText.Size = new System.Drawing.Size(236, 20);
+            this.imageDirectoryText.TabIndex = 5;
+            this.imageDirectoryText.MouseLeave += new System.EventHandler(this.imageDirectoryText_MouseLeave);
             // 
             // MainApp
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(800, 450);
-            this.Controls.Add(this.panel1);
-            this.Controls.Add(this.loadedImageName);
+            this.BackColor = System.Drawing.Color.Silver;
+            this.ClientSize = new System.Drawing.Size(1264, 682);
+            this.Controls.Add(this.imageDirectoryText);
+            this.Controls.Add(this.loadedImagePanel);
             this.Controls.Add(this.loadButton);
+            this.Cursor = System.Windows.Forms.Cursors.Arrow;
             this.Name = "MainApp";
             this.Text = "Hoson\'s Homemade NavMesh Handler";
-            this.panel1.ResumeLayout(false);
-            this.panel1.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
+            this.Load += new System.EventHandler(this.MainApp_Load);
+            this.loadedImagePanel.ResumeLayout(false);
+            this.loadedImagePanel.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.loadedImageDisplay)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -100,9 +118,9 @@
         #endregion
         private System.Windows.Forms.Button loadButton;
         private System.Windows.Forms.OpenFileDialog loadMapDialog;
-        private System.Windows.Forms.Label loadedImageName;
-        private System.Windows.Forms.Panel panel1;
-        private System.Windows.Forms.PictureBox pictureBox1;
+        private System.Windows.Forms.Panel loadedImagePanel;
+        private System.Windows.Forms.PictureBox loadedImageDisplay;
+        private System.Windows.Forms.TextBox imageDirectoryText;
     }
 }
 

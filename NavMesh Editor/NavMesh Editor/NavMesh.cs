@@ -7,14 +7,8 @@ using System.Windows.Forms;
 
 namespace NavMesh_Editor
 {
-    class doStuff
+    class NavMesh
     {
-        public void doThing()
-        {
-            MeshEditor newBox = new MeshEditor();
-            newBox.Show();
-        }
 
-        private int i = 0;
     }
 }
