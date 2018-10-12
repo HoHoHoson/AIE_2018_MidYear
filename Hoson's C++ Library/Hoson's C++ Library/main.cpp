@@ -63,7 +63,7 @@ int main()
 	m3a.translate(10, 10, 10);
 	m4a.scale(2, 2, 2, 2);
 	m4a.translate(10, 10, 10, 10);
-	if (c1.checkCollision(c1))
+	if (p1.checkCollision(Vector2(10, 10)))
 		std::cout << "Kaboom\n";
 	else
 		std::cout << "Never touched\n";

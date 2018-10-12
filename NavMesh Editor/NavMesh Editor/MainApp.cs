@@ -8,7 +8,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.IO;
-
+using System.Xml.Serialization;
 
 namespace NavMesh_Editor
 {
@@ -117,6 +117,16 @@ namespace NavMesh_Editor
                 loadedImageDisplay.Location = new Point(loadedImageDisplay.Location.X, 0);
 
             loadedImagePanel.Refresh();
+        }
+
+        private void MeshSaveButton_Click(object sender, EventArgs e)
+        {
+            XmlSerializer serializer = new XmlSerializer(typeof(NavMeshIO));
+            TextWriter writer = new StreamWriter("myTest.xml");
+
+            NavMeshIO newNav = new NavMeshIO();
+            serializer.Serialize(writer, newNav);
+            writer.Close();
         }
     }
 }

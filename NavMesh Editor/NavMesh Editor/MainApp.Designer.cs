@@ -33,6 +33,7 @@
             this.loadedImagePanel = new System.Windows.Forms.Panel();
             this.loadedImageDisplay = new System.Windows.Forms.PictureBox();
             this.imageDirectoryText = new System.Windows.Forms.TextBox();
+            this.MeshSaveButton = new System.Windows.Forms.Button();
             this.loadedImagePanel.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.loadedImageDisplay)).BeginInit();
             this.SuspendLayout();
@@ -94,12 +95,23 @@
             this.imageDirectoryText.TabIndex = 5;
             this.imageDirectoryText.MouseLeave += new System.EventHandler(this.imageDirectoryText_MouseLeave);
             // 
+            // MeshSaveButton
+            // 
+            this.MeshSaveButton.Location = new System.Drawing.Point(84, 67);
+            this.MeshSaveButton.Name = "MeshSaveButton";
+            this.MeshSaveButton.Size = new System.Drawing.Size(75, 23);
+            this.MeshSaveButton.TabIndex = 6;
+            this.MeshSaveButton.Text = "SAVE";
+            this.MeshSaveButton.UseVisualStyleBackColor = true;
+            this.MeshSaveButton.Click += new System.EventHandler(this.MeshSaveButton_Click);
+            // 
             // MainApp
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.Silver;
             this.ClientSize = new System.Drawing.Size(1264, 682);
+            this.Controls.Add(this.MeshSaveButton);
             this.Controls.Add(this.imageDirectoryText);
             this.Controls.Add(this.loadedImagePanel);
             this.Controls.Add(this.loadButton);
@@ -121,6 +133,7 @@
         private System.Windows.Forms.Panel loadedImagePanel;
         private System.Windows.Forms.PictureBox loadedImageDisplay;
         private System.Windows.Forms.TextBox imageDirectoryText;
+        private System.Windows.Forms.Button MeshSaveButton;
     }
 }
 

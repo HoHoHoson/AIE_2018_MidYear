@@ -121,7 +121,7 @@ class Plane2D
 public:
 	Plane2D();
 	template<typename T>
-	Plane2D(T from, T to); 	// the normal is on the right side of this line (the collision side)
+	Plane2D(T from, T to); 	// the normal is on the left side of this line (the safe side)
 	~Plane2D();
 
 	Vector2 getNormal() const;
