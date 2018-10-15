@@ -16,13 +16,53 @@ namespace NavMesh_Editor
     [Serializable]
     public class NavMeshIO
     {
-        List<Polygon> polygons;
+        public NavMeshIO(MainApp link) { mainApp = link; }
+        public List<Polygon> polygons = new List<Polygon>();
+
+        [XmlIgnore]
+        public Vector selectedNode { get; private set; }
+        [XmlIgnore]
+        public List<Vector> storedVertices { get; set; } = new List<Vector>();
+        private MainApp mainApp;
+
+        public void MouseInput(Vector mousePos)
+        {
+            selectedNode = CheckFor(mousePos);
+
+            if (selectedNode.X == float.NaN || selectedNode.Y == float.NaN)
+                return;
+        }
+
+        private Vector CheckFor(Vector pos)
+        {
+            foreach(Polygon poly in polygons)
+            {
+                foreach(Edge ed in poly.edges)
+                {
+                    float startDis = Pow2Mag(pos - ed.start);
+                    float endDis = Pow2Mag(pos - ed.end);
+                    float nodeBounds = (float)Math.Pow(mainApp.nodeWidth, 2);
+
+                    if (startDis < nodeBounds)
+                        return ed.start;
+
+                    if (endDis < nodeBounds)
+                        return ed.end;
+                }
+            }
+            return new Vector(float.NaN, float.NaN);
+        }
+
+        public static float Pow2Mag(Vector vec)
+        {
+            return (float)(Math.Pow(vec.X, 2) + Math.Pow(vec.Y, 2));
+        }
     }
 
-    class Polygon
+    public class Polygon
     {
-        Polygon() { }
-        Polygon(params Vector[] pArray)
+        public Polygon() { }
+        public Polygon(params Vector[] pArray)
         {
             Debug.Assert(pArray.Length <= 3, "Not enough polygon vertices.");
 
@@ -62,11 +102,11 @@ namespace NavMesh_Editor
                 }
         }
 
-        public Vector midPoint { get; private set; }
-        public List<Edge> edges { get; private set; }
+        public Vector midPoint;
+        public List<Edge> edges = new List<Edge>();
     }
 
-    struct Edge
+    public struct Edge
     {
         public Edge(Vector A, Vector B)
         {
@@ -75,8 +115,8 @@ namespace NavMesh_Editor
             isMapBoundry = false;
         }
 
-        public bool isMapBoundry { get; set; }
-        public Vector start { get; private set; }
-        public Vector end { get; private set; }
+        public bool isMapBoundry;
+        public Vector start;
+        public Vector end;
     }
 }

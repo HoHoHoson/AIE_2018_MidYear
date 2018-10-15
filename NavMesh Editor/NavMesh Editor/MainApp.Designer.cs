@@ -28,12 +28,15 @@
         /// </summary>
         private void InitializeComponent()
         {
+            this.components = new System.ComponentModel.Container();
             this.loadButton = new System.Windows.Forms.Button();
             this.loadMapDialog = new System.Windows.Forms.OpenFileDialog();
             this.loadedImagePanel = new System.Windows.Forms.Panel();
             this.loadedImageDisplay = new System.Windows.Forms.PictureBox();
             this.imageDirectoryText = new System.Windows.Forms.TextBox();
             this.MeshSaveButton = new System.Windows.Forms.Button();
+            this.coordinateViewer = new System.Windows.Forms.ToolTip(this.components);
+            this.autoRefreshTimer = new System.Windows.Forms.Timer(this.components);
             this.loadedImagePanel.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.loadedImageDisplay)).BeginInit();
             this.SuspendLayout();
@@ -72,18 +75,21 @@
             this.loadedImagePanel.TabIndex = 4;
             this.loadedImagePanel.DragDrop += new System.Windows.Forms.DragEventHandler(this.loadedImagePanel_DragDrop);
             this.loadedImagePanel.DragEnter += new System.Windows.Forms.DragEventHandler(this.loadedImagePanel_DragEnter);
+            this.loadedImagePanel.MouseDoubleClick += new System.Windows.Forms.MouseEventHandler(this.loadedImagePanel_MouseDoubleClick);
             this.loadedImagePanel.Resize += new System.EventHandler(this.loadedImagePanel_Resize);
             // 
             // loadedImageDisplay
             // 
             this.loadedImageDisplay.BackColor = System.Drawing.Color.Transparent;
-            this.loadedImageDisplay.Location = new System.Drawing.Point(0, 0);
+            this.loadedImageDisplay.Location = new System.Drawing.Point(-1, -1);
             this.loadedImageDisplay.Name = "loadedImageDisplay";
             this.loadedImageDisplay.Size = new System.Drawing.Size(377, 232);
             this.loadedImageDisplay.SizeMode = System.Windows.Forms.PictureBoxSizeMode.AutoSize;
             this.loadedImageDisplay.TabIndex = 0;
             this.loadedImageDisplay.TabStop = false;
-            this.loadedImageDisplay.Click += new System.EventHandler(this.loadedImageDisplay_Click);
+            this.loadedImageDisplay.MouseDown += new System.Windows.Forms.MouseEventHandler(this.loadedImageDisplay_MouseDown);
+            this.loadedImageDisplay.MouseLeave += new System.EventHandler(this.loadedImageDisplay_MouseLeave);
+            this.loadedImageDisplay.MouseMove += new System.Windows.Forms.MouseEventHandler(this.loadedImageDisplay_MouseMove);
             // 
             // imageDirectoryText
             // 
@@ -104,6 +110,19 @@
             this.MeshSaveButton.Text = "SAVE";
             this.MeshSaveButton.UseVisualStyleBackColor = true;
             this.MeshSaveButton.Click += new System.EventHandler(this.MeshSaveButton_Click);
+            // 
+            // coordinateViewer
+            // 
+            this.coordinateViewer.AutomaticDelay = 0;
+            this.coordinateViewer.AutoPopDelay = 1000;
+            this.coordinateViewer.InitialDelay = 0;
+            this.coordinateViewer.ReshowDelay = 0;
+            this.coordinateViewer.UseAnimation = false;
+            this.coordinateViewer.UseFading = false;
+            // 
+            // autoRefreshTimer
+            // 
+            this.autoRefreshTimer.Tick += new System.EventHandler(this.autoRefreshTimer_Tick);
             // 
             // MainApp
             // 
@@ -134,6 +153,8 @@
         private System.Windows.Forms.PictureBox loadedImageDisplay;
         private System.Windows.Forms.TextBox imageDirectoryText;
         private System.Windows.Forms.Button MeshSaveButton;
+        private System.Windows.Forms.ToolTip coordinateViewer;
+        private System.Windows.Forms.Timer autoRefreshTimer;
     }
 }
 
