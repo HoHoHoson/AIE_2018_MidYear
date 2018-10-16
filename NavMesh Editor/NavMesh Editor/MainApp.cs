@@ -18,7 +18,8 @@ namespace NavMesh_Editor
         private string formText = "Hoson's Homemade NavMesh Handler";
 
         private NavMeshIO navMesh;
-        private Image mapTexture;
+        private Image originaImage;
+        private Image meshCanvas;
 
         public int nodeWidth { get; private set; } = 10;
         public int nodeHeight { get; private set; } = 10;
@@ -84,7 +85,7 @@ namespace NavMesh_Editor
         private void autoRefreshTimer_Tick(object sender, EventArgs e)
         {
             System.Drawing.Point mouseCoord = loadedImageDisplay.PointToClient(MousePosition);
-            coordinateViewer.SetToolTip(loadedImageDisplay, mouseCoord.X + " , " + (mapTexture.Height - mouseCoord.Y));
+            coordinateViewer.SetToolTip(loadedImageDisplay, mouseCoord.X + " , " + (originaImage.Height - mouseCoord.Y));
         }
 
 
@@ -94,19 +95,11 @@ namespace NavMesh_Editor
         {
             MouseEventArgs me = (MouseEventArgs)e;
 
-            //if (me.Button == MouseButtons.Left && mapTexture != null)
-            //{
-            //    Graphics g = Graphics.FromImage(mapTexture);
-            //    Brush b = new SolidBrush(Color.LimeGreen);
-
-            //    g.FillEllipse(b, me.Location.X - nodeWidth / 2, me.Location.Y - nodeHeight / 2, nodeWidth, nodeHeight);
-            //    g.Dispose();
-            //    b.Dispose();
-
-            //    loadedImageDisplay.Refresh();
-            //}
-            navMesh.storedVertices.Add(new Vector(me.Location.X, me.Location.Y));
-            DrawMesh();
+            if (me.Button == MouseButtons.Left && originaImage != null)
+            {
+                navMesh.NodeInput(new Vector(me.Location.X, me.Location.Y));
+                DrawMesh();
+            }
         }
 
         private void loadedImagePanel_Resize(object sender, EventArgs e)
@@ -141,11 +134,11 @@ namespace NavMesh_Editor
         // Picturebox that displays the loaded Image.
         private void loadedImageDisplay_MouseMove(object sender, MouseEventArgs e)
         {
-            if (mapTexture != null)
+            if (originaImage != null)
                 if (mouseLastPos != e.Location)
                 {
                     mouseLastPos = e.Location;
-                    coordinateViewer.SetToolTip(loadedImageDisplay, e.Location.X + " , " + (mapTexture.Height - e.Location.Y));
+                    coordinateViewer.SetToolTip(loadedImageDisplay, e.Location.X + " , " + (originaImage.Height - e.Location.Y));
                     autoRefreshTimer.Stop();
                 }
                 else
@@ -161,17 +154,19 @@ namespace NavMesh_Editor
 
         public void DrawMesh()
         {
-            Graphics g = Graphics.FromImage(mapTexture);
+            meshCanvas = (Image)originaImage.Clone();
+            Graphics g = Graphics.FromImage(meshCanvas);
             Brush b = new SolidBrush(Color.LimeGreen);
 
-            if (navMesh.selectedNode != null)
+            if (navMesh.selectedNode != null && 
+                !double.IsNaN(navMesh.selectedNode.X) && !double.IsNaN(navMesh.selectedNode.Y))
             {
-                Brush pinkBrush = new SolidBrush(Color.HotPink);
+                Brush highlight = new SolidBrush(Color.HotPink);
                 Vector vec = navMesh.selectedNode;
 
-                g.FillEllipse(pinkBrush, (float)vec.X - nodeWidth / 2, (float)vec.Y - nodeHeight / 2, nodeWidth, nodeHeight);
+                g.FillEllipse(highlight, (float)vec.X - nodeWidth * 1.25f / 2, (float)vec.Y - nodeHeight * 1.25f / 2, nodeWidth * 1.25f, nodeHeight * 1.25f);
 
-                pinkBrush.Dispose();
+                highlight.Dispose();
             }
 
             foreach (Vector p in navMesh.storedVertices)
@@ -179,9 +174,11 @@ namespace NavMesh_Editor
                 g.FillEllipse(b, (float)p.X - nodeWidth / 2, (float)p.Y - nodeHeight / 2, nodeWidth, nodeHeight);
             }
 
+            loadedImageDisplay.Image = meshCanvas;
+            loadedImageDisplay.Refresh();
+
             g.Dispose();
             b.Dispose();
-            loadedImageDisplay.Refresh();
         }
         
         /// <summary>
@@ -190,13 +187,13 @@ namespace NavMesh_Editor
         /// <param name="filePath"></param>
         private void LoadImage(string filePath)
         {
-            mapTexture = Image.FromFile(filePath);
+            originaImage = Image.FromFile(filePath);
             imageDirectoryText.Text = filePath;
             this.Text = Path.GetFileName(filePath) + " - " + formText;
 
-            loadedImageDisplay.Image = mapTexture;
-            loadedImageDisplay.Width = mapTexture.Width;
-            loadedImageDisplay.Height = mapTexture.Height;
+            loadedImageDisplay.Image = originaImage;
+            loadedImageDisplay.Width = originaImage.Width;
+            loadedImageDisplay.Height = originaImage.Height;
 
             PositionDisplay();
         }
