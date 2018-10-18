@@ -56,6 +56,7 @@ int main()
 			truetest = v4a;
 		}
 
+	float dgs = HLib::toDegrees(atan2(0, 2) - atan2(2,2));
 	c1.updateCircle(v4a, 10);
 	r1.updateRect(v4a + Vector4(15,15,0,0), 6, 6);
 	m2a.scale(2, 2);

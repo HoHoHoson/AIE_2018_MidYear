@@ -71,6 +71,11 @@ namespace HLib
 		return (float)(degrees * (M_PI / 180));
 	}
 
+	static float toDegrees(float radians)
+	{
+		return (float)(radians / (M_PI / 180));
+	}
+
 	template<typename T, typename Y>
 	static float MagPow2_2D(const T& v1, const Y& v2)
 	{

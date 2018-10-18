@@ -23,20 +23,21 @@ namespace NavMesh_Editor
             Debug.Assert(double.IsNaN(temp.X) == false && double.IsNaN(temp.Y) == false, "Can't create a Plane2D with only one point.");
 
             normal = new Vector(-temp.Y, temp.X);
-            scalar = (float)Vector.Multiply(temp, normal);
+            scalar = (float)Vector.Multiply(-from, normal);
         }
 
         public float scalar { get; private set; }
         public Vector normal { get; private set; }
 
-        public bool CheckCollision(Vector point)
+        public bool IsOutBounds(Vector point)
         {
             return (DistanceTo(point) <= 0);
         }
 
         private float DistanceTo(Vector other)
         {
-            return (float)(Vector.Multiply(other, normal) - scalar);
+            float distance = (float)(Vector.Multiply(other, normal) + scalar);
+            return distance;
         }
     };
 }

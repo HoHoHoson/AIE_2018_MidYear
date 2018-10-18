@@ -17,12 +17,12 @@ namespace NavMesh_Editor
     {
         private string formText = "Hoson's Homemade NavMesh Handler";
 
+        public static Image originaImage { get; private set; }
         private NavMeshIO navMesh;
-        private Image originaImage;
         private Image meshCanvas;
 
-        public int nodeWidth { get; private set; } = 10;
-        public int nodeHeight { get; private set; } = 10;
+        public static int nodeDiameter { get; private set; } = 10;
+        private int lineWidth = 4;
         private System.Drawing.Point mouseLastPos;
 
         public MainApp()
@@ -34,7 +34,7 @@ namespace NavMesh_Editor
             // Whitelisted extensions has one asterix, Blacklisted has two, list can be continued with a semicolon.
             // | for seperating lists and group names 
             loadMapDialog.Filter = "Image Extensions|*.png;*.jpg|Everything Else|*.*";
-            navMesh = new NavMeshIO(this);
+            navMesh = new NavMeshIO();
         }
 
 
@@ -97,7 +97,7 @@ namespace NavMesh_Editor
 
             if (me.Button == MouseButtons.Left && originaImage != null)
             {
-                navMesh.NodeInput(new Vector(me.Location.X, me.Location.Y));
+                navMesh.NodeInput(new Vector(me.Location.X, originaImage.Height - me.Location.Y));
                 DrawMesh();
             }
         }
@@ -158,22 +158,56 @@ namespace NavMesh_Editor
             Graphics g = Graphics.FromImage(meshCanvas);
             Brush b = new SolidBrush(Color.LimeGreen);
 
+            if (navMesh.polygons.Count != 0)
+            {
+                Brush nodeColour = new SolidBrush(Color.DodgerBlue);
+                Brush polyColour = new SolidBrush(Color.FromArgb(100, 149, 237, 100));
+                Pen edgeColour = new Pen(Color.CornflowerBlue, lineWidth);
+
+                foreach (Polygon poly in navMesh.polygons)
+                {
+                    HashSet<PointF> polyPoints = new HashSet<PointF>();
+
+                    foreach (Edge ed in poly.edges)
+                    {
+                        polyPoints.Add(new PointF((float)ed.start.X, (float)(originaImage.Height - ed.start.Y)));
+                        polyPoints.Add(new PointF((float)ed.end.X, (float)(originaImage.Height - ed.end.Y)));
+                    }
+
+                    g.FillPolygon(polyColour, polyPoints.ToArray());
+                }   
+
+                foreach (Polygon poly in navMesh.polygons)
+                    foreach (Edge ed in poly.edges)
+                    {
+                        System.Drawing.Point p1 = new System.Drawing.Point((int)ed.start.X, (int)(originaImage.Height - ed.start.Y));
+                        System.Drawing.Point p2 = new System.Drawing.Point((int)ed.end.X, (int)(originaImage.Height - ed.end.Y));
+
+                        g.DrawLine(edgeColour, p1, p2);
+                    
+                        g.FillEllipse(nodeColour, p1.X - nodeDiameter / 2, p1.Y - nodeDiameter / 2, nodeDiameter, nodeDiameter);
+                        g.FillEllipse(nodeColour, p2.X - nodeDiameter / 2, p2.Y - nodeDiameter / 2, nodeDiameter, nodeDiameter);
+                    }
+
+                nodeColour.Dispose();
+                edgeColour.Dispose();
+            }
+
             if (navMesh.selectedNode != null && 
                 !double.IsNaN(navMesh.selectedNode.X) && !double.IsNaN(navMesh.selectedNode.Y))
             {
                 Brush highlight = new SolidBrush(Color.HotPink);
-                Vector vec = navMesh.selectedNode;
+                System.Drawing.Point sel = new System.Drawing.Point((int)navMesh.selectedNode.X, (int)(originaImage.Height - navMesh.selectedNode.Y));
 
-                g.FillEllipse(highlight, (float)vec.X - nodeWidth * 1.25f / 2, (float)vec.Y - nodeHeight * 1.25f / 2, nodeWidth * 1.25f, nodeHeight * 1.25f);
+                g.FillEllipse(highlight, sel.X - nodeDiameter * 1.25f / 2, sel.Y - nodeDiameter * 1.25f / 2, 
+                              nodeDiameter * 1.25f, nodeDiameter * 1.25f);
 
                 highlight.Dispose();
             }
 
-            foreach (Vector p in navMesh.storedVertices)
-            {
-                g.FillEllipse(b, (float)p.X - nodeWidth / 2, (float)p.Y - nodeHeight / 2, nodeWidth, nodeHeight);
-            }
-
+            foreach (Vector v in navMesh.storedVertices)
+                g.FillEllipse(b, (float)v.X - nodeDiameter / 2, originaImage.Height - (float)v.Y - nodeDiameter / 2, nodeDiameter, nodeDiameter);
+            
             loadedImageDisplay.Image = meshCanvas;
             loadedImageDisplay.Refresh();
 

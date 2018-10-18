@@ -16,14 +16,12 @@ namespace NavMesh_Editor
     [Serializable]
     public class NavMeshIO
     {
-        public NavMeshIO(MainApp link) { mainApp = link; }
         public List<Polygon> polygons = new List<Polygon>();
 
         [XmlIgnore]
         public Vector selectedNode { get; private set; }
         [XmlIgnore]
         public List<Vector> storedVertices { get; set; } = new List<Vector>();
-        private MainApp mainApp;
         private bool polyPositive = true;
 
         public void NodeInput(Vector mousePos)
@@ -41,7 +39,7 @@ namespace NavMesh_Editor
             }
 
             // Checks if the Polygon is complete
-            if (selectedNode == storedVertices.ElementAt(0))
+            if (storedVertices.Count >= 3 && selectedNode == storedVertices.ElementAt(0))
             {
                 polygons.Add(new Polygon(storedVertices.ToArray()));
                 storedVertices.Clear();
@@ -53,7 +51,7 @@ namespace NavMesh_Editor
             foreach(Vector node in storedVertices)
                 if (selectedNode == node)
                 {
-                    MessageBox.Show("Invalid edge.", "Error");
+                    MessageBox.Show("The points must form a complete loop.", "Invalid edge");
                     selectedNode = storedVertices.ElementAt(storedVertices.Count - 1);
                     return;
                 }
@@ -64,7 +62,7 @@ namespace NavMesh_Editor
         // Pass in a node to process it into the NavMesh.
         private Vector GetNode(Vector pos)
         {
-            float nodeBounds = (float)Math.Pow(mainApp.nodeWidth, 2);
+            float nodeBounds = (float)Math.Pow(MainApp.nodeDiameter, 2);
 
             foreach (Polygon poly in polygons)
             {
@@ -119,16 +117,37 @@ namespace NavMesh_Editor
                 }
 
                 if (storedVertices.Count == 3)
-                    if (crossProduct > 0)
-                        polyPositive = true;
-                    else
+                {
+                    Vector checkPoint = new Vector((storedVertices.ElementAt(0).X + storedVertices.ElementAt(1).X + storedVertices.ElementAt(2).X) / 3,
+                                                   (storedVertices.ElementAt(0).Y + storedVertices.ElementAt(1).Y + storedVertices.ElementAt(2).Y) / 3);
+                    Plane2D checkPlane = new Plane2D(storedVertices.ElementAt(0), storedVertices.ElementAt(1));
+
+                    if (checkPlane.IsOutBounds(checkPoint) == true)
                         polyPositive = false;
+                    else
+                        polyPositive = true;
+                }
                 else
-                    if (polyPositive == true && crossProduct < 0 || polyPositive == false && crossProduct > 0)
+                {
+                    Plane2D checkPlane;
+
+                    if (polyPositive == true)
+                        checkPlane = new Plane2D(storedVertices.ElementAt(tail - 1), storedVertices.ElementAt(tail));
+                    else
+                        checkPlane = new Plane2D(storedVertices.ElementAt(tail), storedVertices.ElementAt(tail - 1));
+
+                    for (int i = 0; i < tail - 1; ++i)
                     {
-                        storedVertices.RemoveAt(tail);
-                        MessageBox.Show("Invalid edge.", "Error");
-                    }   
+                        if (checkPlane.IsOutBounds(storedVertices.ElementAt(i)) == true)
+                        {
+                            storedVertices.RemoveAt(tail);
+                            selectedNode = storedVertices.ElementAt(tail - 1);
+
+                            MessageBox.Show("Polygon needs to be convex.", "Invalid edge");
+                            break;
+                        }   
+                    }
+                }
             }
         }
     }
@@ -140,42 +159,29 @@ namespace NavMesh_Editor
         {
             Debug.Assert(pArray.Length >= 3, "Not enough polygon vertices.");
 
-            double averageX = 0;
-            double averageY = 0;
-
-            foreach (Vector v in pArray)
-            {
-                averageX += v.X;
-                averageY += v.Y;
-            }
-            midPoint = new Vector(averageX / pArray.Length, averageY / pArray.Length);
+            Vector midPoint = new Vector((pArray[0].X + pArray[1].X + pArray[2].X) / 3, (pArray[0].Y + pArray[1].Y + pArray[2].Y) / 3);
 
             Plane2D sideCheck = new Plane2D(pArray[0], pArray[1]);
 
             // Checks if the planes are facing in the correct direction.
-            if (sideCheck.CheckCollision(midPoint) == false)
-                for(int i = 0; i < pArray.Length; ++i)
+            if (sideCheck.IsOutBounds(midPoint) == false)
+                for (int i = 0; i < pArray.Length; ++i)
                 {
-                    if (i == 0)
-                        continue;
-                    else if (i == pArray.Length - 1)
+                    if (i == pArray.Length - 1)
                         edges.Add(new Edge(pArray[i], pArray[0]));
                     else
-                        edges.Add(new Edge(pArray[i - 1], pArray[i])); 
+                        edges.Add(new Edge(pArray[i], pArray[i + 1])); 
                 }
             else
                 for (int i = 0; i < pArray.Length; ++i)
                 {
-                    if (i == 0)
-                        continue;
-                    else if (i == pArray.Length - 1)
-                        edges.Add(new Edge(pArray[0], pArray[i]));
+                    if (i == pArray.Length - 1)
+                        edges.Add(new Edge(pArray[i], pArray[0]));
                     else
-                        edges.Add(new Edge(pArray[i], pArray[i - 1]));
+                        edges.Add(new Edge(pArray[i + 1], pArray[i]));
                 }
         }
 
-        public Vector midPoint;
         public List<Edge> edges = new List<Edge>();
     }
 
