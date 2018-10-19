@@ -97,7 +97,7 @@ namespace NavMesh_Editor
 
             if (me.Button == MouseButtons.Left && originaImage != null)
             {
-                navMesh.NodeInput(new Vector(me.Location.X, originaImage.Height - me.Location.Y));
+                navMesh.VectorInput(new Vector(me.Location.X, originaImage.Height - me.Location.Y));
                 DrawMesh();
             }
         }
@@ -161,7 +161,7 @@ namespace NavMesh_Editor
             if (navMesh.polygons.Count != 0)
             {
                 Brush nodeColour = new SolidBrush(Color.DodgerBlue);
-                Brush polyColour = new SolidBrush(Color.FromArgb(100, 149, 237, 100));
+                Brush polyColour = new SolidBrush(Color.FromArgb(100, 100, 149, 237));
                 Pen edgeColour = new Pen(Color.CornflowerBlue, lineWidth);
 
                 foreach (Polygon poly in navMesh.polygons)
@@ -205,7 +205,7 @@ namespace NavMesh_Editor
                 highlight.Dispose();
             }
 
-            foreach (Vector v in navMesh.storedVertices)
+            foreach (Vector v in navMesh.TempNodes)
                 g.FillEllipse(b, (float)v.X - nodeDiameter / 2, originaImage.Height - (float)v.Y - nodeDiameter / 2, nodeDiameter, nodeDiameter);
             
             loadedImageDisplay.Image = meshCanvas;
