@@ -37,19 +37,34 @@ Vector2 Ray2D::closestPoint(const Vector2 & point) const
 	return m_Origin + m_Direction * t;
 }
 
-bool Ray2D::checkCollision(const Ray2D & ray) const
+bool Ray2D::checkCollision(const Ray2D & r, Vector2* v) const
 {
-	float denominator = ((m_End[0] - m_Origin[0]) * (ray.m_End[1] - ray.m_Origin[1])) - ((m_End[1] - m_Origin[1]) * (ray.m_End[0] - ray.m_Origin[0]));
-	float numerator1 = ((m_Origin[1] - ray.m_Origin[1]) * (ray.m_End[0] - ray.m_Origin[0])) - ((m_Origin[0] - ray.m_Origin[0]) * (ray.m_End[1] - ray.m_Origin[1]));
-	float numerator2 = ((m_Origin[1] - ray.m_Origin[1]) * (m_End[0] - m_Origin[0])) - ((m_Origin[0] - ray.m_Origin[0]) * (m_End[0] - m_Origin[1]));
+	Vector2 end1 = m_Origin + m_Direction * m_Length;
+	Vector2 end2 = r.m_Origin + r.m_Direction * r.m_Length;
+	// Ray 1 
+	float A1 = end1[1] - m_Origin[1];
+	float B1 = m_Origin[0] - end1[0];
+	float C1 = A1 * m_Origin[0] + B1 * m_Origin[1];
+	// Ray 2
+	float A2 = end2[1] - r.m_Origin[1];
+	float B2 = r.m_Origin[0] - end2[0];
+	float C2 = A2 * r.m_Origin[0] + B2 * r.m_Origin[1];
 
-	if (denominator == 0) 
-		return (numerator1 == 0 && numerator2 == 0);
+	float det = A1 * B2 - A2 * B1;
 
-	float r = numerator1 / denominator;
-	float s = numerator2 / denominator;
+	// Lines are parallel
+	if (det == 0)
+		return false;
 
-	return (r >= 0 && r <= 1) && (s >= 0 && s <= 1);
+	Vector2 intersect((B2 * C1 - B1 * C2) / det, (A1 * C2 - A2 * C1) / det);
+
+	if (std::fminf(m_Origin[0], end1[0]) <= intersect[0] && intersect[0] <= std::fmaxf(m_Origin[0], end1[0]) &&
+		std::fminf(m_Origin[1], end1[1]) <= intersect[1] && intersect[1] <= std::fmaxf(m_Origin[1], end1[1]))
+		if (std::fminf(r.m_Origin[0], end2[0]) <= intersect[0] && intersect[0] <= std::fmaxf(r.m_Origin[0], end2[0]) &&
+			std::fminf(r.m_Origin[1], end2[1]) <= intersect[1] && intersect[1] <= std::fmaxf(r.m_Origin[1], end2[1]))
+			return true;
+
+	return false;
 }
 
 bool Ray2D::checkCollision(const Circle & c, Vector2* i) const

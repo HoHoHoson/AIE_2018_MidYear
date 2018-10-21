@@ -94,19 +94,34 @@ namespace NavMesh_Editor
                 return true;
         }
 
-        public bool CheckCollision(Ray2D ray)
+        public bool CheckCollision(Ray2D r)
         {
-            double denominator = ((End.X - Origin.X) * (ray.End.Y - ray.Origin.Y)) - ((End.Y - Origin.Y) * (ray.End.X - ray.Origin.X));
-            double numerator1 = ((Origin.Y - ray.Origin.Y) * (ray.End.X - ray.Origin.X)) - ((Origin.X - ray.Origin.X) * (ray.End.Y - ray.Origin.Y));
-            double numerator2 = ((Origin.Y - ray.Origin.Y) * (End.X - Origin.X)) - ((Origin.X - ray.Origin.X) * (End.X - Origin.Y));
+            Vector end1 = Origin + Direction * Length;
+            Vector end2 = r.Origin + r.Direction * r.Length;
+            // Ray 1 
+            float A1 = (float)(end1.Y - Origin.Y);
+            float B1 = (float)(Origin.X - end1.X);
+            float C1 = (float)(A1 * Origin.X + B1 * Origin.Y);
+            // Ray 2
+            float A2 = (float)(end2.Y - r.Origin.Y);
+            float B2 = (float)(r.Origin.X - end2.X);
+            float C2 = (float)(A2 * r.Origin.X + B2 * r.Origin.Y);
 
-	        if (denominator == 0) 
-		        return (numerator1 == 0 && numerator2 == 0);
+            float det = A1 * B2 - A2 * B1;
 
-	        double r = numerator1 / denominator;
-            double s = numerator2 / denominator;
+            // Lines are parallel
+            if (det == 0)
+                return false;
 
-	        return (r >= 0 && r <= 1) && (s >= 0 && s <= 1);
+            Vector intersect = new Vector((B2 * C1 - B1 * C2) / det, (A1 * C2 - A2 * C1) / det);
+
+            if (Math.Min(Origin.X, end1.X) <= intersect.X && intersect.X <= Math.Max(Origin.X, end1.X) &&
+                Math.Min(Origin.Y, end1.Y) <= intersect.Y && intersect.Y <= Math.Max(Origin.Y, end1.Y))
+                if (Math.Min(r.Origin.X, end2.X) <= intersect.X && intersect.X <= Math.Max(r.Origin.X, end2.X) &&
+                    Math.Min(r.Origin.Y, end2.Y) <= intersect.Y && intersect.Y <= Math.Max(r.Origin.Y, end2.Y))
+                    return true;
+
+            return false;
         }
     };
 }

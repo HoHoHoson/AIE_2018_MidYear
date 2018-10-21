@@ -193,11 +193,11 @@ namespace NavMesh_Editor
                 edgeColour.Dispose();
             }
 
-            if (navMesh.selectedNode != null && 
-                !double.IsNaN(navMesh.selectedNode.X) && !double.IsNaN(navMesh.selectedNode.Y))
+            if (navMesh.nodeSelect != null && 
+                !double.IsNaN(navMesh.nodeSelect.X) && !double.IsNaN(navMesh.nodeSelect.Y))
             {
                 Brush highlight = new SolidBrush(Color.HotPink);
-                System.Drawing.Point sel = new System.Drawing.Point((int)navMesh.selectedNode.X, (int)(originaImage.Height - navMesh.selectedNode.Y));
+                System.Drawing.Point sel = new System.Drawing.Point((int)navMesh.nodeSelect.X, (int)(originaImage.Height - navMesh.nodeSelect.Y));
 
                 g.FillEllipse(highlight, sel.X - nodeDiameter * 1.25f / 2, sel.Y - nodeDiameter * 1.25f / 2, 
                               nodeDiameter * 1.25f, nodeDiameter * 1.25f);
@@ -205,7 +205,7 @@ namespace NavMesh_Editor
                 highlight.Dispose();
             }
 
-            foreach (Vector v in navMesh.TempNodes)
+            foreach (Vector v in navMesh.tempNodes)
                 g.FillEllipse(b, (float)v.X - nodeDiameter / 2, originaImage.Height - (float)v.Y - nodeDiameter / 2, nodeDiameter, nodeDiameter);
             
             loadedImageDisplay.Image = meshCanvas;

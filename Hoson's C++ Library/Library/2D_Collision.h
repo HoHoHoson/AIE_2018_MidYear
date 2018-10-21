@@ -168,7 +168,7 @@ public:
 	Vector2 getEnd()		const;
 
 	Vector2 closestPoint(const Vector2& point)						const;
-	bool checkCollision(const Ray2D& ray)							const;
+	bool checkCollision(const Ray2D& ray, Vector2* i = nullptr)		const;
 	bool checkCollision(const Circle& c, Vector2* i = nullptr)	  	const;
 	bool checkCollision(const Plane2D& pl, Vector2* i = nullptr)	const;
 	bool checkCollision(const Rectangle& r, Vector2* i = nullptr)	const;
