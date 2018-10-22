@@ -136,7 +136,7 @@ namespace NavMesh_Editor
 
                     foreach (Plane2D pl in tempPlanes)
                     {
-                        if (tempArray.Contains(v) == false && pl.CheckCollision(v) == true)
+                        if (tempArray.Any(vec => vec == v) == true || pl.CheckCollision(v) == true)
                             isValid = true;
                     }
 
