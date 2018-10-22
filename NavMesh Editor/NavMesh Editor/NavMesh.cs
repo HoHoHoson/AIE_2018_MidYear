@@ -51,35 +51,6 @@ namespace NavMesh_Editor
                         MessageBox.Show("The points must form a complete polygon.", "Invalid Edge");
                         return;
                     }
-
-                // Checks if the edge created by the new node intersects with any existing polygons.
-                if (tempNodes.Count != 0 && originNode == nodeSelect)
-                {
-                    bool exist = false;
-                    Vector vector = tempNodes.ElementAt(tempNodes.Count - 1);
-                    if (tempNodes.Count > 1)
-                        if (DoesExist(tempNodes.ElementAt(tempNodes.Count - 1)) == true)
-                            exist = true;
-
-                    float length = (float)(nodeSelect - tempNodes.ElementAt(tempNodes.Count - 1)).Length;
-                    Ray2D rayCheck = new Ray2D(tempNodes.ElementAt(tempNodes.Count - 1), nodeSelect, length);
-
-                    foreach (Polygon p in polygons)
-                        foreach (Edge ed in p.edges)
-                        {
-                            if (exist == false || exist == true && ed.start != vector && ed.end != vector)
-                            {
-                                Ray2D edgeRay = new Ray2D(ed.start, ed.end, (float)(ed.end - ed.start).Length);
-
-                                if (rayCheck.CheckCollision(edgeRay) == true)
-                                {
-                                    nodeSelect = tempNodes.ElementAt(tempNodes.Count - 1);
-                                    MessageBox.Show("Edge intersects with an existing Polygon.", "Invalid Edge");
-                                    return;
-                                }
-                            }
-                        }
-                }
             }
             else
             {
@@ -121,14 +92,11 @@ namespace NavMesh_Editor
                         tempPlanes.Add(new Plane2D(tempArray[i], tempArray[i + 1]));
                 }
 
-                HashSet<Vector> vSet = new HashSet<Vector>();
+                List<Vector> vSet = new List<Vector>();
 
                 foreach (Polygon p in polygons)
                     foreach (Edge ed in p.edges)
-                    {
                         vSet.Add(ed.start);
-                        vSet.Add(ed.end);
-                    }
 
                 foreach (Vector v in vSet)
                 {
@@ -222,9 +190,15 @@ namespace NavMesh_Editor
             if (crossProduct == 0)
                 tempNodes.RemoveAt(tailNode - 1);
 
-            // Stores the polygon once it is complete.
+            // One last check to see if the polygon already exists. Then stores the polygon once it is complete.
             if (tempNodes.Count >= 3 && nodeSelect == originNode)
             {
+                foreach (Polygon p in polygons)
+                    for (int i = 0; i < p.edges.Count; ++i)
+                    {
+
+                    }
+
                 var nodeArray = tempNodes.ToArray();
 
                 if (polyPositive == false)
@@ -272,13 +246,9 @@ namespace NavMesh_Editor
                 foreach (Edge ed in poly.edges)
                 {
                     float startDis = (float)(pos - ed.start).LengthSquared;
-                    float endDis = (float)(pos - ed.end).LengthSquared;
 
                     if (startDis <= nodeBoundSqr)
                         return ed.start;
-
-                    if (endDis <= nodeBoundSqr)
-                        return ed.end;
                 }
             }
 
@@ -327,25 +297,25 @@ namespace NavMesh_Editor
             // Checks if the edge created by the new node intersects with any existing polygons.
             if (tempNodes.Count != 0)
             {
-                bool exist = false;
-                Vector vector = tempNodes.ElementAt(tempNodes.Count - 1);
-                if (tempNodes.Count > 1)
-                    if (DoesExist(tempNodes.ElementAt(tempNodes.Count - 1)) == true)
-                        exist = true;
+                bool prevExist = false;
+                Vector tailVec = tempNodes.ElementAt(tempNodes.Count - 1);
 
-                float length = (float)(nodeSelect - tempNodes.ElementAt(tempNodes.Count - 1)).Length;
-                Ray2D rayCheck = new Ray2D(tempNodes.ElementAt(tempNodes.Count - 1), nodeSelect, length);
+                if (DoesExist(tailVec) == true)
+                    prevExist = true;
+
+                float length = (float)(nodeSelect - tailVec).Length;
+                Ray2D rayCheck = new Ray2D(tailVec, nodeSelect, length);
                 
                 foreach (Polygon p in polygons)
                     foreach (Edge ed in p.edges)
                     {
-                        if (exist == false || exist == true && ed.start != vector && ed.end != vector)
+                        if (prevExist == false || prevExist == true && ed.start != tailVec && ed.end != tailVec)
                         {
                             Ray2D edgeRay = new Ray2D(ed.start, ed.end, (float)(ed.end - ed.start).Length);
 
                             if (rayCheck.CheckCollision(edgeRay) == true)
                             {
-                                nodeSelect = tempNodes.ElementAt(tempNodes.Count - 1);
+                                nodeSelect = tailVec;
                                 MessageBox.Show("Edge intersects with an existing Polygon.", "Invalid Edge");
                                 return false;
                             }
