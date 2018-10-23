@@ -36,7 +36,10 @@
             this.imageDirectoryText = new System.Windows.Forms.TextBox();
             this.MeshSaveButton = new System.Windows.Forms.Button();
             this.coordinateViewer = new System.Windows.Forms.ToolTip(this.components);
-            this.autoRefreshTimer = new System.Windows.Forms.Timer(this.components);
+            this.tooltipRefreshTimer = new System.Windows.Forms.Timer(this.components);
+            this.MeshLoadButton = new System.Windows.Forms.Button();
+            this.loadMeshDialog = new System.Windows.Forms.OpenFileDialog();
+            this.saveMeshDialog = new System.Windows.Forms.SaveFileDialog();
             this.loadedImagePanel.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.loadedImageDisplay)).BeginInit();
             this.SuspendLayout();
@@ -56,6 +59,7 @@
             // loadMapDialog
             // 
             this.loadMapDialog.FileName = "LoadSomething.png";
+            this.loadMapDialog.Title = "Load Background Image";
             this.loadMapDialog.FileOk += new System.ComponentModel.CancelEventHandler(this.loadMapDialog_FileOk);
             // 
             // loadedImagePanel
@@ -103,7 +107,8 @@
             // 
             // MeshSaveButton
             // 
-            this.MeshSaveButton.Location = new System.Drawing.Point(84, 67);
+            this.MeshSaveButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.MeshSaveButton.Location = new System.Drawing.Point(173, 647);
             this.MeshSaveButton.Name = "MeshSaveButton";
             this.MeshSaveButton.Size = new System.Drawing.Size(75, 23);
             this.MeshSaveButton.TabIndex = 6;
@@ -120,9 +125,31 @@
             this.coordinateViewer.UseAnimation = false;
             this.coordinateViewer.UseFading = false;
             // 
-            // autoRefreshTimer
+            // tooltipRefreshTimer
             // 
-            this.autoRefreshTimer.Tick += new System.EventHandler(this.autoRefreshTimer_Tick);
+            this.tooltipRefreshTimer.Tick += new System.EventHandler(this.autoRefreshTimer_Tick);
+            // 
+            // MeshLoadButton
+            // 
+            this.MeshLoadButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.MeshLoadButton.Location = new System.Drawing.Point(12, 647);
+            this.MeshLoadButton.Name = "MeshLoadButton";
+            this.MeshLoadButton.Size = new System.Drawing.Size(75, 23);
+            this.MeshLoadButton.TabIndex = 1;
+            this.MeshLoadButton.Text = "LOAD";
+            this.MeshLoadButton.UseVisualStyleBackColor = true;
+            this.MeshLoadButton.Click += new System.EventHandler(this.MeshLoadButton_Click);
+            // 
+            // loadMeshDialog
+            // 
+            this.loadMeshDialog.InitialDirectory = "$(SolutionDir)";
+            this.loadMeshDialog.Title = "Load Navigational Mesh";
+            this.loadMeshDialog.FileOk += new System.ComponentModel.CancelEventHandler(this.loadMeshDialog_FileOk);
+            // 
+            // saveMeshDialog
+            // 
+            this.saveMeshDialog.Title = "Save Navigational Mesh";
+            this.saveMeshDialog.FileOk += new System.ComponentModel.CancelEventHandler(this.saveMeshDialog_FileOk);
             // 
             // MainApp
             // 
@@ -130,14 +157,17 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.Silver;
             this.ClientSize = new System.Drawing.Size(1264, 682);
+            this.Controls.Add(this.MeshLoadButton);
             this.Controls.Add(this.MeshSaveButton);
             this.Controls.Add(this.imageDirectoryText);
             this.Controls.Add(this.loadedImagePanel);
             this.Controls.Add(this.loadButton);
             this.Cursor = System.Windows.Forms.Cursors.Arrow;
+            this.KeyPreview = true;
             this.Name = "MainApp";
             this.Text = "Hoson\'s Homemade NavMesh Handler";
             this.Load += new System.EventHandler(this.MainApp_Load);
+            this.KeyDown += new System.Windows.Forms.KeyEventHandler(this.MainApp_KeyDown);
             this.loadedImagePanel.ResumeLayout(false);
             this.loadedImagePanel.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.loadedImageDisplay)).EndInit();
@@ -154,7 +184,10 @@
         private System.Windows.Forms.TextBox imageDirectoryText;
         private System.Windows.Forms.Button MeshSaveButton;
         private System.Windows.Forms.ToolTip coordinateViewer;
-        private System.Windows.Forms.Timer autoRefreshTimer;
+        private System.Windows.Forms.Timer tooltipRefreshTimer;
+        private System.Windows.Forms.Button MeshLoadButton;
+        private System.Windows.Forms.OpenFileDialog loadMeshDialog;
+        private System.Windows.Forms.SaveFileDialog saveMeshDialog;
     }
 }
 

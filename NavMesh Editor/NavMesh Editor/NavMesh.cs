@@ -21,7 +21,7 @@ namespace NavMesh_Editor
         [XmlIgnore]
         public Vector nodeSelect { get; private set; }
         [XmlIgnore]
-        public List<Vector> tempNodes { get; set; } = new List<Vector>();
+        public List<Vector> tempNodes { get; private set; } = new List<Vector>();
         [XmlIgnore]
         public static bool polyPositive = true;
         private Vector originNode;
@@ -60,6 +60,32 @@ namespace NavMesh_Editor
                     return;
             }
             ValidatePoly();
+        }
+
+
+
+        /// <summary>
+        /// Undos the last node that was added.
+        /// </summary>
+        public void UndoPrevNode()
+        {
+            if (tempNodes.Count == 0)
+                return;
+
+            tempNodes.RemoveAt(tempNodes.Count - 1);
+
+            if (tempNodes.Count == 0)
+                nodeSelect = new Vector(double.NaN, 0);
+            else
+                nodeSelect = tempNodes.ElementAt(tempNodes.Count - 1);
+        }
+
+
+
+        public void ClearSelected()
+        {
+            tempNodes.Clear();
+            nodeSelect = new Vector(double.NaN, 0);
         }
 
 
@@ -194,10 +220,27 @@ namespace NavMesh_Editor
             if (tempNodes.Count >= 3 && nodeSelect == originNode)
             {
                 foreach (Polygon p in polygons)
-                    for (int i = 0; i < p.edges.Count; ++i)
-                    {
+                {
+                    int edgeCount = p.edges.Count;
 
-                    }
+                    for (int i = 0; i < p.edges.Count; ++i)
+                        foreach (Vector v in tempNodes)
+                            if (v == p.edges.ElementAt(i).start)
+                            {
+                                edgeCount--;
+                                if (edgeCount == 0)
+                                {
+                                    originNode = new Vector(double.NaN, double.NaN);
+                                    nodeSelect = new Vector(double.NaN, double.NaN);
+                                    tempNodes.Clear();
+                                    polyPositive = true;
+
+                                    MessageBox.Show("Polygon is a duplicate and/or overlaps another.", "Invalid Polygon");
+
+                                    return;
+                                }
+                            }
+                }
 
                 var nodeArray = tempNodes.ToArray();
 

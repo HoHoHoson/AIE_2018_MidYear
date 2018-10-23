@@ -34,6 +34,8 @@ namespace NavMesh_Editor
             // Whitelisted extensions has one asterix, Blacklisted has two, list can be continued with a semicolon.
             // | for seperating lists and group names 
             loadMapDialog.Filter = "Image Extensions|*.png;*.jpg|Everything Else|*.*";
+            loadMeshDialog.Filter = "File Extensions|*.xml|Everything Else|*.*";
+            saveMeshDialog.Filter = "XML|*.xml";
             navMesh = new NavMeshIO();
         }
 
@@ -53,6 +55,12 @@ namespace NavMesh_Editor
             LoadImage(loadMapDialog.FileName);
         }
 
+        private void loadMeshDialog_FileOk(object sender, CancelEventArgs e)
+        {
+            Deserialise(loadMeshDialog.FileName);
+            DrawMesh();
+        }
+
 
 
         // Text Box that displays the loaded Image's directory.
@@ -67,16 +75,12 @@ namespace NavMesh_Editor
         // Button that saves the NavMesh to a XML file.
         private void MeshSaveButton_Click(object sender, EventArgs e)
         {
-            if (navMesh != null)
-            {
-                XmlSerializer serializer = new XmlSerializer(typeof(NavMeshIO));
-                TextWriter writer = new StreamWriter("myTest.xml");
+            saveMeshDialog.ShowDialog();
+        }
 
-                serializer.Serialize(writer, navMesh);
-                writer.Close();
-            }
-            else
-                MessageBox.Show("No NavMesh is loaded", "WARNING");
+        private void MeshLoadButton_Click(object sender, EventArgs e)
+        {
+            loadMeshDialog.ShowDialog();
         }
 
 
@@ -139,10 +143,10 @@ namespace NavMesh_Editor
                 {
                     mouseLastPos = e.Location;
                     coordinateViewer.SetToolTip(loadedImageDisplay, e.Location.X + " , " + (originaImage.Height - e.Location.Y));
-                    autoRefreshTimer.Stop();
+                    tooltipRefreshTimer.Stop();
                 }
                 else
-                    autoRefreshTimer.Start();
+                    tooltipRefreshTimer.Start();
         }
 
         private void loadedImageDisplay_MouseLeave(object sender, EventArgs e)
@@ -156,7 +160,6 @@ namespace NavMesh_Editor
         {
             meshCanvas = (Image)originaImage.Clone();
             Graphics g = Graphics.FromImage(meshCanvas);
-            Brush b = new SolidBrush(Color.LimeGreen);
 
             if (navMesh.polygons.Count != 0)
             {
@@ -191,6 +194,7 @@ namespace NavMesh_Editor
 
                 nodeColour.Dispose();
                 edgeColour.Dispose();
+                polyColour.Dispose();
             }
 
             if (navMesh.nodeSelect != null && 
@@ -205,14 +209,40 @@ namespace NavMesh_Editor
                 highlight.Dispose();
             }
 
-            foreach (Vector v in navMesh.tempNodes)
-                g.FillEllipse(b, (float)v.X - nodeDiameter / 2, originaImage.Height - (float)v.Y - nodeDiameter / 2, nodeDiameter, nodeDiameter);
+            Brush neonLime = new SolidBrush(Color.LimeGreen);
+            Pen limeLine = new Pen(Color.Lime, lineWidth);
+            Pen dashLine = new Pen(Color.Lime, lineWidth);
+            float[] dashValues = { 2, 2 };
+            dashLine.DashPattern = dashValues;
+
+            for (int i = 0; i < navMesh.tempNodes.Count; ++i)
+            {
+                PointF end;
+                PointF origin;
+
+                if (navMesh.tempNodes.Count - 1 == i)
+                {
+                    origin = new PointF((float)navMesh.tempNodes.ElementAt(i).X, originaImage.Height - (float)navMesh.tempNodes.ElementAt(i).Y);
+                    end = new PointF((float)navMesh.tempNodes.ElementAt(0).X, originaImage.Height - (float)navMesh.tempNodes.ElementAt(0).Y);
+                    g.DrawLine(dashLine, origin, end);
+                }
+                else
+                {
+                    origin = new PointF((float)navMesh.tempNodes.ElementAt(i).X, originaImage.Height - (float)navMesh.tempNodes.ElementAt(i).Y);
+                    end = new PointF((float)navMesh.tempNodes.ElementAt(i + 1).X, originaImage.Height - (float)navMesh.tempNodes.ElementAt(i + 1).Y);
+                    g.DrawLine(limeLine, origin, end);
+                }
+
+                g.FillEllipse(neonLime, origin.X - nodeDiameter / 2, origin.Y - nodeDiameter / 2, nodeDiameter, nodeDiameter);
+            }
             
             loadedImageDisplay.Image = meshCanvas;
             loadedImageDisplay.Refresh();
 
             g.Dispose();
-            b.Dispose();
+            neonLime.Dispose();
+            limeLine.Dispose();
+            dashLine.Dispose();
         }
         
         /// <summary>
@@ -249,6 +279,49 @@ namespace NavMesh_Editor
 
             loadedImagePanel.Refresh();
         }
+
+        /// <summary>
+        /// Deserliases the xml file of the given filename.
+        /// </summary>
+        /// <param name="fileName"></param>
+        private void Deserialise(string filePath)
+        {
+            Stream stream = File.Open(filePath, FileMode.Open);
+            XmlSerializer serializer = new XmlSerializer(typeof(NavMeshIO));
+
+            navMesh = (NavMeshIO)serializer.Deserialize(stream);
+            stream.Close();
+        }
+
+        private void saveMeshDialog_FileOk(object sender, CancelEventArgs e)
+        {
+            if (navMesh != null)
+            {
+                XmlSerializer serializer = new XmlSerializer(typeof(NavMeshIO));
+                TextWriter writer = new StreamWriter(saveMeshDialog.FileName);
+
+                serializer.Serialize(writer, navMesh);
+                writer.Close();
+            }
+            else
+                MessageBox.Show("No NavMesh is loaded", "WARNING");
+        }
+
+        private void MainApp_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.KeyCode == Keys.Back)
+            {
+                navMesh.UndoPrevNode();
+                DrawMesh();
+            }
+
+            if (e.KeyCode == Keys.Delete)
+            {
+                navMesh.ClearSelected();
+                DrawMesh();
+            }
+        }
     }
+
 }
 

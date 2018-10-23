@@ -69,6 +69,5 @@ int main()
 	else
 		std::cout << "Never touched\n";
 
-
 	return 0;
 }
