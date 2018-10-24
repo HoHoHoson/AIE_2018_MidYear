@@ -100,10 +100,15 @@ namespace NavMesh_Editor
             MouseEventArgs me = (MouseEventArgs)e;
 
             if (me.Button == MouseButtons.Left && originaImage != null)
-            {
                 navMesh.VectorInput(new Vector(me.Location.X, originaImage.Height - me.Location.Y));
-                DrawMesh();
-            }
+
+            if (me.Button == MouseButtons.Right && originaImage != null && navMesh.tempNodes.Count != 0)
+                navMesh.UndoPrevNode();
+
+            if (me.Button == MouseButtons.Middle && originaImage != null && navMesh.polygons.Count != 0)
+                navMesh.RemovePolygon(new Vector(me.Location.X, originaImage.Height - me.Location.Y));
+
+            DrawMesh();
         }
 
         private void loadedImagePanel_Resize(object sender, EventArgs e)

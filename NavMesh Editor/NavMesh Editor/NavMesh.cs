@@ -82,10 +82,40 @@ namespace NavMesh_Editor
 
 
 
+        /// <summary>
+        /// Clears all the nodes of the ufinished polygon.
+        /// </summary>
         public void ClearSelected()
         {
             tempNodes.Clear();
             nodeSelect = new Vector(double.NaN, 0);
+        }
+
+
+
+        public void RemovePolygon(Vector pos)
+        {
+            foreach (Polygon p in polygons)
+            {
+                bool isSelected = true;
+                
+                foreach (Edge ed in p.edges)
+                {
+                    Plane2D temp = new Plane2D(ed.start, ed.end);
+
+                    if (temp.CheckCollision(pos) == true)
+                    {
+                        isSelected = false;
+                        break;
+                    }
+                }
+
+                if (isSelected == true)
+                {
+                    polygons.Remove(p);
+                    return;
+                }
+            }
         }
 
 
