@@ -12,7 +12,7 @@ public class Enemy : MonoBehaviour
     // Use this for initialization
     void Start()
     {
-        target = GameObject.Find("Player");
+        //target = GameObject.Find("Player");
     }
 
     // Update is called once per frame
@@ -21,5 +21,10 @@ public class Enemy : MonoBehaviour
         dir = target.transform.position - transform.position;
         dir = dir.normalized;
         GetComponent<Rigidbody>().AddForce(dir * speed * Time.deltaTime, ForceMode.Impulse);
+    }
+
+    public void Die()
+    {
+        Destroy(gameObject);
     }
 }

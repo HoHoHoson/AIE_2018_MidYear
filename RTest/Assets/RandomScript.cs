@@ -3,10 +3,11 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class RandomScript : MonoBehaviour {
-    [Range(1, 9000), Tooltip("aesrtfyghujik")]
+    [Range(1.0f, 500.0f), Tooltip("This is a tooltip")]
     public float force = 10.0f;
-    public float turnForce = 180.0f;
-    [Range(0.5f, 9000)]
+    [Range(1.0f, 360.0f)]
+    public float turnDegrees = 180.0f;
+    [Range(0.5f, 10.0f)]
     public float fireRate = 0;
     public GameObject prefabMissile;
 
@@ -15,34 +16,42 @@ public class RandomScript : MonoBehaviour {
     // Use this for initialization
     void Start ()
     {
-        firePos = GameObject.Find("Muzzle");
+        firePos = transform.GetChild(0).gameObject;
         Debug.Assert(firePos);
     }
 	
 	// Update is called once per frame
 	void Update ()
     {
+        var rb = GetComponent<Rigidbody>();
         timer += Time.deltaTime;
 
         if (Input.GetKey(KeyCode.W))
-            GetComponent<Rigidbody>().AddForce(transform.forward * force * Time.deltaTime, ForceMode.Impulse);
+            rb.velocity += gameObject.transform.forward * force * Time.deltaTime;
            
         if (Input.GetKey(KeyCode.S))
-            GetComponent<Rigidbody>().AddForce(transform.forward * -force * Time.deltaTime, ForceMode.Impulse);
+            rb.velocity += gameObject.transform.forward * -force * Time.deltaTime;
 
         if (Input.GetKey(KeyCode.D))
-            GetComponent<Rigidbody>().AddTorque(transform.up * turnForce * Time.deltaTime, ForceMode.Impulse);
-        
+            rb.angularVelocity += new Vector3(0, turnDegrees * Time.deltaTime, 0);
+
         if (Input.GetKey(KeyCode.A))
-            GetComponent<Rigidbody>().AddTorque(transform.up * -turnForce * Time.deltaTime, ForceMode.Impulse);
+            rb.angularVelocity += new Vector3(0, -turnDegrees * Time.deltaTime, 0);
+
+        if (Input.GetKey(KeyCode.LeftArrow))
+            rb.angularVelocity += new Vector3(0, turnDegrees * Time.deltaTime, 0);
+
+        if (Input.GetKey(KeyCode.RightArrow))
+            rb.angularVelocity += new Vector3(0, -turnDegrees * Time.deltaTime, 0);
 
         if (Input.GetKey(KeyCode.Space) && timer >= fireRate)
         {
             Quaternion r = firePos.transform.rotation;
             Vector3 pos = firePos.transform.position;
-            pos += firePos.transform.up * 2.5f;
-
-            GameObject obj = Instantiate(prefabMissile, pos,  r);
+            r *= Quaternion.Euler(90, 0, 0);
+            //pos += firePos.transform.up * 2.5f;
+            
+            Instantiate(prefabMissile, pos,  r);
             timer = 0;
         }
     }       
