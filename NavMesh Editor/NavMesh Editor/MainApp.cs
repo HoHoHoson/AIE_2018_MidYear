@@ -29,25 +29,59 @@ namespace NavMesh_Editor
         {
             InitializeComponent();
         }
+
+
+
+        // Logic and events for the main application.
+        //
+        // Runs when the application first starts up.
         private void MainApp_Load(object sender, EventArgs e)
         {
             // Whitelisted extensions has one asterix, Blacklisted has two, list can be continued with a semicolon.
             // | for seperating lists and group names 
-            loadMapDialog.Filter = "Image Extensions|*.png;*.jpg|Everything Else|*.*";
+            loadMapDialog.Filter = "Image Extensions|*.jpg;*.png;*.jpeg;*.bmp;|Everything Else|*.*";
             loadMeshDialog.Filter = "File Extensions|*.xml|Everything Else|*.*";
             saveMeshDialog.Filter = "XML|*.xml";
             navMesh = new NavMeshIO();
         }
 
-
-
-        // Button that opens up the dialog box that will load in a specified Image.
-        private void loadButton_Click(object sender, EventArgs e)
+        // How the application acts to certain key presses.
+        private void MainApp_KeyDown(object sender, KeyEventArgs e)
         {
-            loadMapDialog.ShowDialog();
+            if (e.KeyCode == Keys.Delete)
+            {
+                navMesh.ClearSelected();
+                DrawMesh();
+            }
+        }
+
+        // Runs when the application closes.
+        private void MainApp_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            if (navMesh.polygons.Count == 0)
+                return;
+
+            DialogResult dr = MessageBox.Show("Would you like to save your mesh?", "Application Shutdown", MessageBoxButtons.YesNoCancel);
+
+            if (dr == DialogResult.Yes)
+                saveMeshDialog.ShowDialog();
+            else if (dr == DialogResult.Cancel)
+                e.Cancel = true;
         }
 
 
+
+        // Handles the Image that gets loaded in as the background for drawing a mesh onto.
+        //
+        // Button that opens up the dialog box that will load in a specified Image.
+        private void loadButton_Click(object sender, EventArgs e)
+        {
+            if (navMesh.polygons.Count != 0)
+                if (OverrideMeshOrImage(false) == false)
+                    return;
+
+            loadMapDialog.ShowDialog();
+        }
 
         // Dialog Box that loads in an Image.
         private void loadMapDialog_FileOk(object sender, CancelEventArgs e)
@@ -55,15 +89,7 @@ namespace NavMesh_Editor
             LoadImage(loadMapDialog.FileName);
         }
 
-        private void loadMeshDialog_FileOk(object sender, CancelEventArgs e)
-        {
-            Deserialise(loadMeshDialog.FileName);
-            DrawMesh();
-        }
-
-
-
-        // Text Box that displays the loaded Image's directory.
+        // Refreshes the text Box that displays the loaded Image's directory to get rid of the caret.
         private void imageDirectoryText_MouseLeave(object sender, EventArgs e)
         {
             imageDirectoryText.Enabled = false;
@@ -72,29 +98,62 @@ namespace NavMesh_Editor
 
 
 
-        // Button that saves the NavMesh to a XML file.
-        private void MeshSaveButton_Click(object sender, EventArgs e)
-        {
-            saveMeshDialog.ShowDialog();
-        }
-
+        // These controls handles the saving/loading of navigational meshs as XML files.
+        //
+        // Button that opens up the loadMeshDialog box.
         private void MeshLoadButton_Click(object sender, EventArgs e)
         {
+            if (originaImage == null)
+            {
+                MessageBox.Show("There is no background image.", "ERROR");
+                return;
+            }
+
+            if (navMesh.polygons.Count != 0)
+                if (OverrideMeshOrImage(true) == false)
+                    return;
+
             loadMeshDialog.ShowDialog();
         }
 
-
-
-        // Timer that refreshes the Coordinate Viewer tooltip so that it doesn't auto hide.
-        private void autoRefreshTimer_Tick(object sender, EventArgs e)
+        // Dialog box for loading in an existing XML mesh that is specified by the user.
+        private void loadMeshDialog_FileOk(object sender, CancelEventArgs e)
         {
-            System.Drawing.Point mouseCoord = loadedImageDisplay.PointToClient(MousePosition);
-            coordinateViewer.SetToolTip(loadedImageDisplay, mouseCoord.X + " , " + (originaImage.Height - mouseCoord.Y));
+            Deserialise(loadMeshDialog.FileName);
+            DrawMesh();
+        }
+
+        // Button that opens up the saveMeshDialog box.
+        private void MeshSaveButton_Click(object sender, EventArgs e)
+        {
+            if (navMesh.polygons.Count != 0)
+                saveMeshDialog.ShowDialog();
+            else
+                MessageBox.Show("Navigational Mesh is empty.", "ERROR");
+        }
+
+        //Dialog box that saves the NavMesh as a XML file.
+        private void saveMeshDialog_FileOk(object sender, CancelEventArgs e)
+        {
+                XmlSerializer serializer = new XmlSerializer(typeof(NavMeshIO));
+                TextWriter writer = new StreamWriter(saveMeshDialog.FileName);
+
+                serializer.Serialize(writer, navMesh);
+                writer.Close();
+        }
+
+        // Removes the MeshDir textbox's caret after it goes out of focus.
+        private void MeshDirectoryTect_MouseLeave(object sender, EventArgs e)
+        {
+            MeshDirectoryText.Enabled = false;
+            MeshDirectoryText.Enabled = true;
         }
 
 
 
         // Panel Containing the Picturebox that displays the loaded Image.
+        //
+        // Mouse controls for creating and deleting nodes and polygons.
         private void loadedImageDisplay_MouseDown(object sender, MouseEventArgs e)
         {
             MouseEventArgs me = (MouseEventArgs)e;
@@ -108,14 +167,17 @@ namespace NavMesh_Editor
             if (me.Button == MouseButtons.Middle && originaImage != null && navMesh.polygons.Count != 0)
                 navMesh.RemovePolygon(new Vector(me.Location.X, originaImage.Height - me.Location.Y));
 
-            DrawMesh();
+            if (originaImage != null)
+                DrawMesh();
         }
 
+        // Resizes the image inside the panel if the form gets resized.
         private void loadedImagePanel_Resize(object sender, EventArgs e)
         {
             PositionDisplay();
         }
 
+        // Allows data to be dragged into the application's image panel to be loaded.
         private void loadedImagePanel_DragEnter(object sender, DragEventArgs e)
         {
             if (e.Data.GetDataPresent(DataFormats.FileDrop))
@@ -124,12 +186,39 @@ namespace NavMesh_Editor
             }
         }
 
+        // Processes the data that was dragged into the imagebox.
         private void loadedImagePanel_DragDrop(object sender, DragEventArgs e)
         {
             string[] s = (string[])e.Data.GetData(DataFormats.FileDrop);
-            LoadImage(s[0] as string);
+
+            if (Path.GetExtension(s[0]) == ".jpg" || Path.GetExtension(s[0]) == ".jpeg" || Path.GetExtension(s[0]) == ".png" || Path.GetExtension(s[0]) == ".bmp")
+            {
+                if (navMesh.polygons.Count != 0)
+                    if (OverrideMeshOrImage(false) == false)
+                        return;
+
+                LoadImage(s[0] as string);
+                DrawMesh();
+            }
+            else if (Path.GetExtension(s[0]) == ".xml")
+            {
+                if (originaImage == null)
+                {
+                    MessageBox.Show("There is no background image.", "ERROR");
+                    return;
+                }
+
+                if (OverrideMeshOrImage(true) == true)
+                {
+                   Deserialise(s[0] as string);
+                   DrawMesh();
+                }
+            }
+            else
+                MessageBox.Show("Invalid file type.", "ERROR");
         }
 
+        // Feature that changes the background colour when the panel gets double clicked.
         private void loadedImagePanel_MouseDoubleClick(object sender, MouseEventArgs e)
         {
             if (loadedImagePanel.BackColor.Name == "Control")
@@ -141,6 +230,8 @@ namespace NavMesh_Editor
 
 
         // Picturebox that displays the loaded Image.
+        //
+        // Creates a tooltip that displays the current coordinate of the mouse over the image.
         private void loadedImageDisplay_MouseMove(object sender, MouseEventArgs e)
         {
             if (originaImage != null)
@@ -154,13 +245,24 @@ namespace NavMesh_Editor
                     tooltipRefreshTimer.Start();
         }
 
+        // Tooltip gets removed once the mouse moves out of the image.
         private void loadedImageDisplay_MouseLeave(object sender, EventArgs e)
         {
             coordinateViewer.Hide(loadedImageDisplay);
         }
 
+        // Timer that refreshes the Coordinate Viewer tooltip so that it doesn't auto hide.
+        private void autoRefreshTimer_Tick(object sender, EventArgs e)
+        {
+            System.Drawing.Point mouseCoord = loadedImageDisplay.PointToClient(MousePosition);
+            coordinateViewer.SetToolTip(loadedImageDisplay, mouseCoord.X + " , " + (originaImage.Height - mouseCoord.Y));
+        }
 
 
+
+        /// <summary>
+        /// Draws the Navigational Mesh onto the background image.
+        /// </summary>
         public void DrawMesh()
         {
             meshCanvas = (Image)originaImage.Clone();
@@ -256,9 +358,11 @@ namespace NavMesh_Editor
         /// <param name="filePath"></param>
         private void LoadImage(string filePath)
         {
+            navMesh.polygons.Clear();
+            navMesh.ClearSelected();
+
             originaImage = Image.FromFile(filePath);
             imageDirectoryText.Text = filePath;
-            this.Text = Path.GetFileName(filePath) + " - " + formText;
 
             loadedImageDisplay.Image = originaImage;
             loadedImageDisplay.Width = originaImage.Width;
@@ -291,42 +395,36 @@ namespace NavMesh_Editor
         /// <param name="fileName"></param>
         private void Deserialise(string filePath)
         {
+            navMesh.ClearSelected();
+
             Stream stream = File.Open(filePath, FileMode.Open);
             XmlSerializer serializer = new XmlSerializer(typeof(NavMeshIO));
-
             navMesh = (NavMeshIO)serializer.Deserialize(stream);
             stream.Close();
+
+            this.Text = Path.GetFileName(filePath);
+            MeshDirectoryText.Text = filePath;
         }
 
-        private void saveMeshDialog_FileOk(object sender, CancelEventArgs e)
+        /// <summary>
+        /// Messagebox for when the mesh or image gets overrided. True for mesh, false for image. Function also returns false if the save was canceled.
+        /// </summary>
+        /// <param name="isMesh"></param>
+        private bool OverrideMeshOrImage(bool isMesh)
         {
-            if (navMesh != null)
-            {
-                XmlSerializer serializer = new XmlSerializer(typeof(NavMeshIO));
-                TextWriter writer = new StreamWriter(saveMeshDialog.FileName);
+            string type = "Mesh";
+            if (isMesh == false)
+                type = "Image";
 
-                serializer.Serialize(writer, navMesh);
-                writer.Close();
-            }
-            else
-                MessageBox.Show("No NavMesh is loaded", "WARNING");
-        }
+            DialogResult dr = MessageBox.Show("Would you like to save your mesh?", "Overriding " + type, MessageBoxButtons.YesNoCancel);
 
-        private void MainApp_KeyDown(object sender, KeyEventArgs e)
-        {
-            if (e.KeyCode == Keys.Back)
-            {
-                navMesh.UndoPrevNode();
-                DrawMesh();
-            }
+            if (dr == DialogResult.Yes)
+                saveMeshDialog.ShowDialog();
+            else if (dr == DialogResult.Cancel)
+                return false;
 
-            if (e.KeyCode == Keys.Delete)
-            {
-                navMesh.ClearSelected();
-                DrawMesh();
-            }
+            return true;
         }
     }
-
 }
 

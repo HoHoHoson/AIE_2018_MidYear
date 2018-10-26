@@ -234,3 +234,15 @@ Remote Procedure Calls/RPC Server/RPC Server/obj/Debug/
 RTest/Library/
 
 RTest/\.vs/
+
+NavMesh Editor/NavMesh Editor/bin/Release/
+
+NavMesh Editor/NavMesh Editor/obj/Release/
+
+Remote Procedure Calls/RPC Client/RPC Client/bin/Release/
+
+Remote Procedure Calls/RPC Client/RPC Client/obj/Release/
+
+Remote Procedure Calls/RPC Server/RPC Server/bin/Release/
+
+Remote Procedure Calls/RPC Server/RPC Server/obj/Release/
