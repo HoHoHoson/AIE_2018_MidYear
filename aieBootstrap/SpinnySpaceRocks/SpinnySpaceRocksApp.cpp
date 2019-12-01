@@ -771,10 +771,14 @@ void SpinnySpaceRocksApp::draw()
 
 		m_2dRenderer->drawText(m_font, "MOVEMENT : WASD Keys", 0 + 10, getWindowHeight() - 40, 0);
 		m_2dRenderer->drawText(m_font, "FIRE     : Left Mouse", 0 + 10, getWindowHeight() - 80, 0);
-		m_2dRenderer->drawText(m_font, "INSTRUCTIONS : From your smecksy commander", 0 + 10, getWindowHeight() - 160, 0);
-		m_2dRenderer->drawText(m_font, "Destroy The Rock by shooting it while it's vulnerable", 0 + 10, getWindowHeight() - 200, 0);
-		m_2dRenderer->drawText(m_font, "It spins incredibly fast for a while after being damaged", 0 + 10, getWindowHeight() - 240, 0);
-		m_2dRenderer->drawText(m_font, "Invulnerable while in this state", 0 + 10, getWindowHeight() - 280, 0);
+		m_2dRenderer->drawText(m_font, "INSTRUCTIONS : From your smecksy commander!", 0 + 10, getWindowHeight() - 160, 0);
+		m_2dRenderer->drawText(m_font, "Destroy The Rock by shooting it while it's docile (slowly spinning).", 0 + 10, getWindowHeight() - 240, 0);
+		m_2dRenderer->drawText(m_font, "It becomes enraged for a while after being damaged (beyblade mode).", 0 + 10, getWindowHeight() - 280, 0);
+		m_2dRenderer->drawText(m_font, "INVULNERABLE AND DEFLECTS BULLETS WHILE ENRAGED", 0 + 10, getWindowHeight() - 320, 0);
+		m_2dRenderer->drawText(m_font, "But fret not, your blaster can still destroy the smaller rocks.", 0 + 10, getWindowHeight() - 400, 0);
+		m_2dRenderer->drawText(m_font, "COMMANDER HOHO OUT!", 0 + 10, getWindowHeight() - 480, 0);
+
+		m_2dRenderer->drawText(m_font, "Backspace to exit back to menu", 0 + 10, getWindowHeight() - 700, 0);
 
 		break;
 	}
