@@ -144,7 +144,7 @@ void SpinnySpaceRocksApp::update(float deltaTime)
 		exTimer += deltaTime;
 		boss.coolDown += deltaTime;
 		m_FirerateTimer += deltaTime;
-		firerate_LMG += deltaTime;
+		timer_LMG += deltaTime;
 		m_shipRotation = atan2(input->getMouseY() - m_shipPosY, input->getMouseX() - m_shipPosX) + 3.15 * 1.5;
 
 		if (input->isKeyDown(aie::INPUT_KEY_W) && m_YouDed == false)
@@ -175,9 +175,9 @@ void SpinnySpaceRocksApp::update(float deltaTime)
 			else
 				m_shipPosX += m_shipSpeed * deltaTime;
 		}
-		if (input->isMouseButtonDown(aie::INPUT_MOUSE_BUTTON_LEFT) && !m_InactiveBullets.empty() && m_YouDed == false && firerate_LMG > 0.2f)
+		if (input->isMouseButtonDown(aie::INPUT_MOUSE_BUTTON_LEFT) && !m_InactiveBullets.empty() && m_YouDed == false && timer_LMG > firerate_LMG)
 		{
-			firerate_LMG = 0;
+			timer_LMG = 0;
 			Bullet* b = m_InactiveBullets.back();
 			b->m_PosX = m_shipPosX;
 			b->m_PosY = m_shipPosY;
@@ -627,6 +627,7 @@ void SpinnySpaceRocksApp::update(float deltaTime)
 		if (input->wasKeyPressed(aie::INPUT_KEY_BACKSPACE))
 			state = Menu;
 
+		break;
 	}
 	default:
 		assert(false && "The Update switch statement broke");
@@ -775,6 +776,7 @@ void SpinnySpaceRocksApp::draw()
 		m_2dRenderer->drawText(m_font, "It spins incredibly fast for a while after being damaged", 0 + 10, getWindowHeight() - 240, 0);
 		m_2dRenderer->drawText(m_font, "Invulnerable while in this state", 0 + 10, getWindowHeight() - 280, 0);
 
+		break;
 	}
 	default:
 		assert(false && "The main draw switch statement is broken");
