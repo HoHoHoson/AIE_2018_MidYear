@@ -71,7 +71,7 @@ protected:
 		Stairs,
 		Random
 	};
-	Patterns p;
+	Patterns m_CirclagonSpawnMode;
 	float m_RingAngle = 0;
 	int m_RingSpeed;
 	float m_ScaleSpeed;

@@ -84,7 +84,7 @@ protected:
 	float m_GameTimer = 0;
 	float iCantThinkSo = 0;
 	float timer_LMG = 0;
-	float firerate_LMG = 0.3f;
+	float firerate_LMG = 0.25f;
 
 	aie::Texture* m_shipTexture;
 	aie::Texture* m_asteroidTexture;

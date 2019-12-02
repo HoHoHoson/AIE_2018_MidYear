@@ -62,7 +62,7 @@ bool NotSoSupaCirclagonApp::startup()
 
 	m_GameTime = 0;
 	m_IsSet = false;
-	p = Random;
+	m_CirclagonSpawnMode = Random;
 	state = Menu;
 
 	return true;
@@ -120,7 +120,7 @@ void NotSoSupaCirclagonApp::update(float deltaTime)
 		m_SpawnTimer += deltaTime;
 		m_RingAngle += m_RingSpeed * 0.9 * deltaTime;
 
-		if (p == Random)
+		if (m_CirclagonSpawnMode == Random)
 		{
 			m_SpawnRate = 1.75 - m_RingSpeed / 1000;
 			HLib::clamp(m_SpawnRate, 1.5, 1.75);
@@ -138,11 +138,11 @@ void NotSoSupaCirclagonApp::update(float deltaTime)
 			{
 				m_IsSet = false;
 				m_SpawnTimer = -1.1;
-				p = Stairs;
+				m_CirclagonSpawnMode = Stairs;
 			}
 		}
 
-		if (p == Stairs)
+		if (m_CirclagonSpawnMode == Stairs)
 		{
 			m_SpawnRate = 0.5;
 
@@ -159,7 +159,7 @@ void NotSoSupaCirclagonApp::update(float deltaTime)
 			{
 				m_IsSet = false;
 				m_SpawnTimer = 0;
-				p = Random;
+				m_CirclagonSpawnMode = Random;
 			}
 		}
 
@@ -498,7 +498,7 @@ bool NotSoSupaCirclagonApp::isInside(const Circle& obj, const Circle& bounds) co
 
 void NotSoSupaCirclagonApp::insertPattern(Circlagon * c)
 {
-	switch (p)
+	switch (m_CirclagonSpawnMode)
 	{
 	case NotSoSupaCirclagonApp::Stairs:
 		c->loadCirclagon(m_RingAngle, m_RingSpeed); return;
@@ -530,5 +530,5 @@ void NotSoSupaCirclagonApp::reloadGame()
 	for (auto r : m_Circlagons)
 		r->isActive() = false;
 	m_IsSet = false;
-	p = Random;
+	m_CirclagonSpawnMode = Random;
 }
